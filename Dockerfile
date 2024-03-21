@@ -15,7 +15,7 @@ RUN npm install
 COPY . .
 
 # npm build
-RUN npm run run build
+RUN npm run build
 
 # prod environment
 FROM nginx:stable-alpine
