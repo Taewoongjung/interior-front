@@ -1,0 +1,138 @@
+$blue: #cc5800;
+$orange: #f95700;
+$grey: #333;
+$white: #fff;
+$bg-clr: #f5f5f5;
+@mixin center {
+  display: grid;
+  place-content: center;
+}
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+}
+body {
+  min-height: 100vh;
+  background: #e5ccab;
+  @include center;
+  padding: 50px;
+}
+section {
+  width: 800px;
+  height: 400px;
+  display: flex;
+  overflow: hidden;
+  border-radius: 10px;
+  &.active {
+    .left {
+      transform: translateY(-400px);
+    }
+    .right {
+      transform: translateY(0);
+    }
+  }
+}
+@media (max-width: 820px) {
+  section {
+    width: 400px;
+    flex-direction: column;
+    img {
+      display: none;
+    }
+    .left {
+      transform: translateY(400px);
+    }
+    &.active {
+      .left {
+        transform: translateY(0);
+      }
+      .right {
+        transform: translateY(-800px);
+      }
+    }
+  }
+}
+.left,
+.right {
+  width: 400px;
+  height: 800px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  transition: 1s;
+  img {
+    max-width: 100%;
+  }
+}
+.right {
+  transform: translateY(-400px);
+}
+.sign-up,
+.sign-in {
+  @include center;
+  width: 400px;
+  height: 400px;
+  h1 {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 340px;
+    gap: 20px;
+    input {
+      border: 0;
+      outline: 0;
+      background: $bg-clr;
+      padding: 10px 5px;
+      border-radius: 5px;
+      padding-left: 10px;
+      &::placeholder {
+        color: $grey;
+        text-transform: capitalize;
+        font-weight: bold;
+      }
+    }
+    [type="submit"] {
+      @include center;
+      max-width: fit-content;
+      padding: 0.5em 1em;
+      color: $white;
+      background: $blue;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: capitalize;
+      font-size: 1.2em;
+    }
+  }
+  p {
+    text-transform: uppercase;
+    margin-top: 20px;
+    a {
+      text-decoration: none;
+      font-weight: bold;
+      color: $blue;
+      &:is(:hover, :visited) {
+        color: $blue;
+      }
+    }
+  }
+}
+.left {
+  input[type="submit"] {
+    background: $orange;
+  }
+  p {
+    a {
+      color: $orange;
+      &:is(:hover, :visited) {
+        color: $orange;
+      }
+    }
+  }
+}
