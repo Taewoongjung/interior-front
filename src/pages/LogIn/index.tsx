@@ -23,7 +23,7 @@ const LogIn = () => {
                     </form>
                     <p>
                         이미 계정이 있으신가요?
-                        <a href="#" id="sign-in" onClick={toggleForm}>로그인 하러 가기.</a>
+                        <a href="#!" id="sign-in" onClick={toggleForm}>로그인 하러 가기.</a>
                     </p>
                 </div>
             </div>
@@ -37,7 +37,7 @@ const LogIn = () => {
                         <input type="submit" value="로그인하기" />
                     </form>
                     <p>
-                        아직 계정이 없으신가요? <a href="#" onClick={toggleForm}>회원가입 하기.</a>
+                        아직 계정이 없으신가요? <a href="#!" onClick={toggleForm}>회원가입 하기.</a>
                     </p>
                 </div>
             </div>
