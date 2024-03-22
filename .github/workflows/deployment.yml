@@ -30,11 +30,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       
-      - name: install npm dependencies
-        run: npm install
-        
-      - name: react build
-        run: npm run build
+#      - name: install npm dependencies
+#        run: npm install
+#
+#      - name: react build
+#        run: npm run build
 
       - name:  execute remote ssh & deploy
         uses: appleboy/ssh-action@v1.0.3
@@ -42,7 +42,6 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
             whoami
