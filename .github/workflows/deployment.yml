@@ -47,7 +47,7 @@ jobs:
             whoami
             ls -al
             docker stop $(docker ps -q --filter ancestor=interior-jung-front)
-            docker rmi $(docker images --format "{{.ID}}" interior-jung-front:latest)
+            docker rmi -f $(docker images --format "{{.ID}}" interior-jung-front:latest)
             cd /home/twj
             rm -rf interior-front
             git clone https://github.com/Taewoongjung/interior-front.git
