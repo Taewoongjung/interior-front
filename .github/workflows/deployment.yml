@@ -46,7 +46,7 @@ jobs:
           script: |
             whoami
             ls -al
-            docker stop $(docker ps -q --filter ancestor=interior-jung-front)
+            docker kill $(docker ps -q --filter ancestor=interior-jung-front)
             docker rmi -f $(docker images --format "{{.ID}}" interior-jung-front:latest)
             cd /home/twj
             rm -rf interior-front
