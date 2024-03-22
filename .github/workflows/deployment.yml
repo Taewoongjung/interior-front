@@ -49,7 +49,9 @@ jobs:
             docker kill $(docker ps -q --filter ancestor=interior-jung-front)
             docker rmi -f $(docker images --format "{{.ID}}" interior-jung-front:latest)
             cd /home/twj
+            ls -al
             cd /home/twj/interior-front
+            ls -al
             git pull
             docker build -t interior-jung-front .
             docker run -d -p ${{ secrets.DOCKER_IMAGE_PORT }} interior-jung-front
