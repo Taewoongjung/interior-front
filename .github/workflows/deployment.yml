@@ -50,7 +50,7 @@ jobs:
             docker rmi -f $(docker images --format "{{.ID}}" interior-jung-front:latest)
             cd /home/twj
             rm -rf interior-front
-            git clone https://github.com/Taewoongjung/interior-front.git
             cd /home/twj/interior-front
+            git pull
             docker build -t interior-jung-front .
             docker run -d -p ${{ secrets.DOCKER_IMAGE_PORT }} interior-jung-front
