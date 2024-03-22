@@ -45,11 +45,11 @@ jobs:
           passphrase: ${{ secrets.SERVER_SSH_PASSPHRASE }}
           port: ${{ secrets.SERVER_PORT }}
           script: |
-            docker stop $(docker ps -q --filter ancestor=interior-jung-front) # 현재 "interior-jung-front"로 실행중인 컨테이너 정지
-            docker rmi $(docker images --format "{{.ID}}" interior-jung-front:latest) # 현재 "interior-jung-front"로 존재하는 도커 이미지 삭제
+            docker stop $(docker ps -q --filter ancestor=interior-jung-front)
+            docker rmi $(docker images --format "{{.ID}}" interior-jung-front:latest)
             cd /home/twj
-            rm -rf interior-front # 업데이트 전 프로젝트 제거
-            git clone https://github.com/Taewoongjung/interior-front.git # 업데이트 된 프로젝트 다시 clone
-            cd /home/twj/interior-front # 업데이트 된 프로젝트로 가기
-            docker build -t interior-jung-front . # Dockerfile 을 바탕으로 도커 이미지 생성
-            docker run -d -p ${{ secrets.DOCKER_IMAGE_PORT }} interior-jung-front # 업데이트 된 이미지 실행
+            rm -rf interior-front
+            git clone https://github.com/Taewoongjung/interior-front.git
+            cd /home/twj/interior-front
+            docker build -t interior-jung-front .
+            docker run -d -p ${{ secrets.DOCKER_IMAGE_PORT }} interior-jung-front
