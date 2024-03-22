@@ -1,5 +1,3 @@
-LABEL authors="jeongtaeung"
-
 # base image 설정(as build 로 완료된 파일을 밑에서 사용할 수 있다.)
 FROM node:16-alpine as builder
 
@@ -17,7 +15,7 @@ RUN npm install
 COPY . .
 
 # npm build
-RUN npm run run build
+RUN npm run build
 
 # prod environment
 FROM nginx:stable-alpine
