@@ -28,7 +28,7 @@ const LogIn = () => {
         const tel = "01011231237";
         const role = "ADMIN";
 
-        axios.post(process.env.REACT_APP_API_URL + "signup", {
+        axios.post("http://localhost:7070/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
