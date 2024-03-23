@@ -24,8 +24,12 @@ const LogIn = () => {
 
     const onSubmitSignUp = (data: { name: any; email: any; password: any; reCheckPassword: any; }) => {
         const {name, email, password, reCheckPassword} = data;
+
+        const tel = "01011231237";
+        const role = "ADMIN";
+
         axios.post(process.env.REACT_APP_API_URL + "signup", {
-            name, email, password, reCheckPassword
+            name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
             }
