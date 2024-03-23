@@ -72,7 +72,7 @@ const LogIn = () => {
             // setLogInError(false);
             axios
                 .post(
-                    process.env.REACT_APP_API_URL + "/login",
+                    "http://localhost:7070/api/login",
                     {email, password},
                     {
                         withCredentials: true,
