@@ -1,7 +1,7 @@
 import React, {useCallback, useState} from "react";
 import axios from "axios";
 import './styles.scss';
-import {useForm} from "react-hook-form";
+import {useForm, useFormState} from "react-hook-form";
 import {IFormValues} from "../../definitions/IFormValues";
 import useInput from "../../hooks/useInput";
 
@@ -10,7 +10,17 @@ const LogIn = () => {
 
     const toggleForm = () => {
         setIsLogIn(!isLogIn);
+        allReset();
     };
+
+    function allReset() {
+        setEmail('');
+        setPassword('');
+        setEmailError('');
+        setPasswordError('');
+        clearErrors();
+        reset();
+    }
 
     const onSubmitSignUp = (data: { name: any; email: any; password: any; reCheckPassword: any; }) => {
         const {name, email, password, reCheckPassword} = data;
@@ -74,7 +84,7 @@ const LogIn = () => {
         [email, password]
     );
 
-    const { register, handleSubmit, formState: { errors } } = useForm<IFormValues>({
+    const { register, handleSubmit, formState: { errors },reset, clearErrors } = useForm<IFormValues>({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
         defaultValues: {},
