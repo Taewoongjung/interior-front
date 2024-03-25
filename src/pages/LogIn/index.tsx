@@ -5,7 +5,6 @@ import {useForm, useFormState} from "react-hook-form";
 import {IFormValues} from "../../definitions/IFormValues";
 import Modal from "../../components/Modal";
 import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
-import Scrollbars from "react-custom-scrollbars";
 
 const LogIn = () => {
     const [isLogIn, setIsLogIn] = useState(false);
