@@ -1,12 +1,13 @@
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
+import {Redirect} from 'react-router-dom';
 import axios from "axios";
 import './styles.scss';
-import {useForm, useFormState} from "react-hook-form";
+import {useForm} from "react-hook-form";
 import {IFormValues} from "../../definitions/IFormValues";
 import Modal from "../../components/Modal";
 import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
 
-const LogIn = () => {
+const Auth = () => {
     const [isLogIn, setIsLogIn] = useState(false);
 
     const toggleForm = () => {
@@ -34,7 +35,8 @@ const LogIn = () => {
             return null;
         }
 
-        axios.post("http://interiorjung.shop:707/api/signup", {
+        axios
+            .post("http://interiorjung.shop:707/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
@@ -42,7 +44,7 @@ const LogIn = () => {
         ).then((response) => {
             if (response.data.isSuccess === true) {
                 openModal();
-                setModalHeader("회원가입이 완료 되었습니다.")
+                setModalHeader("회원가입이 완료 되었습니다.");
                 setIsLogIn(false);
             }}
         )
@@ -89,26 +91,44 @@ const LogIn = () => {
         }
     };
 
+    const [isSuccessLogin, setIsSuccessLogin] = useState(false);
+
     const onSubmit = useCallback((e: { preventDefault: () => void; }) => {
             e.preventDefault();
-            // setLogInError(false);
+
+            const formData = new FormData();
+            formData.append("username", email);
+            formData.append("password", password);
+
             axios
                 .post(
-                    "http://interiorjung.shop:707/api/login",
-                    {email, password},
+                    "http://interiorjung.shop:707/login",
+                    formData,
                     {
                         withCredentials: true,
                     },
                 )
-                // .then((response) => {
-                //     mutate(response.data, false);
-                // })
-                // .catch((error) => {
-                //     setLogInError(error.response?.data?.statusCode === 401);
-                // });
+                .then((response) => {
+                    const token = response.headers["authorization"];
+                    console.log("success = ", token);
+                    // 로그인 성공 시 로컬 스토리지에 토큰 저장
+                    setIsSuccessLogin(true);
+                    localStorage.setItem("interiorjung-token", token);
+
+                })
+                .catch((error) => {
+                    console.dir("error = ", error);
+                });
         },
         [email, password]
     );
+
+    useEffect(() => {
+        if (isSuccessLogin) {
+            // 로그인 성공 시 리다이렉트
+            window.location.href = '/main'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
+        }
+    }, [isSuccessLogin]);
 
     const { register, handleSubmit, formState: { errors },reset, clearErrors } = useForm<IFormValues>({
         mode: 'onSubmit',
@@ -121,7 +141,7 @@ const LogIn = () => {
         shouldUnregister: false,
         shouldUseNativeValidation: false,
         delayError: undefined
-    })
+    });
 
 
     const [isModalOpen, setIsModalOpen] = useState(false); // 모달의 열림 상태를 관리하는 상태 변수
@@ -230,4 +250,4 @@ const LogIn = () => {
     );
 };
 
-export default LogIn;
+export default Auth;
