@@ -1,5 +1,5 @@
 import React, {useState} from "react"
-import './style.scss';
+import './styles.scss';
 
 const customStyles = {
     overlay: {

@@ -28,7 +28,7 @@ const LogIn = () => {
         const tel = "01011231237";
         const role = "ADMIN";
 
-        axios.post("http://localhost:7070/api/signup", {
+        axios.post("http://interiorjung.shop:707/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
