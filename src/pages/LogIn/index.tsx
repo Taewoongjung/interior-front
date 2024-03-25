@@ -24,10 +24,9 @@ const LogIn = () => {
         reset();
     }
 
-    const onSubmitSignUp = (data: { name: any; email: any; password: any; reCheckPassword: any; }) => {
-        const {name, email, password, reCheckPassword} = data;
+    const onSubmitSignUp = (data: { name: any; email: any; tel: any; password: any; reCheckPassword: any; }) => {
+        const {name, email, tel, password, reCheckPassword} = data;
 
-        const tel = "01011231237";
         const role = "ADMIN";
 
         if (password !== reCheckPassword) {
@@ -36,7 +35,7 @@ const LogIn = () => {
             return null;
         }
 
-        axios.post("http://localhost:7070/api/signup", {
+        axios.post("http://interiorjung.shop:707/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
@@ -171,14 +170,14 @@ const LogIn = () => {
 
                                 <input
                                     type="tel" placeholder="전화번호"
-                                    {...register("telephone", {
+                                    {...register("tel", {
                                         required: '전화번호는 필수 입력입니다.',
                                         pattern: {
                                             value: /^010[0-9]{8}$/,
                                             message: '전화번호 양식이 맞지 않습니다.',
                                         },
                                     })} />
-                                {errors.telephone && <div>{errors.telephone?.message}</div>}
+                                {errors.tel && <div>{errors.tel?.message}</div>}
 
                                 <input
                                     type="password" placeholder="비밀번호"
