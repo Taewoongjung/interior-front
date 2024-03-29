@@ -36,7 +36,7 @@ const Auth = () => {
         }
 
         axios
-            .post("http://localhost:707/api/signup", {
+            .post("http://interiorjung.shop:707/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
@@ -102,7 +102,7 @@ const Auth = () => {
 
             axios
                 .post(
-                    "http://localhost:707/login",
+                    "http://interiorjung.shop:707/login",
                     formData,
                     {
                         withCredentials: true,
