@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useState} from "react";
-import {Redirect} from 'react-router-dom';
 import axios from "axios";
 import './styles.scss';
 import {useForm} from "react-hook-form";
