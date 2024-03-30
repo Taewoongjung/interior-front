@@ -21,6 +21,8 @@ const Auth = () => {
         setPasswordError('');
         clearErrors();
         reset();
+        setEmail('');
+        setPassword('');
     }
 
     const onSubmitSignUp = (data: { name: any; email: any; tel: any; password: any; reCheckPassword: any; }) => {
