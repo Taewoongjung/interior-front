@@ -111,11 +111,12 @@ const Auth = () => {
                     const token = response.headers['authorization'];
                     console.log("response.data = ", response.data);
                     console.log("?? = ", response.headers.getAuthorization);
+                    console.log("?? = ", response.headers.getAuthorization.toLocaleString());
                     console.log("response.headers = ", response.headers["pragma"]);
                     console.log("success = ", token);
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
-                    localStorage.setItem("interiorjung-token", response.headers.getAuthorization.toLocaleString());
+                    localStorage.setItem("interiorjung-token", token);
 
                 })
                 .catch((error) => {
