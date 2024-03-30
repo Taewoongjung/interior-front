@@ -101,14 +101,16 @@ const Auth = () => {
 
             axios
                 .post(
-                    "http://interiorjung.shop:707/login",
+                    "http://localhost:7070/login",
                     formData,
                     {
+                        headers: ({'Content-Type':'application/json'}),
                         withCredentials: true,
                     },
                 )
                 .then((response) => {
                     const token = response.headers["authorization"];
+                    console.log("response = ", response);
                     console.log("success = ", token);
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
