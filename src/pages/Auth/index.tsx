@@ -21,8 +21,6 @@ const Auth = () => {
         setPasswordError('');
         clearErrors();
         reset();
-        setEmail('');
-        setPassword('');
     }
 
     const onSubmitSignUp = (data: { name: any; email: any; tel: any; password: any; reCheckPassword: any; }) => {
@@ -232,10 +230,10 @@ const Auth = () => {
                     <div className="sign-in">
                         <h1>로그인</h1>
                         <form onSubmit={onSubmit}>
-                            <input type="email" onChange={onChangeLoginEmail} placeholder="이메일"/>
+                            <input type="email" value={email} onChange={onChangeLoginEmail} placeholder="이메일"/>
                             {emailError && <div>{emailError}</div>}
 
-                            <input type="password" onChange={onChangeLoginPassword} placeholder="패스워드"/>
+                            <input type="password" value={password} onChange={onChangeLoginPassword} placeholder="패스워드"/>
                             {passwordError && <div>{passwordError}</div>}
                             <input type="submit" value="로그인하기"/>
                         </form>
