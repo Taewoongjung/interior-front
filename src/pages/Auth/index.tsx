@@ -109,7 +109,7 @@ const Auth = () => {
                 )
                 .then((response) => {
                     const token = response.headers["authorization"];
-                    const token1 = response.headers["getAuthorization"];
+                    const token1 = response.headers["Authorization"];
                     console.log("response.data = ", response.data);
                     console.log("token1= ", token1);
                     console.log("response.headers = ", response.headers["pragma"]);
