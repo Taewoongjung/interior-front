@@ -101,7 +101,7 @@ const Auth = () => {
 
             axios
                 .post(
-                    "http://localhost:7070/login",
+                    "http://interiorjung.shop:707/login",
                     formData,
                     {
                         headers: ({'Content-Type':'application/json'}),
