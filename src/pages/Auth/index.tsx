@@ -110,8 +110,6 @@ const Auth = () => {
                 .then((response) => {
                     const token = response.headers['authorization'];
                     console.log("response.data = ", response.data);
-                    console.log("?? = ", response.headers.getAuthorization);
-                    console.log("?? = ", response.headers.getAuthorization.toLocaleString());
                     console.log("response.headers = ", response.headers["pragma"]);
                     console.log("success = ", token);
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
