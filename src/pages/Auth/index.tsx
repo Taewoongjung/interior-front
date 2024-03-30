@@ -104,7 +104,6 @@ const Auth = () => {
                     "http://interiorjung.shop:707/login",
                     formData,
                     {
-                        headers: ({'Content-Type':'application/json'}),
                         withCredentials: true,
                     },
                 )
