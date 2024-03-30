@@ -108,8 +108,9 @@ const Auth = () => {
                     },
                 )
                 .then((response) => {
-                    const token = response.headers["authorization"];
-                    console.log("response = ", response);
+                    const token = response.headers["Authorization"];
+                    console.log("response.data = ", response.data);
+                    console.log("response.headers = ", response.headers);
                     console.log("success = ", token);
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
