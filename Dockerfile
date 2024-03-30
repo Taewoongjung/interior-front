@@ -20,6 +20,8 @@ RUN npm run build
 # prod environment
 FROM nginx:stable-alpine
 
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
+
 # 이전 빌드 단계에서 빌드한 결과물을 /usr/share/nginx/html 으로 복사한다.
 COPY --from=builder /app/build /usr/share/nginx/html
 
