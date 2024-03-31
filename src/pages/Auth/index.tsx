@@ -106,9 +106,9 @@ const Auth = () => {
                         "http://interiorjung.shop:707/login",
                         // "http://localhost:7070/login",
                         formData,
-                        // {
-                        //     withCredentials: true,
-                        // },
+                        {
+                            withCredentials: true,
+                        },
                     )
                     .catch((error) => {
                         console.dir("error = ", error);
