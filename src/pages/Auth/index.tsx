@@ -92,13 +92,14 @@ const Auth = () => {
 
     const [isSuccessLogin, setIsSuccessLogin] = useState(false);
 
-    const onSubmit = useCallback((e: { preventDefault: () => void; }) => {
+    const onSubmit = useCallback(async (e: { preventDefault: () => void; }) => {
             e.preventDefault();
 
             const formData = new FormData();
             formData.append("username", email);
             formData.append("password", password);
-            axios.post(`http://interiorjung.shop:707/login`, formData)
+
+            await axios.post(`http://localhost:7070/login`, formData, {withCredentials: true})
                 .then((response) => {
                     const token = response.headers['authorization'];
                     console.log("response.data = ", response.data);
@@ -112,6 +113,7 @@ const Auth = () => {
                     console.dir("error = ", error);
                 });
 
+            console.log("token = ", axios.defaults.headers.common["Authorization"])
             // axios({
             //     method: "post",
             //     url: "http://interiorjung.shop:707/login",
