@@ -112,15 +112,16 @@ const Auth = () => {
                     const token = response.headers['authorization'];
                     console.dir("response.data = ", response.data);
                     console.dir("response.headers = ", response.headers["pragma"]);
-                    console.dir("response.headers2 = ", response);
+                    console.log("response.headers2 = ", response.headers);
                     console.dir("success = ", token);
                     console.log("aa = ", axios.defaults.headers.common.Authorization)
                     console.dir("aa = ", axios.defaults.headers.common.Authorization)
+                    console.dir("bb = ", response.headers.getAuthorization)
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
                     localStorage.setItem("interiorjung-token", token);
-                    localStorage.setItem("interiorjung-toke2n", axios.defaults.headers.common.Authorization);
-
+                    // localStorage.setItem("interiorjung-token2", token1.toString());
+                    // localStorage.setItem("interiorjung-token3", token2.toString());
                 })
                 .catch((error) => {
                     console.dir("error = ", error);
