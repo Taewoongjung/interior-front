@@ -102,12 +102,16 @@ const Auth = () => {
             await axios.post(`http://interiorjung.shop:707/login`, formData, {withCredentials: true})
                 .then((response) => {
                     const token = response.headers['authorization'];
-                    console.log("response.data = ", response.data);
-                    console.log("response.headers = ", response.headers["pragma"]);
+                    console.log("response.data = ", response);
+                    console.log("response.headers = ", response);
+                    console.log("response.headers1 = ", response.headers["Content-Type"]);
+                    console.log("response.headers2 = ", response.headers.getAuthorization);
+                    console.log("response.headers3 = ", response.headers["Content-Length"]);
+                    console.log("response.headers4 = ", response.headers["Authorization"]);
                     console.log("success = ", token);
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
-                    localStorage.setItem("interiorjung-token", token);
+                    localStorage.setItem("access-token", token);
                 })
                 .catch((error) => {
                     console.dir("error = ", error);
