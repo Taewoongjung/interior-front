@@ -99,33 +99,48 @@ const Auth = () => {
             formData.append("username", email);
             formData.append("password", password);
 
-            await axios
+        let authorizationHeader;
+        try {
+            const response = await axios
                 .post(
-                    "http://interiorjung.shop:707/login",
-                    // "http://localhost:7070/login",
+                    // "http://interiorjung.shop:707/login",
+                    "http://localhost:7070/login",
                     formData,
                     {
                         withCredentials: true,
                     },
                 )
-                .then((response) => {
-                    const token = response.headers['authorization'];
-                    console.dir("response.data = ", response.data);
-                    console.dir("response.headers = ", response.headers["pragma"]);
-                    console.log("response.headers2 = ", response.headers);
-                    console.dir("success = ", token);
-                    console.log("aa = ", axios.defaults.headers.common.Authorization)
-                    console.dir("aa = ", axios.defaults.headers.common.Authorization)
-                    console.dir("bb = ", response.headers.getAuthorization)
-                    // 로그인 성공 시 로컬 스토리지에 토큰 저장
-                    setIsSuccessLogin(true);
-                    localStorage.setItem("interiorjung-token", token);
-                    // localStorage.setItem("interiorjung-token2", token1.toString());
-                    // localStorage.setItem("interiorjung-token3", token2.toString());
-                })
+                // .then((response) => {
+                //     const token = response.headers['authorization'];
+                //     console.dir("response.data = ", response.data);
+                //     console.dir("response.headers = ", response.headers["pragma"]);
+                //     console.log("response.headers2 = ", response.headers);
+                //     console.dir("success = ", token);
+                //     console.log("aa = ", axios.defaults.headers.common.Authorization)
+                //     console.dir("aa = ", axios.defaults.headers.common.Authorization)
+                //     console.dir("bb = ", response.headers.getAuthorization)
+                //     // 로그인 성공 시 로컬 스토리지에 토큰 저장
+                //     setIsSuccessLogin(true);
+                //     localStorage.setItem("interiorjung-token", token);
+                //     // localStorage.setItem("interiorjung-token2", token1.toString());
+                //     // localStorage.setItem("interiorjung-token3", token2.toString());
+                // })
                 .catch((error) => {
                     console.dir("error = ", error);
                 });
+
+            if(response) {
+                authorizationHeader = response.headers['authorization'];
+                console.log(response);
+                console.log(authorizationHeader);
+                setIsSuccessLogin(true);
+                localStorage.setItem("interiorjung-token", authorizationHeader);
+            }
+            const token = response;
+            // localStorage.setItem("interiorjung-token", token);
+        }catch (error) {
+            console.dir("error = ", error);
+        }
         },
         [email, password]
     );
