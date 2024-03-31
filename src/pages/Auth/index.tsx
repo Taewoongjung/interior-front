@@ -114,9 +114,12 @@ const Auth = () => {
                     console.dir("response.headers = ", response.headers["pragma"]);
                     console.dir("response.headers2 = ", response);
                     console.dir("success = ", token);
+                    console.log("aa = ", axios.defaults.headers.common.Authorization)
+                    console.dir("aa = ", axios.defaults.headers.common.Authorization)
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
                     localStorage.setItem("interiorjung-token", token);
+                    localStorage.setItem("interiorjung-toke2n", axios.defaults.headers.common.Authorization);
 
                 })
                 .catch((error) => {
