@@ -99,65 +99,28 @@ const Auth = () => {
             formData.append("username", email);
             formData.append("password", password);
 
-            await axios.post(`http://interiorjung.shop:707/login`, formData, {withCredentials: true})
+            await axios
+                .post(
+                    "http://interiorjung.shop:707/login",
+                    // "http://localhost:7070/login",
+                    formData,
+                    {
+                        withCredentials: true,
+                    },
+                )
                 .then((response) => {
                     const token = response.headers['authorization'];
-                    console.log("response.data = ", response);
-                    console.log("response.headers = ", response);
-                    console.log("response.headers1 = ", response.headers["Content-Type"]);
-                    console.log("response.headers2 = ", response.headers.getAuthorization);
-                    console.log("response.headers3 = ", response.headers["Content-Length"]);
-                    console.log("response.headers4 = ", response.headers["Authorization"]);
-                    console.log("success = ", token);
+                    console.dir("response.data = ", response.data);
+                    console.dir("response.headers = ", response.headers["pragma"]);
+                    console.dir("success = ", token);
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
-                    localStorage.setItem("access-token", token);
+                    localStorage.setItem("interiorjung-token", token);
+
                 })
                 .catch((error) => {
                     console.dir("error = ", error);
                 });
-
-            console.log("token = ", axios.defaults.headers.common["Authorization"])
-            // axios({
-            //     method: "post",
-            //     url: "http://interiorjung.shop:707/login",
-            //     // url: "http://localhost:7070/login",
-            //     data: formData,
-            //     withCredentials: true,
-            // }).then((response) => {
-            //     const token = response.headers['authorization'];
-            //     console.log("response.data = ", response.data);
-            //     console.log("response.headers = ", response.headers["pragma"]);
-            //     console.log("success = ", token);
-            //     // 로그인 성공 시 로컬 스토리지에 토큰 저장
-            //     setIsSuccessLogin(true);
-            //     localStorage.setItem("interiorjung-token", token);
-            // })
-            // .catch((error) => {
-            //     console.dir("error = ", error);
-            // });
-
-            // axios
-            //     .post(
-            //         "http://interiorjung.shop:707/login",
-            //         formData,
-            //         {
-            //             withCredentials: true,
-            //         },
-            //     )
-            //     .then((response) => {
-            //         const token = response.headers['authorization'];
-            //         console.log("response.data = ", response.data);
-            //         console.log("response.headers = ", response.headers["pragma"]);
-            //         console.log("success = ", token);
-            //         // 로그인 성공 시 로컬 스토리지에 토큰 저장
-            //         setIsSuccessLogin(true);
-            //         localStorage.setItem("interiorjung-token", token);
-            //
-            //     })
-            //     .catch((error) => {
-            //         console.dir("error = ", error);
-            //     });
         },
         [email, password]
     );
