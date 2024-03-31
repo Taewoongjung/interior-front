@@ -99,7 +99,7 @@ const Auth = () => {
             formData.append("username", email);
             formData.append("password", password);
 
-            await axios.post(`http://localhost:7070/login`, formData, {withCredentials: true})
+            await axios.post(`http://interiorjung.shop:707/login`, formData, {withCredentials: true})
                 .then((response) => {
                     const token = response.headers['authorization'];
                     console.log("response.data = ", response.data);
