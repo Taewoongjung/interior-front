@@ -101,7 +101,7 @@ const Auth = () => {
 
             await axios
                 .post(
-                    "http://localhost:707/login",
+                    "http://localhost:707/api/login",
                     formData,
                     {
                         withCredentials: true,
