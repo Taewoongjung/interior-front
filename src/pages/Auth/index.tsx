@@ -35,7 +35,7 @@ const Auth = () => {
         }
 
         axios
-            .post("http://localhost:707/api/signup", {
+            .post("http://127.0.0.1:707/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
@@ -101,7 +101,7 @@ const Auth = () => {
 
             await axios
                 .post(
-                    "http://localhost:707/api/login",
+                    "http://127.0.0.1:707/api/login",
                     formData,
                     {
                         withCredentials: true,
