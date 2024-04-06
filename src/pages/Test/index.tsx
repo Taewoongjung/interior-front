@@ -206,7 +206,7 @@ const Test = () => {
             <div className="snow"></div>
             <div className="snow"></div>
             <div className="content">
-                    <div>우리 올해도 잘 지내보자</div>
+                    <div className="text mint-text">우리 올해도 잘 지내보자</div>
                 <img src="/ht/ht.png" width="50%" height="50%"/>
             </div>
             <div></div>
