@@ -112,6 +112,7 @@ const Auth = () => {
                     console.dir("response.data = ", response.data);
                     console.dir("response.headers = ", response.headers["pragma"]);
                     console.log("response.headers2 = ", response.headers);
+                    console.log("response = ", response);
                     console.dir("success = ", token);
                     console.log("aa = ", axios.defaults.headers.common.Authorization)
                     console.dir("aa = ", axios.defaults.headers.common.Authorization)
