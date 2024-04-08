@@ -46,7 +46,8 @@ jobs:
           script: |
             docker kill $(docker ps -q --filter ancestor=interior-jung-front)
             docker rmi -f $(docker images --format "{{.ID}}\t{{.Repository}}:{{.Tag}}" interior-jung-front:latest)
+            rm -rf /home/twj/interior-front
+            git clone https://github.com/Taewoongjung/interior-front.git
             cd /home/twj/interior-front
-            git pull
             docker build -t interior-jung-front .
             docker run -d -p ${{ secrets.DOCKER_IMAGE_PORT }} interior-jung-front
