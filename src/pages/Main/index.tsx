@@ -6,9 +6,11 @@ import fetcher from "../../utils/fetcher";
 
 const Main = () => {
 
-    const {data, error, mutate} = useSWR('http://localhost:7070/api/me', fetcher,{
-        dedupingInterval: 2000,
-    });
+    const {data, error, mutate} = useSWR(
+        // 'http://localhost:7070/api/me',
+        'http://api-interiorjung.shop:7077/api/me',
+        fetcher,{dedupingInterval: 2000,});
+
     console.log("컴포넌트 로그인 데이타 = ", data);
 
     const userName = data?.name;
