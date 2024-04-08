@@ -1,8 +1,18 @@
 import React from "react";
 import './assets/css/main.css';
 import './assets/css/fontawesome-all.min.css';
+import useSWR from "swr";
+import fetcher from "../../utils/fetcher";
 
 const Main = () => {
+
+    const {data, error, mutate} = useSWR('http://localhost:7070/api/me', fetcher,{
+        dedupingInterval: 2000,
+    });
+    console.log("컴포넌트 로그인 데이타 = ", data);
+
+    const userName = data?.name;
+    const userEmail = data?.email;
 
     return (
         <>
@@ -13,8 +23,8 @@ const Main = () => {
                     {/*Logo*/}
                     <div id="logo">
                         <span className="image avatar48"><img src="images/avatar.jpg" alt="" /></span>
-                        <h1 id="title">Jane Doe</h1>
-                        <p>Hyperspace Engineer</p>
+                        <h1 id="title">{userName}</h1>
+                        <p>{userEmail}</p>
                     </div>
 
                     {/*Nav*/}

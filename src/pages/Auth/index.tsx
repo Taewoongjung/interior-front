@@ -35,7 +35,8 @@ const Auth = () => {
         }
 
         axios
-            .post("http://api-interiorjung.shop:7077/api/signup", {
+            // .post("http://api-interiorjung.shop:7077/api/signup", {
+            .post("http://localhost:7070/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
@@ -101,7 +102,8 @@ const Auth = () => {
 
             await axios
                 .post(
-                    "http://api-interiorjung.shop:7077/api/login",
+                    // "http://api-interiorjung.shop:7077/api/login",
+                    "http://localhost:7070/api/login",
                     formData,
                     {
                         withCredentials: true,
@@ -109,14 +111,8 @@ const Auth = () => {
                 )
                 .then((response) => {
                     const token = response.headers['authorization'];
-                    console.dir("response.data = ", response.data);
-                    console.dir("response.headers = ", response.headers["pragma"]);
-                    console.log("response.headers2 = ", response.headers);
-                    console.log("response = ", response);
-                    console.dir("success = ", token);
-                    console.log("aa = ", axios.defaults.headers.common.Authorization)
-                    console.dir("aa = ", axios.defaults.headers.common.Authorization)
-                    console.dir("bb = ", response.headers.getAuthorization)
+                    console.dir("response Authorization = ", response.headers['Authorization']);
+                    console.dir("response Authorization2 = ", response.headers['authorization']);
                     // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
                     localStorage.setItem("interiorjung-token", token);
