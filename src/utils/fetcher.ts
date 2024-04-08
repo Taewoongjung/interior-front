@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const fetcher = (url: string) => axios.get(url, {
+const fetcher = async (url: string) => await axios.get(url, {
     headers: {
         Authorization: localStorage.getItem("interiorjung-token")
     },
