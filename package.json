@@ -19,8 +19,9 @@
     "react-modal": "^3.16.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "5.0.1",
+    "sass": "^1.74.1",
     "swr": "^2.2.5",
-    "typescript": "^5.4.4"
+    "typescript": "^2.7.2"
   },
   "scripts": {
     "start": "react-scripts start",
