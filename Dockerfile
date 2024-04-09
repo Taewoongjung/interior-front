@@ -2,7 +2,7 @@
 FROM node:alpine as builder
 
 # 컨테이너 내부 작업 디렉토리 설정
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # app dependencies
 # 컨테이너 내부로 package.json 파일들을 복사
