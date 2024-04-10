@@ -3,14 +3,16 @@ import './assets/css/main.css';
 import './assets/css/fontawesome-all.min.css';
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
-import Nav from "../../components/Nav";
 import BottomButton from "../../components/BottomButton";
+import { useParams, useLocation } from "react-router-dom";
 
 const Main = () => {
 
+    let { companyId } = useParams();
+
     const {data:userData, error, mutate} = useSWR(
-        // 'http://localhost:7070/api/me',
-        'http://api-interiorjung.shop:7077/api/me',
+        // `http://localhost:7070/api/companies/${companyId}`,
+        `http://api-interiorjung.shop:7077/api/companies/${companyId}`,
         fetcher,{
             dedupingInterval: 2000
         });

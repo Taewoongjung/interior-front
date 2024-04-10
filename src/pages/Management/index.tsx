@@ -7,6 +7,7 @@ import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
 import {useForm} from "react-hook-form";
 import {IFormValues} from "../../definitions/Management/IFormValues";
 import Modal from "../../components/Modal";
+import {Link} from 'react-router-dom';
 import './styles.css';
 
 const Management = () => {
@@ -94,7 +95,7 @@ const Management = () => {
                                 <tr key={company.id}>
                                     <td>{company.name}</td>
                                     <td>{company.address}</td>
-                                    <td><button>→</button></td>
+                                    <td><Link to={`/main/${company.id}`}><button>→</button></Link></td>
                                 </tr>
                             ))}
                         </tbody>
