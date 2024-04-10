@@ -8,6 +8,7 @@ const fetcher = async (url: string) => await axios.get(url, {
 }).then((response) => {
 
     console.log("token = ", localStorage.getItem("interiorjung-token"));
+    console.log(response.data);
 
     return response.data;
 }).catch((error) => {

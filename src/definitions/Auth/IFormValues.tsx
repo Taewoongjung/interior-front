@@ -6,4 +6,5 @@ export interface IFormValues {
   reCheckPassword: string;
   loginEmail: string;
   loginPassword: string;
+  address: string;
 }

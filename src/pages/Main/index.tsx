@@ -3,12 +3,15 @@ import './assets/css/main.css';
 import './assets/css/fontawesome-all.min.css';
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
+import Nav from "../../components/Nav";
+import BottomButton from "../../components/BottomButton";
 
 const Main = () => {
 
     const {data:userData, error, mutate} = useSWR(
-        // 'http://localhost:7070/api/me',
-        'http://api-interiorjung.shop:7077/api/me', fetcher,{
+        'http://localhost:7070/api/me',
+        // 'http://api-interiorjung.shop:7077/api/me',
+        fetcher,{
             dedupingInterval: 2000
         });
 
@@ -43,16 +46,7 @@ const Main = () => {
                 </div>
 
                 <div className="bottom">
-
-                    {/*Social Icons*/}
-                    <ul className="icons">
-                        <li><a href="#" className="icon brands fa-twitter"><span className="label">Twitter</span></a></li>
-                        <li><a href="#" className="icon brands fa-facebook-f"><span className="label">Facebook</span></a></li>
-                        <li><a href="#" className="icon brands fa-github"><span className="label">Github</span></a></li>
-                        <li><a href="#" className="icon brands fa-dribbble"><span className="label">Dribbble</span></a></li>
-                        <li><a href="#" className="icon solid fa-envelope"><span className="label">Email</span></a></li>
-                    </ul>
-
+                    <BottomButton/>
                 </div>
 
             </div>

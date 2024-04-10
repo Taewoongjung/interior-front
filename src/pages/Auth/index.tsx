@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import './styles.scss';
 import {useForm} from "react-hook-form";
-import {IFormValues} from "../../definitions/IFormValues";
+import {IFormValues} from "../../definitions/Auth/IFormValues";
 import Modal from "../../components/Modal";
 import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
 
@@ -35,8 +35,8 @@ const Auth = () => {
         }
 
         axios
-            .post("http://api-interiorjung.shop:7077/api/signup", {
-            // .post("http://localhost:7070/api/signup", {
+            // .post("http://api-interiorjung.shop:7077/api/signup", {
+            .post("http://localhost:7070/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
@@ -102,8 +102,8 @@ const Auth = () => {
 
             await axios
                 .post(
-                    "http://api-interiorjung.shop:7077/api/login",
-                    // "http://localhost:7070/api/login",
+                    // "http://api-interiorjung.shop:7077/api/login",
+                    "http://localhost:7070/api/login",
                     formData,
                     {
                         withCredentials: true,
@@ -127,7 +127,7 @@ const Auth = () => {
     useEffect(() => {
         if (isSuccessLogin) {
             // 로그인 성공 시 리다이렉트
-            window.location.href = '/main'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
+            window.location.href = '/management'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
         }
     }, [isSuccessLogin]);
 
