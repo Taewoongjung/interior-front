@@ -35,8 +35,8 @@ const Auth = () => {
         }
 
         axios
-            // .post("http://api-interiorjung.shop:7077/api/signup", {
-            .post("http://localhost:7070/api/signup", {
+            .post("http://api-interiorjung.shop:7077/api/signup", {
+            // .post("http://localhost:7070/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
@@ -102,8 +102,8 @@ const Auth = () => {
 
             await axios
                 .post(
-                    // "http://api-interiorjung.shop:7077/api/login",
-                    "http://localhost:7070/api/login",
+                    "http://api-interiorjung.shop:7077/api/login",
+                    // "http://localhost:7070/api/login",
                     formData,
                     {
                         withCredentials: true,

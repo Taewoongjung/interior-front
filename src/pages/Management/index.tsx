@@ -11,8 +11,8 @@ import './styles.css';
 
 const Management = () => {
     const {data:userData, error, mutate} = useSWR(
-        // 'http://api-interiorjung.shop:7077/api/me',
-        'http://localhost:7070/api/me',
+        'http://api-interiorjung.shop:7077/api/me',
+        // 'http://localhost:7070/api/me',
         fetcher,{
             dedupingInterval: 2000
         });
@@ -32,8 +32,8 @@ const Management = () => {
         const {companyName, mainAddress, subAddress, tel} = data;
         const bdgNumber = "1";
         axios
-            // .post("http://api-interiorjung.shop:7077/api/companies", {
-            .post("http://localhost:7070/api/companies", {
+            .post("http://api-interiorjung.shop:7077/api/companies", {
+            // .post("http://localhost:7070/api/companies", {
                     companyName, mainAddress, subAddress, bdgNumber, tel
                 },
                 {

@@ -9,8 +9,8 @@ import BottomButton from "../../components/BottomButton";
 const Main = () => {
 
     const {data:userData, error, mutate} = useSWR(
-        'http://localhost:7070/api/me',
-        // 'http://api-interiorjung.shop:7077/api/me',
+        // 'http://localhost:7070/api/me',
+        'http://api-interiorjung.shop:7077/api/me',
         fetcher,{
             dedupingInterval: 2000
         });
