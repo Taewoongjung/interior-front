@@ -19,8 +19,8 @@ const Main = () => {
 
     console.log("컴포넌트 로그인 데이타 = ", userData);
 
-    const userName = userData?.name;
-    const userEmail = userData?.email;
+    const companyName = userData?.company.name;
+    const userName = userData?.userName;
 
     return (
         <>
@@ -31,8 +31,8 @@ const Main = () => {
                     {/*Logo*/}
                     <div id="logo">
                         <span className="image avatar48"><img src="images/avatar.jpg" alt="" /></span>
-                        <h1 id="title">{userName}</h1>
-                        <p>{userEmail}</p>
+                        <h1 id="title">{companyName}</h1>
+                        <p>{userName}</p>
                     </div>
 
                     {/*Nav*/}
