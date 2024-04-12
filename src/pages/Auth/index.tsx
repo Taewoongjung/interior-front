@@ -23,7 +23,7 @@ const Auth = () => {
         reset();
     }
 
-    const onSubmitSignUp = (data: { name: any; email: any; tel: any; password: any; reCheckPassword: any; }) => {
+    const onSubmitSignUp = async (data: { name: any; email: any; tel: any; password: any; reCheckPassword: any; }) => {
         const {name, email, tel, password, reCheckPassword} = data;
 
         const role = "ADMIN";
@@ -34,7 +34,7 @@ const Auth = () => {
             return null;
         }
 
-        axios
+        await axios
             .post("http://api-interiorjung.shop:7077/api/signup", {
             // .post("http://localhost:7070/api/signup", {
             name, email, password, tel, role

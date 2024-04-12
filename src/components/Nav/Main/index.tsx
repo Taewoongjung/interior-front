@@ -16,8 +16,6 @@ const MainNav = (() => {
         // 'http://localhost:7070/api/businesses',
         fetcher);
 
-    console.log("businesses = ", businesses);
-
     const handleButtonClick = (businessId: string) => {
         // 이벤트 발생 시 쿼리 파라미터를 추가하여 URL을 업데이트
         const newQueryParams = new URLSearchParams(history.location.search);
@@ -27,6 +25,8 @@ const MainNav = (() => {
             pathname: `/main/${companyId}`,
             search: newQueryParams.toString(),
         });
+
+        window.location.reload();
     };
 
     const [businessName, setBusinessName] = useState('');

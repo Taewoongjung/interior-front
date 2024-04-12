@@ -1,12 +1,14 @@
-import React from "react";
-import {Link, useLocation} from 'react-router-dom';
+import React, {useEffect, useState} from "react";
+import {useLocation} from 'react-router-dom';
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
+import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 
 const BusinessMainScreen = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const businessId = queryParams.get('businessId');
+    // const businessId = useState(queryParams.get('businessId'))[0];
+    const [businessId, setBusinessId] = useState('');
 
     const {data:businessesMaterial, error, mutate} = useSWR(
         `http://api-interiorjung.shop:7077/api/businesses/${businessId}`,
@@ -14,6 +16,15 @@ const BusinessMainScreen = () => {
         fetcher);
 
     console.log("businessesMaterial = ", businessesMaterial?.businessMaterialList);
+
+    useEffect(() => {
+
+        // @ts-ignore
+        setBusinessId(queryParams.get('businessId')[0]);
+        console.log("useEffect => ", businessId);
+
+        mutate();
+    }, [businessId]);
 
     return (
         <>
@@ -39,12 +50,16 @@ const BusinessMainScreen = () => {
             <section id="portfolio" className="two">
                 <div className="container">
 
+                    <section>
+                        <BusinessMaterialAddInput businessIdParam={businessId}/>
+                    </section>
+
                     <header>
                         <h2>인테리어 재료 목록</h2>
                     </header>
 
                     <div className="row">
-                        <div className="col-12 col-17-mobile">
+                        <div className="col-12 col-100-mobile">
                             <article className="item">
                                 <div className="table-container">
                                     <table>
@@ -58,14 +73,20 @@ const BusinessMainScreen = () => {
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        {businessesMaterial?.businessMaterialList.map((material: { id: string; name: React.ReactNode; amount: React.ReactNode; category: React.ReactNode; memo: React.ReactNode; }) => (
-                                            <tr key={material.id}>
-                                                <td>{material.name}</td>
-                                                <td>{material.amount}</td>
-                                                <td>{material.category}</td>
-                                                <td>{material.memo}</td>
-                                            </tr>
-                                        ))}
+                                            {businessesMaterial?.businessMaterialList.length > 0 ? (
+                                                businessesMaterial.businessMaterialList.map((material: { id: string | number | bigint | null | undefined; name: React.ReactNode; amount: React.ReactNode; category: React.ReactNode; memo: React.ReactNode; }) => (
+                                                    <tr key={material.id}>
+                                                        <td>{material.name}</td>
+                                                        <td>{material.amount}</td>
+                                                        <td>{material.category}</td>
+                                                        <td>{material.memo}</td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr>
+                                                    <td align={"center"} colSpan={4}>데이터가 없습니다.</td>
+                                                </tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>

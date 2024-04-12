@@ -29,10 +29,11 @@ const Management = () => {
         setIsModalOpen(false);
     };
 
-    const onSubmitAddCompany = (data: { companyName: string; mainAddress: string; subAddress:string; tel: string; }) => {
+    const onSubmitAddCompany = async (data: { companyName: string; mainAddress: string; subAddress:string; tel: string; }) => {
         const {companyName, mainAddress, subAddress, tel} = data;
         const bdgNumber = "1";
-        axios
+
+        await axios
             .post("http://api-interiorjung.shop:7077/api/companies", {
             // .post("http://localhost:7070/api/companies", {
                     companyName, mainAddress, subAddress, bdgNumber, tel
