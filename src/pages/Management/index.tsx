@@ -80,7 +80,7 @@ const Management = () => {
     return(
         <>
             <ManagementNav userName={userData?.name} userEmail={userData?.email}/>
-            <section>회사 리스트</section>
+            <section>사업체 리스트</section>
             {userData?.companyList.length !== 0 &&
                 <div className="table-container">
                     <table>
@@ -106,50 +106,36 @@ const Management = () => {
 
             <form onSubmit={handleSubmit(onSubmitAddCompany)}>
                 <input
-                    id="name" placeholder="회사명"
+                    id="name" placeholder="사업체 명"
                     {...register("companyName", {
-                        required: "회사명은 필수 응답 항목입니다.",
-                        pattern: {
-                            value: /^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]{2,7}$/,
-                            message: "이름 형식이 맞지않습니다."
-                        },
+                        required: "사업체 명은 필수 응답 항목입니다."
                     })} />
-                {errors.companyName && <div>{errors.companyName?.message}</div>}
+                {errors.companyName && <div className="error_msg">{errors.companyName?.message}</div>}
 
                 <input
-                    type="address" placeholder="회사 주소"
+                    type="address" placeholder="사업체 주소"
                     {...register("mainAddress", {
-                        required: "주소는 필수 응답 항목입니다.",
-                        pattern: {
-
-                            value: /^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]{2,7}$/,
-                            message: "주소 형식이 아닙니다."
-                        }
+                        required: "주소는 필수 응답 항목입니다."
                     })} />
-                {errors.mainAddress && <div>{errors.mainAddress?.message}</div>}
+                {errors.mainAddress && <div className="error_msg">{errors.mainAddress?.message}</div>}
 
                 <input
-                    type="address" placeholder="회사 주소"
+                    type="address" placeholder="사업체 부주소"
                     {...register("subAddress", {
-                        required: "서브 주소는 필수 응답 항목입니다.",
-                        pattern: {
-
-                            value: /^[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]{2,7}$/,
-                            message: "주소 형식이 아닙니다."
-                        }
+                        required: "서브 주소는 필수 응답 항목입니다."
                     })} />
-                {errors.subAddress && <div>{errors.subAddress?.message}</div>}
+                {errors.subAddress && <div className="error_msg">{errors.subAddress?.message}</div>}
 
                 <input
-                    type="tel" placeholder="전화번호"
+                    type="tel" placeholder="사업체 전화번호"
                     {...register("tel", {
-                        required: '전화번호는 필수 입력입니다.',
+                        required: '사업체 전화번호는 필수 입력입니다.',
                         pattern: {
                             value: /^010[0-9]{8}$/,
                             message: '전화번호 양식이 맞지 않습니다.',
                         },
                     })} />
-                {errors.tel && <div>{errors.tel?.message}</div>}
+                {errors.tel && <div className="error_msg">{errors.tel?.message}</div>}
 
                 <input type="submit" value="+"/>
             </form>

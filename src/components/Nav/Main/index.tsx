@@ -4,6 +4,7 @@ import fetcher from "../../../utils/fetcher";
 import {useHistory, useParams} from 'react-router-dom';
 import axios from "axios";
 import "./styles.css";
+import { MdOutlineWorkOff } from 'react-icons/md';
 
 const MainNav = (() => {
 
@@ -77,6 +78,15 @@ const MainNav = (() => {
                         <input className="main-nav-input-text-submit" type="submit" value="사업등록"/>
                     </div>
                 </form>
+
+                {(businesses === undefined ||businesses.length === 0) &&
+                    <div className="no-business-message">
+                        <br/>
+                        <br/>
+                        <MdOutlineWorkOff className="no-business-icon" />
+                        <div className="no-business-text">진행중인 사업이 없습니다.</div>
+                    </div>
+                }
 
                 {businesses?.map((business: { id: string; name: React.ReactNode; }) => (
                     <li key={business.id}>

@@ -21,3 +21,10 @@
 .table-container tr:hover {
     background-color: #dddddd;
 }
+
+.error_msg {
+    color: red;
+    font-size: 14px;
+    text-align: left;
+    font-weight: bold;
+}

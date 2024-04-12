@@ -65,3 +65,22 @@
 .input-block input:focus ~ span, .input-block input:valid ~ span {
     width: 100%;
 }
+
+.no-business-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-size: 18px;
+    color: #555;
+}
+
+.no-business-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.no-business-text {
+    font-weight: bold;
+}
