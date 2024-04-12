@@ -17,12 +17,14 @@ const BusinessMainScreen = () => {
     console.log("businessesMaterial = ", businessesMaterial?.businessMaterialList);
 
     useEffect(() => {
+        console.log("before businessId = ", businessId);
         if (queryParams.size !== 0) {
             // @ts-ignore
             setBusinessId(queryParams.get('businessId')[0]);
 
             mutate();
         }
+        console.log("after businessId = ", businessId);
     }, [businessId]);
 
     const handleMutate = () => {
