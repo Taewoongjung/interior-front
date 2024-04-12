@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {useLocation} from 'react-router-dom';
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
@@ -7,7 +7,6 @@ import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 const BusinessMainScreen = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    // const [businessId, setBusinessId] = useState('');
     // @ts-ignore
     const businessId = queryParams.get('businessId')[0];
 
@@ -19,17 +18,12 @@ const BusinessMainScreen = () => {
     console.log("businessesMaterial = ", businessesMaterial?.businessMaterialList);
 
     useEffect(() => {
-        console.log("before businessId = ", businessId);
         if (queryParams.size !== 0) {
-            // @ts-ignore
-
             mutate();
         }
-        console.log("after businessId = ", businessId);
     }, [businessId]);
 
     const handleMutate = () => {
-        // mutate를 호출하여 데이터를 다시 불러옵니다.
         mutate();
     };
 

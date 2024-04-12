@@ -53,6 +53,7 @@ const MainNav = (() => {
                 ).then((response) => {
                         if (response.data === true) {
                             mutate();
+                            setBusinessName('');
                         }
                 })
                 .catch((error) => {
@@ -65,11 +66,6 @@ const MainNav = (() => {
     return(
         <>
             <ul className="main-nav-input-text-ul">
-                {/*<li><a href="#top" id="top-link"><span className="icon solid fa-home">Intro</span></a></li>*/}
-                {/*<li><a href="#portfolio" id="portfolio-link"><span className="icon solid fa-th">Portfolio</span></a></li>*/}
-                {/*<li><a href="#about" id="about-link"><span className="icon solid fa-user">About Me</span></a></li>*/}
-                {/*<li><a href="#contact" id="contact-link"><span className="icon solid fa-envelope">Contact</span></a></li>*/}
-
                 <form onSubmit={onSubmitCreateBusiness}>
                     <div className="input-block">
                         <input id="input-text" value={businessName} placeholder="추가 할 사업" onChange={onChangeBusinessName} required={true}/>

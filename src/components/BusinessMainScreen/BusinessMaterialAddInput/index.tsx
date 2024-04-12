@@ -8,9 +8,6 @@ import axios from "axios";
 const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () => void;}) => {
     const {businessIdParam, onEvent} = props;
 
-    console.log("?? ",businessIdParam)
-    console.log("?? ",props.businessIdParam)
-
     const { register, handleSubmit, formState: { errors },reset, clearErrors } = useForm<IFormValues>({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
@@ -46,6 +43,7 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
             ).then((response) => {
                 if (response.data === true) {
                     onEvent();
+                    reset();
                 }}
         )
             .catch((error) => {
