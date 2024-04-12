@@ -7,8 +7,7 @@ import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 const BusinessMainScreen = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    // @ts-ignore
-    const businessId = queryParams.get('businessId')[0];
+    const businessId = queryParams.get('businessId');
 
     const {data:businessesMaterial, error, mutate} = useSWR(
         `http://api-interiorjung.shop:7077/api/businesses/${businessId}`,

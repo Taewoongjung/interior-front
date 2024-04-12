@@ -23,7 +23,6 @@ const Main = () => {
 
     return (
         <>
-            <body className="is-preload">
                 <div id="header">
 
                     <div className="top">
@@ -70,7 +69,6 @@ const Main = () => {
                 <script src="assets/js/breakpoints.min.js"></script>
                 <script src="assets/js/util.js"></script>
                 <script src="assets/js/main.js"></script>
-            </body>
         </>
     )
 }
