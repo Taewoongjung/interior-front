@@ -25,6 +25,11 @@ const BusinessMainScreen = () => {
         }
     }, [businessId]);
 
+    const handleMutate = () => {
+        // mutate를 호출하여 데이터를 다시 불러옵니다.
+        mutate();
+    };
+
     return (
         <>
             {/*Intro*/}
@@ -52,7 +57,7 @@ const BusinessMainScreen = () => {
 
                     {queryParams.size !== 0 &&
                         <section>
-                            <BusinessMaterialAddInput businessIdParam={businessId}/>
+                            <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />
                         </section>
                     }
 

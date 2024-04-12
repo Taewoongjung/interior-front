@@ -5,8 +5,8 @@ import "./styles.css";
 import {options} from "./select";
 import axios from "axios";
 
-const BusinessMaterialAddInput = ((props: { businessIdParam?: any; }) => {
-    const {businessIdParam} = props;
+const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () => void;}) => {
+    const {businessIdParam, onEvent} = props;
 
     console.log("?? ",businessIdParam)
     console.log("?? ",props.businessIdParam)
@@ -35,7 +35,7 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; }) => {
 
         await axios
             .post(`http://api-interiorjung.shop:7077/api/businesses/${businessIdParam}/materials`, {
-                    // .post(`http://localhost:7070/api/businesses/${businessIdParam[0]}/materials`, {
+                // .post(`http://localhost:7070/api/businesses/${businessIdParam[0]}/materials`, {
                 materialName, materialAmount, materialCategory, materialMemo
                 }, {
                     withCredentials: true, // CORS 처리 옵션
@@ -45,7 +45,7 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; }) => {
                 }
             ).then((response) => {
                 if (response.data === true) {
-                    console.log("true");
+                    onEvent();
                 }}
         )
             .catch((error) => {
@@ -141,7 +141,6 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; }) => {
                                     <button type="submit" className="btn btn-warning" >등록<span className="glyphicon glyphicon-send"></span></button>
                                 </div>
                             </div>
-
                         </fieldset>
                     </form>
                 </section>
