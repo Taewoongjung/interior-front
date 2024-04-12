@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
-import Nav from "../../components/Nav";
 import axios from "axios";
 import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
 import {useForm} from "react-hook-form";
@@ -9,6 +8,7 @@ import {IFormValues} from "../../definitions/Management/IFormValues";
 import Modal from "../../components/Modal";
 import {Link} from 'react-router-dom';
 import './styles.css';
+import ManagementNav from "../../components/Nav/Management";
 
 const Management = () => {
     const {data:userData, error, mutate} = useSWR(
@@ -78,7 +78,7 @@ const Management = () => {
 
     return(
         <>
-            <Nav userName={userData?.name} userEmail={userData?.email}/>
+            <ManagementNav userName={userData?.name} userEmail={userData?.email}/>
             <section>회사 리스트</section>
             {userData?.companyList.length !== 0 &&
                 <div className="table-container">

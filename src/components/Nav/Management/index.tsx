@@ -1,8 +1,15 @@
 import React from "react";
 import './styles.css';
+import useSWR from "swr";
+import fetcher from "../../../utils/fetcher";
 
-const Nav = ((props: { userName?: string; userEmail?: string; }) => {
+const ManagementNav = ((props: { userName?: string; userEmail?: string; }) => {
     const {userName, userEmail} = props;
+
+    const {data:userData, error, mutate} = useSWR(
+        'http://api-interiorjung.shop:7077/api/me',
+        // 'http://localhost:7070/api/me',
+        fetcher);
 
     return(
         <>
@@ -38,4 +45,4 @@ const Nav = ((props: { userName?: string; userEmail?: string; }) => {
     )
 })
 
-export default Nav;
+export default ManagementNav;
