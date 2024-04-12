@@ -23,52 +23,60 @@ const Main = () => {
 
     return (
         <>
-            <div id="header">
+            <head>
+                <title>Prologue by HTML5 UP</title>
+                <meta charSet="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+                <link rel="stylesheet" href="./assets/css/main.css" />
+            </head>
+            <body className="is-preload">
+                <div id="header">
 
-                <div className="top">
+                    <div className="top">
 
-                    {/*Logo*/}
-                    <div id="logo">
-                        <span className="image avatar48"><img src="images/avatar.jpg" alt="" /></span>
-                        <h1 id="title">{userData?.company.name}</h1>
-                        <p>{userData?.userName}</p>
+                        {/*Logo*/}
+                        <div id="logo">
+                            <span className="image avatar48"><img src="./images/avatar.jpg" alt="" /></span>
+                            <h1 id="title">{userData?.company.name}</h1>
+                            <p>{userData?.userName}</p>
+                        </div>
+
+                        {/*Nav*/}
+                        <nav id="nav">
+                            <MainNav/>
+                        </nav>
+
                     </div>
 
-                    {/*Nav*/}
-                    <nav id="nav">
-                        <MainNav/>
-                    </nav>
+                    <div className="bottom">
+                        <BottomButton/>
+                    </div>
 
                 </div>
 
-                <div className="bottom">
-                    <BottomButton/>
+                {/*Main*/}
+                <div id="main">
+                   <BusinessMainScreen/>
                 </div>
 
-            </div>
+                {/*Footer*/}
+                <div id="footer">
 
-            {/*Main*/}
-            <div id="main">
-               <BusinessMainScreen/>
-            </div>
+                    {/*Copyright*/}
+                    <ul className="copyright">
+                        <li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="https://github.com/Taewoongjung">InteriorJung</a></li>
+                    </ul>
 
-            {/*Footer*/}
-            <div id="footer">
+                </div>
 
-                {/*Copyright*/}
-                <ul className="copyright">
-                    <li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="https://github.com/Taewoongjung">InteriorJung</a></li>
-                </ul>
-
-            </div>
-
-            <script src="assets/js/jquery.min.js"></script>
-            <script src="assets/js/jquery.scrolly.min.js"></script>
-            <script src="assets/js/jquery.scrollex.min.js"></script>
-            <script src="assets/js/browser.min.js"></script>
-            <script src="assets/js/breakpoints.min.js"></script>
-            <script src="assets/js/util.js"></script>
-            <script src="assets/js/main.js"></script>
+                <script src="assets/js/jquery.min.js"></script>
+                <script src="assets/js/jquery.scrolly.min.js"></script>
+                <script src="assets/js/jquery.scrollex.min.js"></script>
+                <script src="assets/js/browser.min.js"></script>
+                <script src="assets/js/breakpoints.min.js"></script>
+                <script src="assets/js/util.js"></script>
+                <script src="assets/js/main.js"></script>
+            </body>
         </>
     )
 }

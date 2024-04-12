@@ -7,7 +7,6 @@ import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 const BusinessMainScreen = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    // const businessId = useState(queryParams.get('businessId'))[0];
     const [businessId, setBusinessId] = useState('');
 
     const {data:businessesMaterial, error, mutate} = useSWR(
@@ -18,12 +17,12 @@ const BusinessMainScreen = () => {
     console.log("businessesMaterial = ", businessesMaterial?.businessMaterialList);
 
     useEffect(() => {
+        if (queryParams.size !== 0) {
+            // @ts-ignore
+            setBusinessId(queryParams.get('businessId')[0]);
 
-        // @ts-ignore
-        setBusinessId(queryParams.get('businessId')[0]);
-        console.log("useEffect => ", businessId);
-
-        mutate();
+            mutate();
+        }
     }, [businessId]);
 
     return (
@@ -49,85 +48,57 @@ const BusinessMainScreen = () => {
             {/*Portfolio*/}
             <section id="portfolio" className="two">
                 <div className="container">
+                    {queryParams.size === 0 && <div className="default_msg"><u>← 메뉴에서 사업을 선택해주세요</u></div>}
 
-                    <section>
-                        <BusinessMaterialAddInput businessIdParam={businessId}/>
-                    </section>
+                    {queryParams.size !== 0 &&
+                        <section>
+                            <BusinessMaterialAddInput businessIdParam={businessId}/>
+                        </section>
+                    }
 
-                    <header>
-                        <h2>인테리어 재료 목록</h2>
-                    </header>
+                    {queryParams.size !== 0 &&
+                        <header>
+                            <h2>인테리어 재료 목록</h2>
+                        </header>
+                    }
 
-                    <div className="row">
-                        <div className="col-12 col-100-mobile">
-                            <article className="item">
-                                <div className="table-container">
-                                    <table>
-                                        <thead>
-                                        <tr>
-                                            <th>재료 명</th>
-                                            <th>수량</th>
-                                            <th>카테고리</th>
-                                            <th>메모</th>
-                                            <th></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                            {businessesMaterial?.businessMaterialList.length > 0 ? (
-                                                businessesMaterial.businessMaterialList.map((material: { id: string | number | bigint | null | undefined; name: React.ReactNode; amount: React.ReactNode; category: React.ReactNode; memo: React.ReactNode; }) => (
-                                                    <tr key={material.id}>
-                                                        <td>{material.name}</td>
-                                                        <td>{material.amount}</td>
-                                                        <td>{material.category}</td>
-                                                        <td>{material.memo}</td>
+                    {queryParams.size !== 0 &&
+                        <div className="row">
+                            <div className="col-12 col-100-mobile">
+                                <article className="item">
+                                    <div className="table-container">
+                                        <table>
+                                            <thead>
+                                            <tr>
+                                                <th>재료 명</th>
+                                                <th>수량</th>
+                                                <th>카테고리</th>
+                                                <th>메모</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                {businessesMaterial?.businessMaterialList.length > 0 ? (
+                                                    businessesMaterial.businessMaterialList.map((material: { id: string | number | bigint | null | undefined; name: React.ReactNode; amount: React.ReactNode; category: React.ReactNode; memo: React.ReactNode; }) => (
+                                                        <tr key={material.id}>
+                                                            <td>{material.name}</td>
+                                                            <td>{material.amount}</td>
+                                                            <td>{material.category}</td>
+                                                            <td>{material.memo}</td>
+                                                        </tr>
+                                                    ))
+                                                ) : (
+                                                    <tr>
+                                                        <td align={"center"} colSpan={4}>데이터가 없습니다.</td>
                                                     </tr>
-                                                ))
-                                            ) : (
-                                                <tr>
-                                                    <td align={"center"} colSpan={4}>데이터가 없습니다.</td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </article>
-                            {/*<article className="item">*/}
-                            {/*    <a href="#" className="image fit"><img src="images/pic03.jpg" alt="" /></a>*/}
-                            {/*    <header>*/}
-                            {/*        <h3>Rhoncus Semper</h3>*/}
-                            {/*    </header>*/}
-                            {/*</article>*/}
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </article>
+                            </div>
                         </div>
-                        {/*<div className="col-4 col-12-mobile">*/}
-                        {/*    <article className="item">*/}
-                        {/*        <a href="#" className="image fit"><img src="images/pic04.jpg" alt="" /></a>*/}
-                        {/*        <header>*/}
-                        {/*            <h3>Magna Nullam</h3>*/}
-                        {/*        </header>*/}
-                        {/*    </article>*/}
-                        {/*    <article className="item">*/}
-                        {/*        <a href="#" className="image fit"><img src="images/pic05.jpg" alt="" /></a>*/}
-                        {/*        <header>*/}
-                        {/*            <h3>Natoque Vitae</h3>*/}
-                        {/*        </header>*/}
-                        {/*    </article>*/}
-                        {/*</div>*/}
-                        {/*<div className="col-4 col-12-mobile">*/}
-                        {/*    <article className="item">*/}
-                        {/*        <a href="#" className="image fit"><img src="images/pic06.jpg" alt="" /></a>*/}
-                        {/*        <header>*/}
-                        {/*            <h3>Dolor Penatibus</h3>*/}
-                        {/*        </header>*/}
-                        {/*    </article>*/}
-                        {/*    <article className="item">*/}
-                        {/*        <a href="#" className="image fit"><img src="images/pic07.jpg" alt="" /></a>*/}
-                        {/*        <header>*/}
-                        {/*            <h3>Orci Convallis</h3>*/}
-                        {/*        </header>*/}
-                        {/*    </article>*/}
-                        {/*</div>*/}
-                    </div>
-
+                    }
                 </div>
             </section>
 
