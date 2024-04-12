@@ -1,0 +1,67 @@
+
+.main-nav-input-text-ul {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.input-block input[type="submit"].main-nav-input-text-submit {
+    width:80px;
+    border: 3px solid #ecf1f1; /* 원하는 색상으로 변경 */
+    border-radius: 5px; /* 필요한 경우 테두리의 모서리를 둥글게 만듭니다. */
+    /* 기타 스타일링 */
+}
+.input-block {
+    position: relative;
+    width: 200px;
+    margin-left: 50px;
+    margin-top: 100px;
+}
+
+.input-block input {
+    font-size: 15px;
+    color: #ecbca2;
+    width: 100px;
+    border: none;
+    border-bottom: solid #ecbca2 1px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    position: relative;
+    background: none;
+    z-index: 5;
+}
+
+.input-block input::placeholder { color: #ecbca2; }
+.input-block input:focus { outline: none; }
+
+.main-nav-input-text-span {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: 0%;  /* right로만 바꿔주면 오 - 왼 */
+    background-color: #666;
+    width: 0;
+    height: 2px;
+    border-radius: 2px;
+    transition: 0.5s;
+}
+
+.main-nav-input-text-label {
+    position: absolute;
+    color: #ecbca2;
+    left: 10px;
+    font-size: 20px;
+    bottom: 8px;
+    transition: all .2s;
+}
+
+.input-block input:focus ~ label, .input-block input:valid ~ label {
+    font-size: 16px;
+    bottom: 40px;
+    color: #ecbca2;
+    font-weight: bold;
+}
+
+.input-block input:focus ~ span, .input-block input:valid ~ span {
+    width: 100%;
+}
