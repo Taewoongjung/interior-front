@@ -13,8 +13,8 @@ const MainNav = (() => {
     const history = useHistory();
 
     const {data:businesses, error, mutate} = useSWR(
-        'http://api-interiorjung.shop:7077/api/businesses',
-        // 'http://localhost:7070/api/businesses',
+        `http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses`,
+        // `http://localhost:7070/api/companies/${companyId}/businesses`,
         fetcher);
 
     const handleButtonClick = (businessId: string) => {
@@ -41,8 +41,8 @@ const MainNav = (() => {
             e.preventDefault();
 
             await axios
-                .post("http://api-interiorjung.shop:7077/api/businesses", {
-                // .post("http://localhost:7070/api/businesses", {
+                .post(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses`, {
+                // .post(`http://localhost:7070/api/companies/${companyId}/businesses`, {
                         businessName
                     }, {
                         withCredentials: true, // CORS 처리 옵션
