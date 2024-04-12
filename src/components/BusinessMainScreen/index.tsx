@@ -7,7 +7,9 @@ import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 const BusinessMainScreen = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const [businessId, setBusinessId] = useState('');
+    // const [businessId, setBusinessId] = useState('');
+    // @ts-ignore
+    const businessId = queryParams.get('businessId')[0];
 
     const {data:businessesMaterial, error, mutate} = useSWR(
         `http://api-interiorjung.shop:7077/api/businesses/${businessId}`,
@@ -20,7 +22,6 @@ const BusinessMainScreen = () => {
         console.log("before businessId = ", businessId);
         if (queryParams.size !== 0) {
             // @ts-ignore
-            setBusinessId(queryParams.get('businessId')[0]);
 
             mutate();
         }
