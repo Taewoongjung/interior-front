@@ -39,8 +39,6 @@ const NavMainAntd =(() => {
             pathname: `/main_test/${companyId}`,
             search: newQueryParams.toString(),
         });
-
-        window.location.reload();
     };
 
     const {data:businesses, error, mutate} = useSWR(
@@ -85,10 +83,10 @@ const NavMainAntd =(() => {
         <>
             <Menu
                 mode="inline"
-                theme="dark"
-                defaultSelectedKeys={['2']}
+                theme="light"
+                defaultSelectedKeys={['1']}
                 style={{
-                    background: '#050F33',
+                    background: '#e7a19a',
                     color: 'white',
                     height: 'calc(100vh - (55px + 130px + 16px + 32px)'
                 }}

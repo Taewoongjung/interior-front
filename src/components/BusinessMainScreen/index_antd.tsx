@@ -32,7 +32,7 @@ interface DataType {
 
 const columns: TableColumnsType<DataType> = [
     {
-        title: 'id',
+        title: 'No',
         width: 30,
         dataIndex: 'key',
         key: 'id',
@@ -85,14 +85,6 @@ const BusinessMainScreenAntd = () => {
         // `http://localhost:7070/api/businesses/${businessId}`,
         fetcher);
 
-    console.log("businessesMaterial = ", businessesMaterial?.businessMaterialList);
-
-    useEffect(() => {
-        if (queryParams.size !== 0) {
-            mutate();
-        }
-    }, [businessId]);
-
     const handleMutate = () => {
         mutate();
     };
@@ -114,8 +106,9 @@ const BusinessMainScreenAntd = () => {
         console.log("businessesMaterial = ", businessesMaterial)
         if (businessesMaterial) {
             // 새로운 데이터를 추가하기 위해 이전 데이터를 복제
-            const newData = [...tableData];
+            const newData: ((prevState: DataType[]) => DataType[]) | { key: any; name: any; category: any; amount: any; memo: any; }[] = [];
 
+            let count = 1;
             // 새로운 데이터를 추가
             businessesMaterial.businessMaterialList.forEach((business: { id:any; name: any; category: any; amount: any; memo:any; }, index: any) => {
                 // 이미 존재하는 아이템인지 확인
@@ -123,12 +116,13 @@ const BusinessMainScreenAntd = () => {
                 if (existingItemIndex === -1) {
                     // 존재하지 않는 경우에만 추가
                     newData.push({
-                        key: business.id,
+                        key: count,
                         name: business.name,
                         category: business.category,
                         amount: business.amount,
                         memo: business.memo,
                     });
+                    count++;
                 }
             });
 

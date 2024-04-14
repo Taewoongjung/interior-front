@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Layout, Row, Col, Input, Button, Dropdown, Menu, MenuProps, Drawer} from 'antd';
-import {ArrowDownOutlined, MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined} from '@ant-design/icons';
+import {Layout, Button, Menu, MenuProps, Avatar} from 'antd';
+import {MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined} from '@ant-design/icons';
 import NavMainAntd from "../../components/Nav/Main/index_antd";
 import BusinessMainScreenAntd from "../../components/BusinessMainScreen/index_antd";
 
@@ -42,7 +42,7 @@ const Mainantd = () => {
                 />
                 <Sider
                     style={{
-                        background: '#050F33',
+                        background: '#e5ccab',
                         overflow: 'auto'
                     }}
                     trigger={null} collapsible={true} collapsed={collapsed} collapsedWidth={0}
@@ -51,12 +51,11 @@ const Mainantd = () => {
                         style={{
                             width: 130,
                             height: 130,
-                            background: 'black',
                             margin: 'auto',
                             marginTop: 16,
                             marginBottom: 32
                         }}
-                    />
+                    ><Avatar size={130} style={{ backgroundColor: '#c5665e' }} icon={<UserOutlined />} /></div>
 
                     <NavMainAntd/>
                 </Sider>
