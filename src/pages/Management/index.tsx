@@ -8,7 +8,6 @@ import {IFormValues} from "../../definitions/Management/IFormValues";
 import Modal from "../../components/Modal";
 import {Link} from 'react-router-dom';
 import './styles.css';
-import ManagementNav from "../../components/Nav/Management";
 
 const Management = () => {
     const {data:userData, error, mutate} = useSWR(
@@ -79,7 +78,6 @@ const Management = () => {
 
     return(
         <>
-            <ManagementNav userName={userData?.name} userEmail={userData?.email}/>
             <section>사업체 리스트</section>
             {userData?.companyList.length !== 0 &&
                 <div className="table-container">

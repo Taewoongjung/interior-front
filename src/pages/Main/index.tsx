@@ -1,12 +1,17 @@
 import React, {useState} from "react";
-import {Layout, Button, Menu, MenuProps, Avatar} from 'antd';
+import {Layout, Button, Menu, MenuProps, Avatar, Radio} from 'antd';
 import {MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined} from '@ant-design/icons';
 import NavMain from "../../components/Nav/Main";
 import BusinessMainScreen from "../../components/BusinessMainScreen";
+import {useLocalObservable, useObserver} from "mobx-react";
+import MainNavState from "../../statemanager/mainNavState";
+import RegisterBusiness from "../RegisterBusiness";
+import {observable} from "mobx";
 
 const { Header, Sider, Content } = Layout;
 
 const Main = () => {
+
     const menuSortBy = (
         <Menu>
             <Menu.Item>Profile name</Menu.Item>
@@ -24,28 +29,28 @@ const Main = () => {
 
 
     const [collapsed, setCollapsed] = useState(false);
-    const [currentSelectedMenu, setCurrentSelectedMenu] = useState('list');
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
     };
 
-    return (
+    const navState = new MainNavState();
+
+    return useObserver(() => (
         <>
             <Layout style={{ height: '100vh' }} hasSider>
-                <div style={{ width: 256 }}>
+                <div>
                     <Button
                         id={"menuBtn"}
                         type="text"
                         onClick={toggleCollapsed}
                     >{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</Button>
-
-                    <NavMain inlineCollapsed={collapsed}/>
+                    <NavMain inlineCollapsed={collapsed} navState={navState}/>
                 </div>
-                <BusinessMainScreen/>
+                <BusinessMainScreen navState={navState}/>
             </Layout>
         </>
-    )
+    ));
 }
 
 export default Main;

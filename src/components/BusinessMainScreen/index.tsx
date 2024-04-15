@@ -1,11 +1,15 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Dropdown, Input, Layout, Menu, Row, Table, TableColumnsType} from "antd";
+import {Button, Col, Dropdown, Input, Layout, Menu, Radio, Row, Table, TableColumnsType} from "antd";
 import {ArrowDownOutlined, UserOutlined} from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
 import {useLocation} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
+import RegisterBusiness from "../../pages/RegisterBusiness";
+import { toJS } from 'mobx';
+import {useLocalObservable, useObserver} from "mobx-react";
+import MainNavState from "../../statemanager/mainNavState";
 
 const menuSortBy = (
     <Menu>
@@ -74,7 +78,8 @@ const columns: TableColumnsType<DataType> = [
     },
 ];
 
-const BusinessMainScreen = () => {
+const BusinessMainScreen = (props:{navState:MainNavState;}) => {
+
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const businessId = queryParams.get('businessId');
@@ -131,21 +136,35 @@ const BusinessMainScreen = () => {
         }
     }, [businessesMaterial]);
 
-    return(
+    const [businessListOrRegister, setBusinessListOrRegister] = useState('사업목록');
+
+    const handleBusinessChange = (e:any) => {
+        const selectedValue = e.target.value;
+        setBusinessListOrRegister(selectedValue);
+    };
+
+
+    console.log("🙇🏻‍♂️❤️ ㅋ = ",toJS(props.navState._navState));
+
+    return useObserver(() => (
         <>
             <Layout>
                 <Header style={{ background: 'white' }}>
-                    <Row justify="space-between">
+                        <Row justify="space-between">
                         <Col>
-                            <Input.Search
-                                style={{
-                                    verticalAlign: 'middle',
-                                    minWidth: 400
-                                }}
-                                allowClear
-                                placeholder="Search here..."
-                                enterButton
-                            />
+                            {/*<Radio.Group value={businessListOrRegister} onChange={handleBusinessChange}>*/}
+                            {/*    <Radio.Button value="사업목록">≡ 사업 목록</Radio.Button>*/}
+                            {/*    <Radio.Button value="사업등록">+ 사업 등록</Radio.Button>*/}
+                            {/*</Radio.Group>*/}
+                            {/*<Input.Search*/}
+                            {/*    style={{*/}
+                            {/*        verticalAlign: 'middle',*/}
+                            {/*        minWidth: 400*/}
+                            {/*    }}*/}
+                            {/*    allowClear*/}
+                            {/*    placeholder="Search here..."*/}
+                            {/*    enterButton*/}
+                            {/*/>*/}
                         </Col>
                         <Col>
                             <Dropdown.Button
@@ -157,6 +176,8 @@ const BusinessMainScreen = () => {
                         </Col>
                     </Row>
                 </Header>
+                {props.navState.getNavState() === '사업 등록' && <RegisterBusiness/>}
+                {props.navState.getNavState() !== '사업 등록' &&
                 <Content style={{ background: 'white', padding: 48 }}>
                     <Row gutter={8} style={{ alignItems: 'center' }}>
                         <Col flex={1}>
@@ -191,9 +212,10 @@ const BusinessMainScreen = () => {
                     </Row>
                     <Table columns={columns} dataSource={tableData} scroll={{ x: 1500, y: 300 }} />
                 </Content>
+                }
             </Layout>
         </>
-    )
+    ));
 }
 
 export default BusinessMainScreen;
