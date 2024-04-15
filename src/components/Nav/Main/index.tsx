@@ -3,7 +3,7 @@ import {useHistory, useParams} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../../utils/fetcher";
 import {Button, Input, Menu, MenuProps, Radio, Space, Form} from "antd";
-import {MailOutlined} from "@ant-design/icons";
+import {AppstoreOutlined} from "@ant-design/icons";
 import axios from "axios";
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -24,7 +24,9 @@ function getItem(
     } as MenuItem;
 }
 
-const NavMain =(() => {
+const NavMain =(props:{inlineCollapsed:any;}) => {
+
+    const {inlineCollapsed} = props;
 
     const { companyId } = useParams();
 
@@ -75,7 +77,7 @@ const NavMain =(() => {
 
     // "사업 목록" 아래에 새로운 비즈니스 아이템을 추가하여 전체 메뉴 아이템 배열 생성
     const menuItems: MenuProps['items'] = [
-        getItem('사업 목록', 'sub1', <MailOutlined />, businessItems)
+        getItem('사업 목록', 'sub1', <AppstoreOutlined/>, businessItems)
     ];
 
 
@@ -134,10 +136,11 @@ const NavMain =(() => {
                     style={{
                         background: '#e7a19a',
                         color: 'white',
-                        height: 'calc(100vh - (55px + 130px + 16px + 32px)'
+                        height: 'calc(100vh - (75px + 130px + 16px + 32px)'
                     }}
                     items={menuItems}
-                    onClick={({ key }) => handleButtonClick(key.toString())}
+                    // onClick={({ key }) => handleButtonClick(key.toString())}
+                    inlineCollapsed={inlineCollapsed}
                 />
             }
 
@@ -160,6 +163,6 @@ const NavMain =(() => {
             }
         </>
     );
-})
+}
 
 export default NavMain;

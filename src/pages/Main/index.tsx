@@ -23,43 +23,25 @@ const Main = () => {
     );
 
 
-    const [collapsed, setCollapsed] = useState(true);
+    const [collapsed, setCollapsed] = useState(false);
     const [currentSelectedMenu, setCurrentSelectedMenu] = useState('list');
 
-    const onMenuClick: MenuProps['onClick'] = (e) => {
-        console.log('click ', e);
-        setCurrentSelectedMenu(e.key);
+    const toggleCollapsed = () => {
+        setCollapsed(!collapsed);
     };
 
     return (
         <>
             <Layout style={{ height: '100vh' }} hasSider>
-                <Button
-                    id={"menuBtn"}
-                    type="text"
-                    icon={collapsed ? <MenuUnfoldOutlined className="icon"/> : <MenuFoldOutlined className="icon"/>}
-                    onClick={() => setCollapsed(!collapsed)}
-                />
-                <Sider
-                    style={{
-                        background: '#e5ccab',
-                        overflow: 'auto'
-                    }}
-                    trigger={null} collapsible={true} collapsed={collapsed} collapsedWidth={0}
-                >
-                    <div
-                        style={{
-                            width: 130,
-                            height: 130,
-                            margin: 'auto',
-                            marginTop: 16,
-                            marginBottom: 32
-                        }}
-                    ><Avatar size={130} style={{ backgroundColor: '#c5665e' }} icon={<UserOutlined />} /></div>
+                <div style={{ width: 256 }}>
+                    <Button
+                        id={"menuBtn"}
+                        type="text"
+                        onClick={toggleCollapsed}
+                    >{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</Button>
 
-                    <NavMain/>
-                </Sider>
-
+                    <NavMain inlineCollapsed={collapsed}/>
+                </div>
                 <BusinessMainScreen/>
             </Layout>
         </>
