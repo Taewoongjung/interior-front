@@ -39,11 +39,14 @@ const Main = () => {
     return useObserver(() => (
         <>
             <Layout style={{ height: '100vh' }} hasSider>
-                <div>
+                <div style={{background: '#e7a19a'}}>
                     <Button
                         id={"menuBtn"}
                         type="text"
                         onClick={toggleCollapsed}
+                        style={{
+                            background: '#e7a19a',
+                        }}
                     >{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</Button>
                     <NavMain inlineCollapsed={collapsed} navState={navState}/>
                 </div>

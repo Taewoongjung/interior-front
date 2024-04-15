@@ -25,6 +25,9 @@ function getItem(
     } as MenuItem;
 }
 
+// 초기 메뉴 아이템 설정
+const initialBusinessItems: MenuItem[] = [];
+
 const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
 
     console.log("state = ", props.navState._navState);
@@ -53,9 +56,6 @@ const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
     const handleMutateFetchBusinesses = () => {
         mutate();
     };
-
-    // 초기 메뉴 아이템 설정
-    const initialBusinessItems: MenuItem[] = [];
 
     // 비즈니스 목록을 담을 상태
     const [businessItems, setBusinessItems] = useState<MenuItem[]>(initialBusinessItems);
@@ -99,13 +99,13 @@ const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
     return useObserver(() => (
         <>
             <Menu
-                mode="inline"
                 theme="light"
+                mode="vertical"
                 defaultSelectedKeys={['1']}
                 style={{
                     background: '#e7a19a',
                     color: 'white',
-                    height: 'calc(100vh - (75px + 130px + 16px + 32px)'
+                    height: 'calc(100vh)'
                 }}
                 items={menuItems}
                 onClick={({ key }) => handleMenuClick(key.toString())}

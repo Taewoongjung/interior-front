@@ -1,5 +1,5 @@
 import React, {useCallback, useState} from "react";
-import {Button, Form, Input, Layout, Space} from "antd";
+import {Button, Form, Input, Layout, message, Space} from "antd";
 import axios from "axios";
 import {useParams} from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
@@ -9,6 +9,22 @@ const RegisterBusiness = () => {
     const [form] = Form.useForm();
 
     const [businessName, setBusinessName] = useState('');
+
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const success = (successMsg:string) => {
+        messageApi.open({
+            type: 'success',
+            content: successMsg,
+        });
+    };
+
+    const error = (errorMsg:string) => {
+        messageApi.open({
+            type: 'error',
+            content: errorMsg
+        });
+    };
 
     const onChangeBusinessName = (e: { target: { value: string; }; }) => {
         const value = e.target.value;
@@ -33,10 +49,12 @@ const RegisterBusiness = () => {
                     if (response.data === true) {
                         // props.navState._newBusinessUpdate(); // 사업 등록 후 업데이트
                         setBusinessName('');
+                        success('등록 완료');
                     }
                 })
                 .catch((error) => {
                     console.dir("error = ", error);
+                    error(error);
                 });
         },
         [businessName]
@@ -44,14 +62,19 @@ const RegisterBusiness = () => {
 
     return (
         <>
-            <Layout>
+            {contextHolder}
+            <Layout style={{ background: 'white' }}>
                 <Header style={{ background: 'white' }}>
                     <Form form={form} onFinish={onSubmitCreateBusiness}>
                         <Form.Item
                             name="businessName"
                             label="사업 명"
-                            style={{ marginTop: '30%' }}
-                            rules={[{ required: true, message: '⚠️ 사업 명은 필수 입니다.' }]}
+                            style={{ marginTop: '10%' }}
+                            rules={[
+                                { required: true, message: '⚠️ 사업 명은 필수 입니다.' },
+                                { min: 2, message: '사업 명은 최소 2글자 이상이어야 합니다.' },
+                                { max: 30, message: '사업 명은 최대 30글자까지만 가능합니다.' },
+                            ]}
                         >
                             <Space direction="horizontal" size="middle">
                                 <Space.Compact style={{ width: '100%' }}>

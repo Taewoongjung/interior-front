@@ -1,6 +1,6 @@
-import React, {FormEventHandler, useCallback, useState} from "react";
+import React, {useState} from "react";
 import axios from "axios";
-import { Button, Col, Drawer, Form, Input, Row, Select, Space, InputNumber } from 'antd';
+import {Button, Col, Drawer, Form, Input, Row, Select, Space, InputNumber, InputNumberProps} from 'antd';
 import {PlusOutlined} from "@ant-design/icons";
 import {options} from "./select";
 
@@ -20,6 +20,11 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
     };
 
     const [value, setValue] = useState<string | number | null>('0');
+
+    const onChange: InputNumberProps['onChange'] = (value) => {
+        console.log('changed', value);
+        setValue(value);
+    };
 
     const onFinish = async (values: any) => {
         const materialAmount = values.materialAmount;
@@ -94,13 +99,9 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                             <Form.Item
                                 name="materialAmount"
                                 label="재료 개수"
-                                rules={[{ required: true, message: '⚠️ 개수는 필수 입니다.' }]}
                             >
                                 <Space>
-                                    <InputNumber
-                                        min={1} max={10000} value={value} onChange={setValue}
-                                        id="material_amount" placeholder="재료 개수" type="text"/>
-
+                                    <InputNumber min={1} max={10} defaultValue={3} value={value} onChange={setValue}/>
                                     <Button
                                         type="primary"
                                         onClick={() => {

@@ -143,28 +143,12 @@ const BusinessMainScreen = (props:{navState:MainNavState;}) => {
         setBusinessListOrRegister(selectedValue);
     };
 
-
-    console.log("🙇🏻‍♂️❤️ ㅋ = ",toJS(props.navState._navState));
-
     return useObserver(() => (
         <>
             <Layout>
                 <Header style={{ background: 'white' }}>
                         <Row justify="space-between">
                         <Col>
-                            {/*<Radio.Group value={businessListOrRegister} onChange={handleBusinessChange}>*/}
-                            {/*    <Radio.Button value="사업목록">≡ 사업 목록</Radio.Button>*/}
-                            {/*    <Radio.Button value="사업등록">+ 사업 등록</Radio.Button>*/}
-                            {/*</Radio.Group>*/}
-                            {/*<Input.Search*/}
-                            {/*    style={{*/}
-                            {/*        verticalAlign: 'middle',*/}
-                            {/*        minWidth: 400*/}
-                            {/*    }}*/}
-                            {/*    allowClear*/}
-                            {/*    placeholder="Search here..."*/}
-                            {/*    enterButton*/}
-                            {/*/>*/}
                         </Col>
                         <Col>
                             <Dropdown.Button
