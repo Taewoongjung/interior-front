@@ -1,151 +1,153 @@
-import React, {FormEventHandler, useState} from "react";
-import {useForm} from "react-hook-form";
-import {IFormValues} from "../../../definitions/BusinessMaterialAddInput/IFormValues";
-import "./styles.css";
-import {options} from "./select";
+import React, {FormEventHandler, useCallback, useState} from "react";
 import axios from "axios";
+import { Button, Col, Drawer, Form, Input, Row, Select, Space, InputNumber } from 'antd';
+import {PlusOutlined} from "@ant-design/icons";
+import {options} from "./select";
 
 const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () => void;}) => {
+
     const {businessIdParam, onEvent} = props;
 
-    const { register, handleSubmit, formState: { errors },reset, clearErrors } = useForm<IFormValues>({
-        mode: 'onSubmit',
-        reValidateMode: 'onChange',
-        defaultValues: {},
-        resolver: undefined,
-        context: undefined,
-        criteriaMode: "firstError",
-        shouldFocusError: true,
-        shouldUnregister: false,
-        shouldUseNativeValidation: false,
-        delayError: undefined
-    });
+    const [open, setOpen] = useState(false);
 
-    const textareaAutosize: FormEventHandler<HTMLTextAreaElement> = (e) => {
-        const element = e.target as HTMLTextAreaElement;
-        element.style.height = 'auto';
-        element.style.height = `${element.scrollHeight}px`;
+    const showDrawer = () => {
+        setOpen(true);
     };
 
-    const onSubmitRegisterMaterial = async (data: { materialName: any; materialAmount: any; materialCategory: any; materialMemo: any; }) => {
-        const {materialName, materialAmount, materialCategory, materialMemo} = data;
+    const [form] = Form.useForm();
+    const onClose = () => {
+        setOpen(false);
+    };
 
+    const [value, setValue] = useState<string | number | null>('0');
+
+    const onFinish = async (values: any) => {
+        const materialAmount = values.materialAmount;
+        const materialCategory = values.materialCategory;
+        const materialMemo = values.materialMemo;
+        const materialName = values.materialName;
+
+        // Axios 요청 보내기
         await axios
             .post(`http://api-interiorjung.shop:7077/api/businesses/${businessIdParam}/materials`, {
-                // .post(`http://localhost:7070/api/businesses/${businessIdParam[0]}/materials`, {
-                materialName, materialAmount, materialCategory, materialMemo
-                }, {
-                    withCredentials: true, // CORS 처리 옵션
-                    headers: {
-                        Authorization: localStorage.getItem("interiorjung-token")
-                    }
-                }
-            ).then((response) => {
-                if (response.data === true) {
-                    onEvent();
-                    reset();
-                }}
-        )
-            .catch((error) => {
-                // const errorCode = error.response.data.errorCode;
-                console.dir(error);
+            // .post(`http://localhost:7070/api/businesses/${businessIdParam[0]}/materials`, {
+                materialAmount, materialCategory, materialMemo, materialName
+        }, {
+            withCredentials: true, // CORS 처리 옵션
+            headers: {
+                Authorization: localStorage.getItem("interiorjung-token")
+            }
+        })
+            .then(response => {
+                console.log('Response:', response);
+                onClose();
+                onEvent();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // 실패 처리
+                // 필요한 작업 수행
             });
     };
 
-
     return (
         <>
-        <div className="container">
-            <details>
-            <summary>자재 등록하기</summary>
-                <br/>
-                <section>
-                    <form className="well form-horizontal" action=" " method="post" id="contact_form"
-                          onSubmit={handleSubmit(onSubmitRegisterMaterial)}>
-                        <fieldset>
+            <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
+                재료 추가
+            </Button>
+            <Drawer
+                title="인테리어 재료 추가하기"
+                width={720}
+                onClose={onClose}
+                open={open}
+                styles={{
+                    body: {
+                        paddingBottom: 80,
+                    },
+                }}
+                extra={
+                    <Space>
+                        <Button onClick={onClose}>취소</Button>
+                        <Button onClick={() => form.submit()} type="primary">
+                            등록
+                        </Button>
+                    </Space>
+                }
+            >
+                <Form layout="vertical" hideRequiredMark form={form} onFinish={onFinish}>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="materialName"
+                                label="재료 명"
+                                rules={[{ required: true, message: '⚠️ 재료명은 필수 응답 항목입니다.' }]}
+                            >
+                                <Input
+                                    style={{ width: '100%' }}
+                                    id="material_name"
+                                    placeholder="재료 명 입력..." type="text"
+                                />
 
-                            <div className="form-group">
-                                <label className="col-md-4 control-label">자재 명</label>
-                                <div className="col-md-4 inputGroupContainer">
-                                    <div className="input-group">
-                                        <input id="material_name"
-                                            placeholder="입력..." type="text"
-                                            {...register("materialName", {
-                                                required: "이름은 필수 응답 항목입니다."
-                                            })} />
-                                        {errors.materialName && <div className="error_msg">⚠️ {errors.materialName.message}</div>}
-                                    </div>
-                                </div>
-                            </div>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}>
+                            <Form.Item
+                                name="materialAmount"
+                                label="재료 개수"
+                                rules={[{ required: true, message: '⚠️ 개수는 필수 입니다.' }]}
+                            >
+                                <Space>
+                                    <InputNumber
+                                        min={1} max={10000} value={value} onChange={setValue}
+                                        id="material_amount" placeholder="재료 개수" type="text"/>
 
-                            <div className="form-group">
-                                <label className="col-md-4 control-label">수량</label>
-                                <div className="col-md-4 inputGroupContainer">
-                                    <div className="input-group">
-                                        <input id="material_amount"
-                                               placeholder="입력..." type="text"
-                                               {...register("materialAmount", {
-                                                   required: "필수 항목입니다.",
-                                                   valueAsNumber: true,
-                                                   validate: {
-                                                       isNumber: value => !isNaN(value) || "숫자만 입력하세요."
-                                                   }
-                                               })} />
-                                        {errors.materialAmount && <div className="error_msg">⚠️️️ {errors.materialAmount.message}<br/></div>}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="form-group">
-                                <label className="col-md-4 control-label">자재 종류</label>
-                                <div className="col-md-4 selectContainer">
-                                    <div className="input-group">
-                                        <span className="input-group-addon"><i className="glyphicon glyphicon-list"></i></span>
-                                        <select
-                                            className="form-control selectpicker"
-                                            {...register("materialCategory")}>
-                                            {options.map(option => (
-                                                <option key={option.value} value={option.value}>{option.label}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <br/>
-                            <div className="form-group">
-                                <label className="col-md-4 control-label">메모</label>
-                                <div className="col-md-4 inputGroupContainer">
-                                    <div className="input-group">
-                                        <span className="input-group-addon"><i className="glyphicon glyphicon-pencil"></i></span>
-                                        <textarea id="material_memo"
-                                              rows={1} placeholder="자재에 대한 메모를 입력해주세요."
-                                               {...register("materialMemo", {
-                                                   // maxLength: 200,
-                                                   onChange: textareaAutosize,
-                                               })} />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <br/>
-                            <hr/>
-
-                            <div className="alert alert-success" role="alert" id="normal_message"><i className="glyphicon glyphicon-thumbs-up"></i> *<u>자재 명</u> 과 <u>수량</u> 은 필수값 입니다.</div>
-
-                            <div className="form-group">
-                                <label className="col-md-4 control-label"></label>
-                                <div className="col-md-4">
-                                    <button type="submit" className="btn btn-warning" >등록<span className="glyphicon glyphicon-send"></span></button>
-                                </div>
-                            </div>
-                        </fieldset>
-                    </form>
-                </section>
-            </details>
-        </div>
+                                    <Button
+                                        type="primary"
+                                        onClick={() => {
+                                            setValue(0);
+                                        }}
+                                    >
+                                        리셋
+                                    </Button>
+                                </Space>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item
+                                name="materialCategory"
+                                label="자재 종류"
+                                rules={[{ required: true, message: '⚠️ 재료의 카테고리는 필수값입니다.' }]}
+                            >
+                                <Select placeholder="재료의 카테고리를 입력해주세요.">
+                                    {options.map(option => (
+                                        <Select.Option key={option.value} value={option.value}>{option.label}</Select.Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                        <Col span={12}></Col>
+                    </Row>
+                    <Row gutter={16}>
+                        <Col span={24}>
+                            <Form.Item
+                                name="materialMemo"
+                                label="재료 설명"
+                                rules={[
+                                    {
+                                        required: false
+                                    },
+                                ]}
+                            >
+                                <Input.TextArea rows={4} placeholder="자재에 대한 메모를 입력해주세요." />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Form>
+            </Drawer>
         </>
-    );
+    )
 });
 
 export default BusinessMaterialAddInput;

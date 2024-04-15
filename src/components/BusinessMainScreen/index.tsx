@@ -1,158 +1,199 @@
-import React, {useEffect} from "react";
-import {useLocation} from 'react-router-dom';
+import React, {useEffect, useState} from "react";
+import {Button, Col, Dropdown, Input, Layout, Menu, Row, Table, TableColumnsType} from "antd";
+import {ArrowDownOutlined, UserOutlined} from "@ant-design/icons";
+import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
+import {Content, Header} from "antd/es/layout/layout";
+import {useLocation} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
-import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
+
+const menuSortBy = (
+    <Menu>
+        <Menu.Item>Profile name</Menu.Item>
+        <Menu.Item>Agent</Menu.Item>
+        <Menu.Item>State</Menu.Item>
+    </Menu>
+);
+
+const menuUserAccount = (
+    <Menu>
+        <Menu.Item>Change password</Menu.Item>
+        <Menu.Item>Logout</Menu.Item>
+    </Menu>
+);
+
+interface DataType {
+    key: React.Key;
+    name: string;
+    category: number;
+    amount: string;
+    memo: string;
+}
+
+const columns: TableColumnsType<DataType> = [
+    {
+        title: 'No',
+        width: 30,
+        dataIndex: 'key',
+        key: 'id',
+        // fixed: 'left',
+    },
+    {
+        title: '재료 명',
+        width: 100,
+        dataIndex: 'name',
+        key: 'name',
+        // fixed: 'left',
+    },
+    {
+        title: '카테고리',
+        width: 50,
+        dataIndex: 'category',
+        key: 'category',
+        // fixed: 'left',
+    },
+    {
+        title: '수량',
+        dataIndex: 'amount',
+        key: 'category',
+        width: 50,
+        // fixed: 'left',
+    },
+    {
+        title: '메모',
+        dataIndex: 'memo',
+        key: 'memo',
+        width: 150,
+    },
+    {
+        title: '',
+        key: 'operation',
+        fixed: 'right',
+        width: 30,
+        render: () => <a>삭제</a>,
+    },
+];
 
 const BusinessMainScreen = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const businessId = queryParams.get('businessId');
+    console.log("businessId = ", businessId);
 
     const {data:businessesMaterial, error, mutate} = useSWR(
         `http://api-interiorjung.shop:7077/api/businesses/${businessId}`,
         // `http://localhost:7070/api/businesses/${businessId}`,
         fetcher);
 
-    console.log("businessesMaterial = ", businessesMaterial?.businessMaterialList);
-
-    useEffect(() => {
-        if (queryParams.size !== 0) {
-            mutate();
-        }
-    }, [businessId]);
-
     const handleMutate = () => {
         mutate();
     };
 
-    return (
+    const [open, setOpen] = useState(false);
+
+    const showDrawer = () => {
+        setOpen(true);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+    };
+
+    const [tableData, setTableData] = useState<DataType[]>([]);
+
+    // 데이터가 업데이트될 때마다 실행되는 useEffect
+    useEffect(() => {
+        console.log("businessesMaterial = ", businessesMaterial)
+        if (businessesMaterial) {
+            // 새로운 데이터를 추가하기 위해 이전 데이터를 복제
+            const newData: ((prevState: DataType[]) => DataType[]) | { key: any; name: any; category: any; amount: any; memo: any; }[] = [];
+
+            let count = 1;
+            // 새로운 데이터를 추가
+            businessesMaterial.businessMaterialList.forEach((business: { id:any; name: any; category: any; amount: any; memo:any; }, index: any) => {
+                // 이미 존재하는 아이템인지 확인
+                const existingItemIndex = newData.findIndex(item => item.key === business.id);
+                if (existingItemIndex === -1) {
+                    // 존재하지 않는 경우에만 추가
+                    newData.push({
+                        key: count,
+                        name: business.name,
+                        category: business.category,
+                        amount: business.amount,
+                        memo: business.memo,
+                    });
+                    count++;
+                }
+            });
+
+            // 업데이트된 데이터를 상태에 저장
+            setTableData(newData);
+        }
+    }, [businessesMaterial]);
+
+    return(
         <>
-            {/*Intro*/}
-            {/*<section id="top" className="one dark cover">*/}
-            {/*    <div className="container">*/}
-
-            {/*        <header>*/}
-            {/*            <h2 className="alt">Hi! I'm <strong>Prologue</strong>, a <a href="http://html5up.net/license">free</a> responsive<br />*/}
-            {/*                site template designed by <a href="http://html5up.net">HTML5 UP</a>.</h2>*/}
-            {/*            <p>Ligula scelerisque justo sem accumsan diam quis<br />*/}
-            {/*                vitae natoque dictum sollicitudin elementum.</p>*/}
-            {/*        </header>*/}
-
-            {/*        <footer>*/}
-            {/*            <a href="#portfolio" className="button scrolly">Magna Aliquam</a>*/}
-            {/*        </footer>*/}
-
-            {/*    </div>*/}
-            {/*</section>*/}
-
-            {/*Portfolio*/}
-            <section id="portfolio" className="two">
-                <div className="container">
-                    {queryParams.size === 0 && <div className="default_msg"><u>← 메뉴에서 사업을 선택해주세요</u></div>}
-
-                    {queryParams.size !== 0 &&
-                        <section>
-                            <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />
-                        </section>
-                    }
-
-                    {queryParams.size !== 0 &&
-                        <header>
-                            <h2>인테리어 재료 목록</h2>
-                        </header>
-                    }
-
-                    {queryParams.size !== 0 &&
-                        <div className="row">
-                            <div className="col-12 col-100-mobile">
-                                <article className="item">
-                                    <div className="table-container">
-                                        <table>
-                                            <thead>
-                                            <tr>
-                                                <th>재료 명</th>
-                                                <th>수량</th>
-                                                <th>카테고리</th>
-                                                <th>메모</th>
-                                                <th></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                                {businessesMaterial?.businessMaterialList.length > 0 ? (
-                                                    businessesMaterial.businessMaterialList.map((material: { id: string | number | bigint | null | undefined; name: React.ReactNode; amount: React.ReactNode; category: React.ReactNode; memo: React.ReactNode; }) => (
-                                                        <tr key={material.id}>
-                                                            <td>{material.name}</td>
-                                                            <td>{material.amount}</td>
-                                                            <td>{material.category}</td>
-                                                            <td>{material.memo}</td>
-                                                        </tr>
-                                                    ))
-                                                ) : (
-                                                    <tr>
-                                                        <td align={"center"} colSpan={4}>데이터가 없습니다.</td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </article>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </section>
-
-            {/*/!*About Me*!/*/}
-            {/*<section id="about" className="three">*/}
-            {/*    <div className="container">*/}
-
-            {/*        <header>*/}
-            {/*            <h2>About Me</h2>*/}
-            {/*        </header>*/}
-
-            {/*        <a href="#" className="image featured"><img src="images/pic08.jpg" alt="" /></a>*/}
-
-            {/*        <p>Tincidunt eu elit diam magnis pretium accumsan etiam id urna. Ridiculus*/}
-            {/*            ultricies curae quis et rhoncus velit. Lobortis elementum aliquet nec vitae*/}
-            {/*            laoreet eget cubilia quam non etiam odio tincidunt montes. Elementum sem*/}
-            {/*            parturient nulla quam placerat viverra mauris non cum elit tempus ullamcorper*/}
-            {/*            dolor. Libero rutrum ut lacinia donec curae mus vel quisque sociis nec*/}
-            {/*            ornare iaculis.</p>*/}
-
-            {/*    </div>*/}
-            {/*</section>*/}
-
-            {/*/!*Contact*!/*/}
-            {/*<section id="contact" className="four">*/}
-            {/*    <div className="container">*/}
-
-            {/*        <header>*/}
-            {/*            <h2>Contact</h2>*/}
-            {/*        </header>*/}
-
-            {/*        <p>Elementum sem parturient nulla quam placerat viverra*/}
-            {/*            mauris non cum elit tempus ullamcorper dolor. Libero rutrum ut lacinia*/}
-            {/*            donec curae mus. Eleifend id porttitor ac ultricies lobortis sem nunc*/}
-            {/*            orci ridiculus faucibus a consectetur. Porttitor curae mauris urna mi dolor.</p>*/}
-
-            {/*        <form method="post" action="#">*/}
-            {/*            <div className="row">*/}
-            {/*                <div className="col-6 col-12-mobile"><input type="text" name="name" placeholder="Name" /></div>*/}
-            {/*                <div className="col-6 col-12-mobile"><input type="text" name="email" placeholder="Email" /></div>*/}
-            {/*                <div className="col-12">*/}
-            {/*                    <textarea name="message" placeholder="Message"></textarea>*/}
-            {/*                </div>*/}
-            {/*                <div className="col-12">*/}
-            {/*                    <input type="submit" value="Send Message" />*/}
-            {/*                </div>*/}
-            {/*            </div>*/}
-            {/*        </form>*/}
-
-            {/*    </div>*/}
-            {/*</section>*/}
+            <Layout>
+                <Header style={{ background: 'white' }}>
+                    <Row justify="space-between">
+                        <Col>
+                            <Input.Search
+                                style={{
+                                    verticalAlign: 'middle',
+                                    minWidth: 400
+                                }}
+                                allowClear
+                                placeholder="Search here..."
+                                enterButton
+                            />
+                        </Col>
+                        <Col>
+                            <Dropdown.Button
+                                overlay={menuUserAccount}
+                                icon={<UserOutlined />}
+                            >
+                                Yoav Melamed
+                            </Dropdown.Button>
+                        </Col>
+                    </Row>
+                </Header>
+                <Content style={{ background: 'white', padding: 48 }}>
+                    <Row gutter={8} style={{ alignItems: 'center' }}>
+                        <Col flex={1}>
+                            <Row style={{ fontSize: 12 }}>
+                                <br />
+                            </Row>
+                            <Row>Profiles (3)</Row>
+                        </Col>
+                        <Col>
+                            <Row>
+                                <span style={{ fontSize: 12 }}>Sort by</span>
+                            </Row>
+                            <Row>
+                                <Dropdown overlay={menuSortBy}>
+                                    <Button style={{ borderRadius: '2px 0 0 2px' }}>
+                                        Profile name
+                                    </Button>
+                                </Dropdown>
+                                <Button style={{ borderLeft: 0, borderRadius: '0 2px 2px 0' }}>
+                                    <ArrowDownOutlined />
+                                </Button>
+                            </Row>
+                        </Col>
+                        <Col>
+                            <Row style={{ fontSize: 12 }}>
+                                <br />
+                            </Row>
+                            <Row>
+                                <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />
+                            </Row>
+                        </Col>
+                    </Row>
+                    <Table columns={columns} dataSource={tableData} scroll={{ x: 1500, y: 300 }} />
+                </Content>
+            </Layout>
         </>
-    );
-};
+    )
+}
 
 export default BusinessMainScreen;

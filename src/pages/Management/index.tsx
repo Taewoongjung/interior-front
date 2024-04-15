@@ -96,7 +96,7 @@ const Management = () => {
                                 <tr key={company.id}>
                                     <td>{company.name}</td>
                                     <td>{company.address}</td>
-                                    <td><Link to={`/main_test/${company.id}`}><button>→</button></Link></td>
+                                    <td><Link to={`/main/${company.id}`}><button>→</button></Link></td>
                                 </tr>
                             ))}
                         </tbody>
