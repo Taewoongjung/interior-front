@@ -1,12 +1,10 @@
 import React, {useState} from "react";
-import {Layout, Button, Menu, MenuProps, Avatar, Radio} from 'antd';
-import {MenuFoldOutlined, MenuUnfoldOutlined, UserOutlined} from '@ant-design/icons';
+import {Layout, Button, Menu} from 'antd';
+import {MenuFoldOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
 import NavMain from "../../components/Nav/Main";
 import BusinessMainScreen from "../../components/BusinessMainScreen";
-import {useLocalObservable, useObserver} from "mobx-react";
+import {useObserver} from "mobx-react";
 import MainNavState from "../../statemanager/mainNavState";
-import RegisterBusiness from "../RegisterBusiness";
-import {observable} from "mobx";
 
 const { Header, Sider, Content } = Layout;
 
@@ -14,16 +12,17 @@ const Main = () => {
 
     const menuSortBy = (
         <Menu>
-            <Menu.Item>Profile name</Menu.Item>
-            <Menu.Item>Agent</Menu.Item>
-            <Menu.Item>State</Menu.Item>
+            <Menu.Item>No</Menu.Item>
+            <Menu.Item>재료 명</Menu.Item>
+            <Menu.Item>카테고리</Menu.Item>
+            <Menu.Item>수량</Menu.Item>
         </Menu>
     );
 
     const menuUserAccount = (
         <Menu>
-            <Menu.Item>Change password</Menu.Item>
-            <Menu.Item>Logout</Menu.Item>
+            <Menu.Item>마이페이지</Menu.Item>
+            <Menu.Item>로그아웃</Menu.Item>
         </Menu>
     );
 

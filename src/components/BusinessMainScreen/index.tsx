@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Dropdown, Input, Layout, Menu, Radio, Row, Table, TableColumnsType} from "antd";
+import {Button, Col, Dropdown, Layout, Menu, Row, Table, TableColumnsType} from "antd";
 import {ArrowDownOutlined, UserOutlined} from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -7,8 +7,7 @@ import {useLocation} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 import RegisterBusiness from "../../pages/RegisterBusiness";
-import { toJS } from 'mobx';
-import {useLocalObservable, useObserver} from "mobx-react";
+import {useObserver} from "mobx-react";
 import MainNavState from "../../statemanager/mainNavState";
 
 const menuSortBy = (
@@ -94,16 +93,6 @@ const BusinessMainScreen = (props:{navState:MainNavState;}) => {
         mutate();
     };
 
-    const [open, setOpen] = useState(false);
-
-    const showDrawer = () => {
-        setOpen(true);
-    };
-
-    const onClose = () => {
-        setOpen(false);
-    };
-
     const [tableData, setTableData] = useState<DataType[]>([]);
 
     // 데이터가 업데이트될 때마다 실행되는 useEffect
@@ -136,13 +125,6 @@ const BusinessMainScreen = (props:{navState:MainNavState;}) => {
         }
     }, [businessesMaterial]);
 
-    const [businessListOrRegister, setBusinessListOrRegister] = useState('사업목록');
-
-    const handleBusinessChange = (e:any) => {
-        const selectedValue = e.target.value;
-        setBusinessListOrRegister(selectedValue);
-    };
-
     return useObserver(() => (
         <>
             <Layout>
@@ -162,40 +144,40 @@ const BusinessMainScreen = (props:{navState:MainNavState;}) => {
                 </Header>
                 {props.navState.getNavState() === '사업 등록' && <RegisterBusiness/>}
                 {props.navState.getNavState() !== '사업 등록' &&
-                <Content style={{ background: 'white', padding: 48 }}>
-                    <Row gutter={8} style={{ alignItems: 'center' }}>
-                        <Col flex={1}>
-                            <Row style={{ fontSize: 12 }}>
-                                <br />
-                            </Row>
-                            <Row>Profiles (3)</Row>
-                        </Col>
-                        <Col>
-                            <Row>
-                                <span style={{ fontSize: 12 }}>Sort by</span>
-                            </Row>
-                            <Row>
-                                <Dropdown overlay={menuSortBy}>
-                                    <Button style={{ borderRadius: '2px 0 0 2px' }}>
-                                        Profile name
+                    <Content style={{ background: 'white', padding: 48 }}>
+                        <Row gutter={8} style={{ alignItems: 'center' }}>
+                            <Col flex={1}>
+                                <Row style={{ fontSize: 12 }}>
+                                    <br />
+                                </Row>
+                                <Row>Profiles (3)</Row>
+                            </Col>
+                            <Col>
+                                <Row>
+                                    <span style={{ fontSize: 12 }}>Sort by</span>
+                                </Row>
+                                <Row>
+                                    <Dropdown overlay={menuSortBy}>
+                                        <Button style={{ borderRadius: '2px 0 0 2px' }}>
+                                            Profile name
+                                        </Button>
+                                    </Dropdown>
+                                    <Button style={{ borderLeft: 0, borderRadius: '0 2px 2px 0' }}>
+                                        <ArrowDownOutlined />
                                     </Button>
-                                </Dropdown>
-                                <Button style={{ borderLeft: 0, borderRadius: '0 2px 2px 0' }}>
-                                    <ArrowDownOutlined />
-                                </Button>
-                            </Row>
-                        </Col>
-                        <Col>
-                            <Row style={{ fontSize: 12 }}>
-                                <br />
-                            </Row>
-                            <Row>
-                                <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />
-                            </Row>
-                        </Col>
-                    </Row>
-                    <Table columns={columns} dataSource={tableData} scroll={{ x: 1500, y: 300 }} />
-                </Content>
+                                </Row>
+                            </Col>
+                            <Col>
+                                <Row style={{ fontSize: 12 }}>
+                                    <br />
+                                </Row>
+                                <Row>
+                                    <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />
+                                </Row>
+                            </Col>
+                        </Row>
+                        <Table columns={columns} dataSource={tableData} scroll={{ x: 1500, y: 700 }} />
+                    </Content>
                 }
             </Layout>
         </>
