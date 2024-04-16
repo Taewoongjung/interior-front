@@ -1,5 +1,5 @@
 import React from "react";
-import {Layout} from "antd";
+import {Layout, Typography} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content, Footer} from "antd/es/layout/layout";
 import UserView from "./views/user";
@@ -9,10 +9,7 @@ import fetcher from "../../utils/fetcher";
 import CompanyListTable from "./views/table";
 import CompanyRegister from "./register";
 
-const baseStyle: React.CSSProperties = {
-    width: '25%',
-    height: 54,
-};
+const { Title } = Typography;
 
 const Management = () => {
 
@@ -26,9 +23,8 @@ const Management = () => {
     return (
         <div>
             <Layout style={{ height: 920 }}>
-                <Sider width={300} style={{backgroundColor:'#eee'}}>
+                <Sider width={300} style={{backgroundColor:'#eee1'}}>
                     <Content style={{ height: 200 }}>
-                        {/*<View1 user={selectedUser}/>*/}
                         <UserView name={userData?.name} email={userData?.email}/>
                     </Content>
                     <Content style={{ height: 300 }}>
@@ -42,11 +38,11 @@ const Management = () => {
                     </Content>
                 </Sider>
                 <Layout>
-                    <Content>
+                    <Content style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <CompanyRegister/>
                     </Content>
-                    <Content style={{ height: 300 }}>
-                        <section>사업체 리스트</section>
+                    <Content style={{ height: 300, marginLeft: 20 }}>
+                        <Title level={3}>사업체 리스트</Title>
                         {userData?.companyList.length !== 0 &&
                             <CompanyListTable tableData={userData?.companyList}/>
                         }
