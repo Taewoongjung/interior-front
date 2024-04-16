@@ -61,7 +61,7 @@ const Management = () => {
                 <Footer style={{ height: 20 }}>
                     <div style={{marginTop: -10}}>
                         produced by tws
-                        Author <a href='https://sdq.ai'>sdq</a>;
+                        Author <a href='https://ydontustudy.tistory.com/'>twj</a>;
                     </div>
                 </Footer>
             </Layout>
