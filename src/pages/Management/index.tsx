@@ -1,5 +1,5 @@
 import React from "react";
-import {Layout, Spin, Typography} from "antd";
+import {Layout, Typography} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content, Footer} from "antd/es/layout/layout";
 import UserView from "./views/user";

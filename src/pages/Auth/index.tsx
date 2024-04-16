@@ -5,6 +5,7 @@ import {useForm} from "react-hook-form";
 import {IFormValues} from "../../definitions/Auth/IFormValues";
 import Modal from "../../components/Modal";
 import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
+import {message} from "antd";
 
 const Auth = () => {
     const [isLogIn, setIsLogIn] = useState(false);
@@ -35,16 +36,15 @@ const Auth = () => {
         }
 
         await axios
-            .post("http://api-interiorjung.shop:7077/api/signup", {
-            // .post("http://localhost:7070/api/signup", {
+            // .post("http://api-interiorjung.shop:7077/api/signup", {
+            .post("http://localhost:7070/api/signup", {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
             }
         ).then((response) => {
             if (response.data.isSuccess === true) {
-                openModal();
-                setModalHeader("회원가입이 완료 되었습니다.");
+                success("회원가입이 완료 되었습니다.");
                 setIsLogIn(false);
             }}
         )
@@ -52,11 +52,10 @@ const Auth = () => {
             const errorCode = error.response.data.errorCode;
 
             if (SIGNUP_ERROR_CODES.includes(errorCode)) {
-                openModal();
-                setModalHeader(error.response.data.message);
+                errorModal(error.response.data.message);
             }
             else{
-                console.dir(error);
+                errorModal('회원가입에 실패했습니다. 다시 시도해주세요.');
             }
         });
     };
@@ -91,6 +90,22 @@ const Auth = () => {
         }
     };
 
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const success = (successMsg:string) => {
+        messageApi.open({
+            type: 'success',
+            content: successMsg,
+        });
+    };
+
+    const errorModal = (errorMsg:string) => {
+        messageApi.open({
+            type: 'error',
+            content: errorMsg
+        });
+    };
+
     const [isSuccessLogin, setIsSuccessLogin] = useState(false);
 
     const onSubmit = useCallback(async (e: { preventDefault: () => void; }) => {
@@ -102,8 +117,8 @@ const Auth = () => {
 
             await axios
                 .post(
-                    "http://api-interiorjung.shop:7077/api/login",
-                    // "http://localhost:7070/api/login",
+                    // "http://api-interiorjung.shop:7077/api/login",
+                    "http://localhost:7070/api/login",
                     formData,
                     {
                         withCredentials: true,
@@ -111,14 +126,13 @@ const Auth = () => {
                 )
                 .then((response) => {
                     const token = response.headers['authorization'];
-                    console.dir("response Authorization = ", response.headers['Authorization']);
-                    console.dir("response Authorization2 = ", response.headers['authorization']);
-                    // 로그인 성공 시 로컬 스토리지에 토큰 저장
                     setIsSuccessLogin(true);
-                    localStorage.setItem("interiorjung-token", token);
+                    localStorage.setItem("interiorjung-token", token); // 로그인 성공 시 로컬 스토리지에 토큰 저장
                 })
                 .catch((error) => {
-                    console.dir("error = ", error);
+                    if (error.response.status === 401) {
+                        errorModal('아이디나 비밀번호를 다시 확인해주세요.');
+                    }
                 });
         },
         [email, password]
@@ -160,6 +174,7 @@ const Auth = () => {
 
     return (
         <>
+            {contextHolder}
             <section className={isLogIn ? 'active' : ''}>
                 <div className="left">
                     <img src="/login/interior-jung-title-login.png" alt="로그인 이미지" width="800" height="450"/>

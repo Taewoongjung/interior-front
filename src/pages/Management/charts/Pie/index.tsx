@@ -17,8 +17,8 @@ const PieChart =() => {
     };
 
     const {data:businessesMaterial, error, mutate} = useSWR(
-        `http://api-interiorjung.shop:7077/api/businesses`,
-        // `http://localhost:7070/api/businesses`,
+        // `http://api-interiorjung.shop:7077/api/businesses`,
+        `http://localhost:7070/api/businesses`,
         fetcher);
 
     const [materials, setMaterials] = useState([]);
