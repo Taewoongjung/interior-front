@@ -1,15 +1,21 @@
-import React, {useState} from "react";
+import React from "react";
+import {Layout} from "antd";
+import Sider from "antd/es/layout/Sider";
+import {Content, Footer} from "antd/es/layout/layout";
+import UserView from "./views/user";
+import './styles.css';
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
-import axios from "axios";
-import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
-import {useForm} from "react-hook-form";
-import {IFormValues} from "../../definitions/Management/IFormValues";
-import Modal from "../../components/Modal";
-import {Link} from 'react-router-dom';
-import './styles.css';
+import CompanyListTable from "./views/table";
+import CompanyRegister from "./register";
+
+const baseStyle: React.CSSProperties = {
+    width: '25%',
+    height: 54,
+};
 
 const Management = () => {
+
     const {data:userData, error, mutate} = useSWR(
         'http://api-interiorjung.shop:7077/api/me',
         // 'http://localhost:7070/api/me',
@@ -17,130 +23,54 @@ const Management = () => {
             dedupingInterval: 2000
         });
 
-    const [isModalOpen, setIsModalOpen] = useState(false); // 모달의 열림 상태를 관리하는 상태 변수
-    const [modalHeader, setModalHeader] = useState(""); // 모달의 열림 상태를 관리하는 상태 변수
-
-    const openModal = () => {
-        setIsModalOpen(true);
-    };
-
-    const closeModal = () => {
-        setIsModalOpen(false);
-    };
-
-    const onSubmitAddCompany = async (data: { companyName: string; mainAddress: string; subAddress:string; tel: string; }) => {
-        const {companyName, mainAddress, subAddress, tel} = data;
-        const bdgNumber = "1";
-
-        await axios
-            .post("http://api-interiorjung.shop:7077/api/companies", {
-            // .post("http://localhost:7070/api/companies", {
-                    companyName, mainAddress, subAddress, bdgNumber, tel
-                },
-                {
-                    withCredentials: true, // CORS 처리 옵션
-                    headers: {
-                        Authorization: localStorage.getItem("interiorjung-token")
-                    }
-                }
-            ).then((response) => {
-            if (response.data === true) {
-                openModal();
-                setModalHeader("회사가 등록됐습니다.");
-                mutate();
-            }}
-        )
-            .catch((error) => {
-                const errorCode = error.response.data.errorCode;
-
-                if (SIGNUP_ERROR_CODES.includes(errorCode)) {
-                    openModal();
-                    setModalHeader(error.response.data.message);
-                }
-                else{
-                    console.dir(error);
-                }
-            });
-    };
-
-    const { register, handleSubmit, formState: { errors },reset, clearErrors } = useForm<IFormValues>({
-        mode: 'onSubmit',
-        reValidateMode: 'onChange',
-        defaultValues: {},
-        resolver: undefined,
-        context: undefined,
-        criteriaMode: "firstError",
-        shouldFocusError: true,
-        shouldUnregister: false,
-        shouldUseNativeValidation: false,
-        delayError: undefined
-    });
-
-    return(
-        <>
-            <section>사업체 리스트</section>
-            {userData?.companyList.length !== 0 &&
-                <div className="table-container">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Address</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                            {userData?.companyList.map((company: { id: string | number | bigint | null | undefined; name: React.ReactNode; address: React.ReactNode; subAddress: React.ReactNode; buildingNumber: React.ReactNode; tel: React.ReactNode; }) => (
-                                <tr key={company.id}>
-                                    <td>{company.name}</td>
-                                    <td>{company.address}</td>
-                                    <td><Link to={`/main/${company.id}`}><button>→</button></Link></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            }
-
-            <form onSubmit={handleSubmit(onSubmitAddCompany)}>
-                <input
-                    id="name" placeholder="사업체 명"
-                    {...register("companyName", {
-                        required: "사업체 명은 필수 응답 항목입니다."
-                    })} />
-                {errors.companyName && <div className="error_msg">{errors.companyName?.message}</div>}
-
-                <input
-                    type="address" placeholder="사업체 주소"
-                    {...register("mainAddress", {
-                        required: "주소는 필수 응답 항목입니다."
-                    })} />
-                {errors.mainAddress && <div className="error_msg">{errors.mainAddress?.message}</div>}
-
-                <input
-                    type="address" placeholder="사업체 부주소"
-                    {...register("subAddress", {
-                        required: "서브 주소는 필수 응답 항목입니다."
-                    })} />
-                {errors.subAddress && <div className="error_msg">{errors.subAddress?.message}</div>}
-
-                <input
-                    type="tel" placeholder="사업체 전화번호"
-                    {...register("tel", {
-                        required: '사업체 전화번호는 필수 입력입니다.',
-                        pattern: {
-                            value: /^010[0-9]{8}$/,
-                            message: '전화번호 양식이 맞지 않습니다.',
-                        },
-                    })} />
-                {errors.tel && <div className="error_msg">{errors.tel?.message}</div>}
-
-                <input type="submit" value="+"/>
-            </form>
-
-            <Modal open={isModalOpen} close={closeModal} header={modalHeader}/>
-        </>
-    )
+    return (
+        <div>
+            <Layout style={{ height: 920 }}>
+                <Sider width={300} style={{backgroundColor:'#eee'}}>
+                    <Content style={{ height: 200 }}>
+                        {/*<View1 user={selectedUser}/>*/}
+                        <UserView name={userData?.name} email={userData?.email}/>
+                    </Content>
+                    <Content style={{ height: 300 }}>
+                        {/*<View2 data={filteredData}/>*/}
+                    </Content>
+                    <Content style={{ height: 400 }}>
+                        {/*<View3*/}
+                        {/*    changeGreaterThenAge={this.changeGreaterThenAge}*/}
+                        {/*    changeIncludedGender={this.changeIncludedGender}*/}
+                        {/*/>*/}
+                    </Content>
+                </Sider>
+                <Layout>
+                    <Content>
+                        <CompanyRegister/>
+                    </Content>
+                    <Content style={{ height: 300 }}>
+                        <section>사업체 리스트</section>
+                        {userData?.companyList.length !== 0 &&
+                            <CompanyListTable tableData={userData?.companyList}/>
+                        }
+                    </Content>
+                    <Layout style={{ height: 600 }}>
+                        <Content>
+                            {/*<View5 data={filteredData}/>*/}
+                        </Content>
+                        {/*<Sider width={300} style={{backgroundColor:'#eee'}}>*/}
+                        {/*    /!*<View6 data={filteredData} changeSelectUser={this.changeSelectUser}/>*!/*/}
+                        {/*</Sider>*/}
+                    </Layout>
+                </Layout>
+            </Layout>
+            <Layout>
+                <Footer style={{ height: 20 }}>
+                    <div style={{marginTop: -10}}>
+                        produced by tws
+                        Author <a href='https://sdq.ai'>sdq</a>;
+                    </div>
+                </Footer>
+            </Layout>
+        </div>
+    );
 }
 
 export default Management;

@@ -1,8 +1,30 @@
-import React, {useCallback, useState} from "react";
-import {Button, Form, Input, Layout, message, Space} from "antd";
+import React, {useCallback, useEffect, useState} from "react";
+import {
+    Button,
+    Descriptions,
+    DescriptionsProps, Divider,
+    Form,
+    Input,
+    Layout,
+    notification,
+    NotificationArgsProps,
+    Space, Typography
+} from "antd";
 import axios from "axios";
-import {useParams} from "react-router-dom";
+import {useHistory, useParams} from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
+
+type NotificationPlacement = NotificationArgsProps['placement'];
+
+const items: DescriptionsProps['items'] = [
+    {
+        key: '1',
+        label: '사업 명',
+        children: '대장동 인테리어건'
+    }
+]
+
+const { Title } = Typography;
 
 const RegisterBusiness = () => {
 
@@ -10,21 +32,16 @@ const RegisterBusiness = () => {
 
     const [businessName, setBusinessName] = useState('');
 
-    const [messageApi, contextHolder] = message.useMessage();
+    const [api, contextHolder] = notification.useNotification();
 
-    const success = (successMsg:string) => {
-        messageApi.open({
-            type: 'success',
-            content: successMsg,
+    const openNotification = async (placement: NotificationPlacement) => {
+        await api.info({
+            message: "등록 성공",
+            description: "사업이 등록 완료 되었습니다.",
+            placement
         });
     };
 
-    const error = (errorMsg:string) => {
-        messageApi.open({
-            type: 'error',
-            content: errorMsg
-        });
-    };
 
     const onChangeBusinessName = (e: { target: { value: string; }; }) => {
         const value = e.target.value;
@@ -32,6 +49,9 @@ const RegisterBusiness = () => {
     };
 
     const { companyId } = useParams();
+
+    const history = useHistory();
+    const newQueryParams = new URLSearchParams(history.location.search);
 
     const onSubmitCreateBusiness = useCallback(async (e: { preventDefault: () => void; }) => {
 
@@ -46,10 +66,20 @@ const RegisterBusiness = () => {
                         }
                     }
                 ).then((response) => {
-                    if (response.data === true) {
+                    console.log("사업 등록 후 response = ", response);
+
+                    if (response.data.isSuccess === true) {
                         // props.navState._newBusinessUpdate(); // 사업 등록 후 업데이트
                         setBusinessName('');
-                        success('등록 완료');
+                        openNotification('top'); // 함수 호출
+
+                        setTimeout(() => {
+                            newQueryParams.set('businessId', response.data.createdBusinessId);
+                            history.push({
+                                pathname: `/main/${companyId}`,
+                                search: newQueryParams.toString(),
+                            });
+                        }, 1000);
                     }
                 })
                 .catch((error) => {
@@ -66,6 +96,7 @@ const RegisterBusiness = () => {
             <Layout style={{ background: 'white' }}>
                 <Header style={{ background: 'white' }}>
                     <Form form={form} onFinish={onSubmitCreateBusiness}>
+                    <Title level={3}>사업 등록</Title>
                         <Form.Item
                             name="businessName"
                             label="사업 명"
@@ -84,6 +115,9 @@ const RegisterBusiness = () => {
                             </Space>
                         </Form.Item>
                     </Form>
+                    <br/>
+                    <Divider />
+                    <Descriptions title="등록 예시" items={items} />
                 </Header>
             </Layout>
         </>
