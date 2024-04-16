@@ -1,5 +1,5 @@
 import React from "react";
-import {Layout, Typography} from "antd";
+import {Layout, Spin, Typography} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content, Footer} from "antd/es/layout/layout";
 import UserView from "./views/user";
@@ -8,6 +8,7 @@ import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 import CompanyListTable from "./views/table";
 import CompanyRegister from "./register";
+import PieChart from "./charts/Pie";
 
 const { Title } = Typography;
 
@@ -24,17 +25,12 @@ const Management = () => {
         <div>
             <Layout style={{ height: 920 }}>
                 <Sider width={300} style={{backgroundColor:'#eee1'}}>
-                    <Content style={{ height: 200 }}>
+                    <Content style={{ height: 300 }}>
                         <UserView name={userData?.name} email={userData?.email}/>
                     </Content>
                     <Content style={{ height: 300 }}>
-                        {/*<View2 data={filteredData}/>*/}
-                    </Content>
-                    <Content style={{ height: 400 }}>
-                        {/*<View3*/}
-                        {/*    changeGreaterThenAge={this.changeGreaterThenAge}*/}
-                        {/*    changeIncludedGender={this.changeIncludedGender}*/}
-                        {/*/>*/}
+                        <Title level={4}>재료 사용 현황</Title>
+                        <PieChart/>
                     </Content>
                 </Sider>
                 <Layout>
