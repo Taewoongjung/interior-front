@@ -34,7 +34,7 @@ const Management = () => {
                     </Content>
                     <Content style={{ height: 300, marginTop: 60}}>
                         <Title level={4}>재료 사용 현황</Title>
-                        <PieChart/>
+                        {userData && <PieChart/>}
                     </Content>
                 </Sider>
                 <Layout>

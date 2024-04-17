@@ -35,14 +35,6 @@ const CompanyListTable = (props:{tableData:any;}) => {
         setSortedInfo({});
     };
 
-    const setAgeSort = () => {
-        setSortedInfo({
-            order: 'descend',
-            columnKey: 'age',
-        });
-    };
-
-
 const columns: TableColumnsType<DataType> = [
         {
             title: 'No',
