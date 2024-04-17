@@ -70,7 +70,7 @@ const columns: TableColumnsType<DataType> = [
         {
             title: '',
             key: 'operation',
-            render: (company) => <a><Link to={`/main/${company.id}`}><button>→</button></Link></a>,
+            render: (company) => <Link to={`/main/${company.id}`}><button>→</button></Link>,
         }
     ];
 

@@ -28,17 +28,17 @@ const Management = () => {
                     <Content style={{ height: 300 }}>
                         <UserView name={userData?.name} email={userData?.email}/>
                     </Content>
-                    <Content style={{ height: 300 }}>
+                    <Content style={{ height: 300, marginTop: 60}}>
                         <Title level={4}>재료 사용 현황</Title>
                         <PieChart/>
                     </Content>
                 </Sider>
                 <Layout>
-                    <Content style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <CompanyRegister/>
-                    </Content>
-                    <Content style={{ height: 300, marginLeft: 20 }}>
+                    <Content style={{ height: 300, marginLeft: 20, marginTop: 70 }}>
                         <Title level={3}>사업체 리스트</Title>
+                        <Content style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                            <CompanyRegister/>
+                        </Content>
                         {userData?.companyList.length !== 0 &&
                             <CompanyListTable tableData={userData?.companyList}/>
                         }

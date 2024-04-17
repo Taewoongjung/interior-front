@@ -1,36 +1,31 @@
 import React, {useState} from "react";
-import {Layout, Button, Menu} from 'antd';
+import {Layout, Button} from 'antd';
 import {MenuFoldOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
 import NavMain from "../../components/Nav/Main";
 import BusinessMainScreen from "../../components/BusinessMainScreen";
 import {useObserver} from "mobx-react";
 import MainNavState from "../../statemanager/mainNavState";
+import useSWR from "swr";
+import fetcher from "../../utils/fetcher";
 
 const { Header, Sider, Content } = Layout;
 
 const Main = () => {
-
-    const menuSortBy = (
-        <Menu>
-            <Menu.Item>No</Menu.Item>
-            <Menu.Item>재료 명</Menu.Item>
-            <Menu.Item>카테고리</Menu.Item>
-            <Menu.Item>수량</Menu.Item>
-        </Menu>
-    );
-
-    const menuUserAccount = (
-        <Menu>
-            <Menu.Item>마이페이지</Menu.Item>
-            <Menu.Item>로그아웃</Menu.Item>
-        </Menu>
-    );
-
-
     const [collapsed, setCollapsed] = useState(false);
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
+    };
+
+    const {data:userData, error, mutate} = useSWR(
+        'http://api-interiorjung.shop:7077/api/me',
+        // 'http://localhost:7070/api/me',
+        fetcher,{
+            dedupingInterval: 2000
+        });
+
+    const handleApiMeMutate = () => {
+        mutate();
     };
 
     const navState = new MainNavState();
@@ -49,7 +44,7 @@ const Main = () => {
                     >{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</Button>
                     <NavMain inlineCollapsed={collapsed} navState={navState}/>
                 </div>
-                <BusinessMainScreen navState={navState}/>
+                <BusinessMainScreen navState={navState} user={userData} onEvent={handleApiMeMutate}/>
             </Layout>
         </>
     ));

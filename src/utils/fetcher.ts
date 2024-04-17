@@ -6,13 +6,15 @@ const fetcher = async (url: string) => await axios.get(url, {
         withCredentials: true
     },
 }).then((response) => {
-
-    console.log("token = ", localStorage.getItem("interiorjung-token"));
-    console.log(response.data);
+    console.log("검증 됨");
+    const token = localStorage.getItem("interiorjung-token");
+    if (token == null) {
+        window.location.reload();
+    }
 
     return response.data;
 }).catch((error) => {
-    if (error.response.status === 403) {
+    if (error.response.status === 401) {
         window.location.href = '/auth';
     }
 });

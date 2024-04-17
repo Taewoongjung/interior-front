@@ -1,29 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {Button, Col, Dropdown, Layout, Menu, Row, Table, TableColumnsType} from "antd";
-import {ArrowDownOutlined, UserOutlined} from "@ant-design/icons";
+import {ArrowDownOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
-import {useLocation} from "react-router-dom";
+import {useHistory, useLocation} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 import RegisterBusiness from "../../pages/RegisterBusiness";
 import {useObserver} from "mobx-react";
 import MainNavState from "../../statemanager/mainNavState";
-
-const menuSortBy = (
-    <Menu>
-        <Menu.Item>Profile name</Menu.Item>
-        <Menu.Item>Agent</Menu.Item>
-        <Menu.Item>State</Menu.Item>
-    </Menu>
-);
-
-const menuUserAccount = (
-    <Menu>
-        <Menu.Item>Change password</Menu.Item>
-        <Menu.Item>Logout</Menu.Item>
-    </Menu>
-);
 
 interface DataType {
     key: React.Key;
@@ -36,7 +21,7 @@ interface DataType {
 const columns: TableColumnsType<DataType> = [
     {
         title: 'No',
-        width: 30,
+        width: 20,
         dataIndex: 'key',
         key: 'id',
         // fixed: 'left',
@@ -50,7 +35,7 @@ const columns: TableColumnsType<DataType> = [
     },
     {
         title: '카테고리',
-        width: 50,
+        width: 40,
         dataIndex: 'category',
         key: 'category',
         // fixed: 'left',
@@ -69,7 +54,7 @@ const columns: TableColumnsType<DataType> = [
         width: 150,
     },
     {
-        title: '',
+        title: '-',
         key: 'operation',
         fixed: 'right',
         width: 30,
@@ -77,23 +62,95 @@ const columns: TableColumnsType<DataType> = [
     },
 ];
 
-const BusinessMainScreen = (props:{navState:MainNavState;}) => {
+const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void;}) => {
+    const {user, onEvent} = props;
+
+    const history = useHistory();
+
+    useEffect(() => {
+        const token = localStorage.getItem("interiorjung-token");
+
+        if (token === null) {
+            const redirectUrl = '/auth';
+            history.push(redirectUrl);
+            window.location.reload();
+        }
+    }, []);
+
+    const handleGoBackManagement = () => {
+        console.log("대시보드로 이동");
+        const redirectUrl = '/management';
+        history.push(redirectUrl);
+        window.location.reload();
+    }
+
+    const handleLogout = () => {
+        console.log("로그아웃");
+        onEvent();
+        localStorage.removeItem("interiorjung-token");
+    };
+
+    const [sortKey, setSortKey] = useState(null);
+    const [sortValue, setSortValue] = useState('');
+
+    const handleMenuClick = (e:any) => {
+        const keyToValueMap = {
+            no: 'No',
+            name: '재료 명',
+            category: '카테고리'
+        };
+
+        setSortKey(e.key);
+        // @ts-ignore
+        setSortValue(keyToValueMap[e.key]);
+    };
+
+    const menuSortBy = (
+        <Menu onClick={handleMenuClick}>
+            <Menu.Item key="no">No</Menu.Item>
+            <Menu.Item key="name">재료 명</Menu.Item>
+            <Menu.Item key="category">카테고리</Menu.Item>
+        </Menu>
+    );
+
+    // 정렬된 데이터를 생성하는 함수
+    const getSortedData = (data: DataType[]) => {
+        if (!sortKey) return data;
+
+        return data.slice().sort((a, b) => {
+            // @ts-ignore
+            if (a[sortKey] < b[sortKey]) return -1;
+            // @ts-ignore
+            if (a[sortKey] > b[sortKey]) return 1;
+            return 0;
+        });
+    };
+
+    const menuUserAccount = (
+        <Menu>
+            <Menu.Item onClick={handleGoBackManagement}>대시보드 이동</Menu.Item>
+            <Menu.Item onClick={handleLogout}>로그아웃 <LogoutOutlined /></Menu.Item>
+        </Menu>
+    );
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const businessId = queryParams.get('businessId');
-    console.log("businessId = ", businessId);
 
-    const {data:businessesMaterial, error, mutate} = useSWR(
-        `http://api-interiorjung.shop:7077/api/businesses/${businessId}`,
-        // `http://localhost:7070/api/businesses/${businessId}`,
-        fetcher);
+    const url = businessId ?
+        `http://api-interiorjung.shop:7077/api/businesses/${businessId}`
+        // `http://localhost:7070/api/businesses/${businessId}`
+        : null;
+
+    const {data:businessesMaterial, error, mutate} = useSWR(url, fetcher);
 
     const handleMutate = () => {
         mutate();
     };
 
     const [tableData, setTableData] = useState<DataType[]>([]);
+
+    const sortedData = getSortedData(tableData);
 
     // 데이터가 업데이트될 때마다 실행되는 useEffect
     useEffect(() => {
@@ -137,7 +194,7 @@ const BusinessMainScreen = (props:{navState:MainNavState;}) => {
                                 overlay={menuUserAccount}
                                 icon={<UserOutlined />}
                             >
-                                Yoav Melamed
+                                <strong>{user.name}</strong>&nbsp;님
                             </Dropdown.Button>
                         </Col>
                     </Row>
@@ -150,19 +207,19 @@ const BusinessMainScreen = (props:{navState:MainNavState;}) => {
                                 <Row style={{ fontSize: 12 }}>
                                     <br />
                                 </Row>
-                                <Row>Profiles (3)</Row>
+                                <Row>조회 결과&nbsp;<strong>({tableData.length})</strong></Row>
                             </Col>
                             <Col>
                                 <Row>
-                                    <span style={{ fontSize: 12 }}>Sort by</span>
+                                    <span style={{ fontSize: 10 }}>- 정렬 조건 -</span>
                                 </Row>
                                 <Row>
                                     <Dropdown overlay={menuSortBy}>
-                                        <Button style={{ borderRadius: '2px 0 0 2px' }}>
-                                            Profile name
+                                        <Button style={{ borderRadius: '15px 0 0 2px' }}>
+                                            {sortValue ? sortValue : '-'}
                                         </Button>
                                     </Dropdown>
-                                    <Button style={{ borderLeft: 0, borderRadius: '0 2px 2px 0' }}>
+                                    <Button style={{ borderLeft: 0, borderRadius: '0 15px 2px 0' }}>
                                         <ArrowDownOutlined />
                                     </Button>
                                 </Row>
@@ -176,7 +233,7 @@ const BusinessMainScreen = (props:{navState:MainNavState;}) => {
                                 </Row>
                             </Col>
                         </Row>
-                        <Table columns={columns} dataSource={tableData} scroll={{ x: 1500, y: 700 }} />
+                        <Table columns={columns} dataSource={sortedData} scroll={{ x: 1500, y: 700 }} />
                     </Content>
                 }
             </Layout>

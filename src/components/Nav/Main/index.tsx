@@ -30,8 +30,6 @@ const initialBusinessItems: MenuItem[] = [];
 
 const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
 
-    console.log("state = ", props.navState._navState);
-
     const {inlineCollapsed} = props;
 
     const { companyId } = useParams();
