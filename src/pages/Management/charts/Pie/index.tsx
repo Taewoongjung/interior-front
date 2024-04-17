@@ -48,7 +48,7 @@ const PieChart =(props:{businessesMaterial:any;}) => {
             // @ts-ignore
             setMaterials(newMaterials); // 새로운 재료 배열로 상태 업데이트
         }
-    }, [businessesMaterial]);
+    }, []);
 
     const chartData = Object.entries(categoryAmounts).map(([key, value]) => ({
         id: key,
