@@ -3,7 +3,6 @@ import axios from "axios";
 import './styles.scss';
 import {useForm} from "react-hook-form";
 import {IFormValues} from "../../definitions/Auth/IFormValues";
-import Modal from "../../components/Modal";
 import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
 import {message} from "antd";
 
@@ -30,8 +29,7 @@ const Auth = () => {
         const role = "ADMIN";
 
         if (password !== reCheckPassword) {
-            openModal();
-            setModalHeader("비밀번호가 다릅니다. 다시 확인해주세요.")
+            errorModal("비밀번호가 다릅니다. 다시 확인해주세요.")
             return null;
         }
 
@@ -90,24 +88,6 @@ const Auth = () => {
         }
     };
 
-    const [messageApi, contextHolder] = message.useMessage();
-
-    const success = (successMsg:string) => {
-        messageApi.open({
-            type: 'success',
-            content: successMsg,
-        });
-    };
-
-    const errorModal = (errorMsg:string) => {
-        messageApi.open({
-            type: 'error',
-            content: errorMsg
-        });
-    };
-
-    const [isSuccessLogin, setIsSuccessLogin] = useState(false);
-
     const onSubmit = useCallback(async (e: { preventDefault: () => void; }) => {
             e.preventDefault();
 
@@ -125,9 +105,13 @@ const Auth = () => {
                     },
                 )
                 .then((response) => {
+
                     const token = response.headers['authorization'];
-                    setIsSuccessLogin(true);
+
                     localStorage.setItem("interiorjung-token", token); // 로그인 성공 시 로컬 스토리지에 토큰 저장
+
+                    // 로그인 성공 시 리다이렉트
+                    window.location.href = '/management'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
                 })
                 .catch((error) => {
                     if (error.response.status === 401) {
@@ -139,11 +123,27 @@ const Auth = () => {
     );
 
     useEffect(() => {
-        if (isSuccessLogin) {
-            // 로그인 성공 시 리다이렉트
-            window.location.href = '/management'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
+        const token = localStorage.getItem("interiorjung-token");
+        console.log("token= ",token);
+        if (token !== null) {
+            if (token !== undefined) {
+                axios.get(
+                        "http://api-interiorjung.shop:7077/api/me",
+                        // "http://localhost:7070/api/me",
+                        {
+                            headers: {
+                                Authorization: localStorage.getItem("interiorjung-token"),
+                                withCredentials: true
+                            },
+                        })
+                    .then((response) => {
+                        window.location.href = '/management';
+                    })
+                    .catch((error) => {}
+                    );
+            }
         }
-    }, [isSuccessLogin]);
+    }, []);
 
     const { register, handleSubmit, formState: { errors },reset, clearErrors } = useForm<IFormValues>({
         mode: 'onSubmit',
@@ -158,18 +158,20 @@ const Auth = () => {
         delayError: undefined
     });
 
+    const [messageApi, contextHolder] = message.useMessage();
 
-    const [isModalOpen, setIsModalOpen] = useState(false); // 모달의 열림 상태를 관리하는 상태 변수
-    const [modalHeader, setModalHeader] = useState(""); // 모달의 열림 상태를 관리하는 상태 변수
-
-    // 모달을 열기 위한 함수
-    const openModal = () => {
-        setIsModalOpen(true);
+    const success = (successMsg:string) => {
+        messageApi.open({
+            type: 'success',
+            content: successMsg,
+        });
     };
 
-    // 모달을 닫기 위한 함수
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const errorModal = (errorMsg:string) => {
+        messageApi.open({
+            type: 'error',
+            content: errorMsg
+        });
     };
 
     return (
@@ -260,8 +262,6 @@ const Auth = () => {
                     </div>
                 </div>
             </section>
-
-            <Modal open={isModalOpen} close={closeModal} header={modalHeader}/>
         </>
     );
 };

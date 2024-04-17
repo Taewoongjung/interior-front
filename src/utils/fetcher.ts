@@ -12,7 +12,9 @@ const fetcher = async (url: string) => await axios.get(url, {
 
     return response.data;
 }).catch((error) => {
-    console.log("swr error = ", error);
+    if (error.response.status === 403) {
+        window.location.href = '/auth';
+    }
 });
 
 export default fetcher;
