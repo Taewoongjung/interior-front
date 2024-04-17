@@ -21,6 +21,10 @@ const Management = () => {
             dedupingInterval: 2000
         });
 
+    const handleApiMeMutate = () => {
+        mutate();
+    };
+
     return (
         <div>
             <Layout style={{ height: 920 }}>
@@ -37,7 +41,7 @@ const Management = () => {
                     <Content style={{ height: 300, marginLeft: 20, marginTop: 70 }}>
                         <Title level={3}>사업체 리스트</Title>
                         <Content style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <CompanyRegister/>
+                            <CompanyRegister onEvent={handleApiMeMutate}/>
                         </Content>
                         {userData?.companyList.length !== 0 &&
                             <CompanyListTable tableData={userData?.companyList}/>

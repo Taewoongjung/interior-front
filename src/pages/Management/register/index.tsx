@@ -4,7 +4,8 @@ import {PlusOutlined} from "@ant-design/icons";
 import axios from "axios";
 import {SIGNUP_ERROR_CODES} from "../../../codes/ErrorCodes";
 
-const CompanyRegister = () => {
+const CompanyRegister = (props:{onEvent: () => void}) => {
+    const {onEvent} = props;
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -21,7 +22,6 @@ const CompanyRegister = () => {
             content: errorMsg
         });
     };
-
 
 
     const [open, setOpen] = useState(false);
@@ -54,6 +54,7 @@ const CompanyRegister = () => {
                 if (response.data === true) {
                     success('등록 완료');
                     onClose();
+                    onEvent();
                 }}
             )
             .catch((error) => {
