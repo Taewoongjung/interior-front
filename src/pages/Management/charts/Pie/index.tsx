@@ -4,7 +4,9 @@ import useSWR from "swr";
 import fetcher from "../../../../utils/fetcher";
 import {Spin} from "antd";
 
-const PieChart =() => {
+const PieChart =(props:{businessesMaterial:any;}) => {
+
+    const {businessesMaterial} = props;
 
     const handle = {
         padClick: (data: any) => {
@@ -15,11 +17,6 @@ const PieChart =() => {
             console.log(data);
         },
     };
-
-    const {data:businessesMaterial, error, mutate} = useSWR(
-        `http://api-interiorjung.shop:7077/api/businesses`,
-        // `http://localhost:7070/api/businesses`,
-        fetcher);
 
     const [materials, setMaterials] = useState([]);
 

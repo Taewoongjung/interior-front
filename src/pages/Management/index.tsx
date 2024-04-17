@@ -21,6 +21,11 @@ const Management = () => {
             dedupingInterval: 2000
         });
 
+    const {data:businessesMaterial} = useSWR(
+        `http://api-interiorjung.shop:7077/api/businesses`,
+        // `http://localhost:7070/api/businesses`,
+        fetcher);
+
     const handleApiMeMutate = () => {
         mutate();
     };
@@ -34,7 +39,7 @@ const Management = () => {
                     </Content>
                     <Content style={{ height: 300, marginTop: 60}}>
                         <Title level={4}>재료 사용 현황</Title>
-                        {userData && <PieChart/>}
+                        {userData && <PieChart businessesMaterial={businessesMaterial}/>}
                     </Content>
                 </Sider>
                 <Layout>
