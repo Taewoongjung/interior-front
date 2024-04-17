@@ -48,7 +48,7 @@ const PieChart =(props:{businessesMaterial:any;}) => {
             // @ts-ignore
             setMaterials(newMaterials); // 새로운 재료 배열로 상태 업데이트
         }
-    }, []);
+    }, [businessesMaterial]);
 
     const chartData = Object.entries(categoryAmounts).map(([key, value]) => ({
         id: key,
@@ -58,9 +58,9 @@ const PieChart =(props:{businessesMaterial:any;}) => {
 
     return (
         <>
-            {(!businessesMaterial || businessesMaterial.length === 0) ? (
-                <Spin tip="Loading..." />
-            ) : (
+            {/*{(!businessesMaterial || businessesMaterial.length === 0) ? (*/}
+            {/*    <Spin tip="Loading..." />*/}
+            {/*) : (*/}
                 <ResponsivePie
                     data={chartData}
                     margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
@@ -102,7 +102,7 @@ const PieChart =(props:{businessesMaterial:any;}) => {
                         },
                     ]}
                 />
-            )}
+            {/*)}*/}
         </>
     )
 }
