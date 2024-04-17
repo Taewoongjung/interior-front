@@ -88,6 +88,9 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         console.log("로그아웃");
         onEvent();
         localStorage.removeItem("interiorjung-token");
+        const redirectUrl = '/auth';
+        history.push(redirectUrl);
+        window.location.reload();
     };
 
     const [sortKey, setSortKey] = useState(null);
