@@ -37,6 +37,7 @@ const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
     const history = useHistory();
 
     const handleButtonClick = async (businessId: string) => {
+        mutate();
         // 이벤트 발생 시 쿼리 파라미터를 추가하여 URL을 업데이트
         const newQueryParams = new URLSearchParams(history.location.search);
         await newQueryParams.set('businessId', businessId);
