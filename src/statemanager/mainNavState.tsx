@@ -1,8 +1,7 @@
 const { makeAutoObservable } = require('mobx');
 
 class MainNavState {
-    _navState = { state: '' };
-    // _newBusinessUpdate = {};
+    _navState = {state: ''};
 
     constructor() {
         makeAutoObservable(this);

@@ -1,6 +1,22 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Dropdown, Layout, Menu, Row, Table, TableColumnsType} from "antd";
-import {ArrowDownOutlined, UserOutlined, LogoutOutlined} from "@ant-design/icons";
+import {
+    Button,
+    Col,
+    Dropdown, Input,
+    Layout,
+    Menu, message, Modal,
+    Row,
+    Table,
+    TableColumnsType,
+    Typography,
+    Form
+} from "antd";
+import {
+    ArrowDownOutlined,
+    UserOutlined,
+    LogoutOutlined,
+    EditOutlined,
+} from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
 import {useHistory, useLocation} from "react-router-dom";
@@ -9,6 +25,7 @@ import fetcher from "../../utils/fetcher";
 import RegisterBusiness from "../../pages/RegisterBusiness";
 import {useObserver} from "mobx-react";
 import MainNavState from "../../statemanager/mainNavState";
+import axios from "axios";
 
 interface DataType {
     key: React.Key;
@@ -61,6 +78,8 @@ const columns: TableColumnsType<DataType> = [
         render: () => <a>삭제</a>,
     },
 ];
+
+const { Title } = Typography;
 
 const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void;}) => {
     const {user, onEvent} = props;
@@ -185,19 +204,113 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         }
     }, [businessesMaterial]);
 
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
+
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const success = (successMsg:string) => {
+        messageApi.open({
+            type: 'success',
+            content: successMsg,
+        });
+    };
+
+    const errorModal = (errorMsg:string) => {
+        messageApi.open({
+            type: 'error',
+            content: errorMsg
+        });
+    };
+
+    const showModal = () => {
+        setOpen(true);
+    };
+
+    const handleOk = async () => {
+
+        setLoading(true);
+
+        setTimeout(() => {
+            setLoading(false);
+        }, 5000);
+
+        const changeBusinessName = reviseBusinessName;
+
+        try {
+            await axios
+                .patch(`http://api-interiorjung.shop:7077/api/businesses/${businessId}`, {
+                // .patch(`http://localhost:7070/api/businesses/${businessId}`, {
+                        changeBusinessName
+                    }, {
+                        withCredentials: true, // CORS 처리 옵션
+                        headers: {
+                            Authorization: localStorage.getItem("interiorjung-token")
+                        }
+                    }
+                ).then((response) => {
+                    if (response.data === true) {
+                        setBusinessName('');
+                        success('사업 수정 성공');
+                        mutate();
+                    }
+                })
+            setOpen(false);
+        } catch (error) {
+            errorModal(error);
+        }
+    };
+
+    const handleCancel = () => {
+        setOpen(false);
+    };
+
+    const [reviseBusinessName, setBusinessName] = useState('');
+
     return useObserver(() => (
         <>
+            {contextHolder}
             <Layout>
                 <Header style={{ background: 'white' }}>
-                        <Row justify="space-between">
-                        <Col>
-                        </Col>
+                    <Row justify="space-between">
+                        {props.navState.getNavState() === '사업 등록' &&<Col></Col>}
+                        {props.navState.getNavState() !== '사업 등록' &&
+                            <Row justify="space-between">
+                                    <Title level={2}>{businessesMaterial && businessesMaterial.name}</Title>
+                                &nbsp;&nbsp;
+                                {businessesMaterial &&
+                                    <EditOutlined onClick={showModal}/>
+                                }
+                                <Modal
+                                    open={open}
+                                    width={300}
+                                    title="사업 수정"
+                                    onOk={handleOk}
+                                    onCancel={handleCancel}
+                                    footer={[
+                                        <Button key="back" onClick={handleCancel}>
+                                            취소
+                                        </Button>,
+                                        <Button key="submit" type="primary" loading={loading} onClick={handleOk}>
+                                            수정
+                                        </Button>,
+                                    ]}
+                                >
+                                    <br/>
+                                    <Form onFinish={handleOk}>
+                                        <Form.Item label="수정 할 사업 명" >
+                                            <Input value={reviseBusinessName} onChange={(e) => setBusinessName(e.target.value)} />
+                                        </Form.Item>
+                                    </Form>
+                                </Modal>
+                            </Row>
+                        }
                         <Col>
                             <Dropdown.Button
                                 overlay={menuUserAccount}
                                 icon={<UserOutlined />}
                             >
-                                <strong>{user.name}</strong>&nbsp;님
+                                <strong>{user && user.name}</strong>&nbsp;님
                             </Dropdown.Button>
                         </Col>
                     </Row>
@@ -213,19 +326,23 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                 <Row>조회 결과&nbsp;<strong>({tableData.length})</strong></Row>
                             </Col>
                             <Col>
-                                <Row>
-                                    <span style={{ fontSize: 10 }}>- 정렬 조건 -</span>
-                                </Row>
-                                <Row>
-                                    <Dropdown overlay={menuSortBy}>
-                                        <Button style={{ borderRadius: '15px 0 0 2px' }}>
-                                            {sortValue ? sortValue : '-'}
+                                {tableData.length !== 0 &&
+                                    <Row>
+                                        <span style={{ fontSize: 10 }}>- 정렬 조건 -</span>
+                                    </Row>
+                                }
+                                {tableData.length !== 0 &&
+                                    <Row>
+                                        <Dropdown overlay={menuSortBy}>
+                                            <Button style={{ borderRadius: '15px 0 0 2px' }}>
+                                                {sortValue ? sortValue : '-'}
+                                            </Button>
+                                        </Dropdown>
+                                        <Button style={{ borderLeft: 0, borderRadius: '0 15px 2px 0' }}>
+                                            <ArrowDownOutlined />
                                         </Button>
-                                    </Dropdown>
-                                    <Button style={{ borderLeft: 0, borderRadius: '0 15px 2px 0' }}>
-                                        <ArrowDownOutlined />
-                                    </Button>
-                                </Row>
+                                    </Row>
+                                }
                             </Col>
                             <Col>
                                 <Row style={{ fontSize: 12 }}>

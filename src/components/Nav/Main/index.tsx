@@ -51,10 +51,6 @@ const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
         // `http://localhost:7070/api/companies/${companyId}/businesses`,
         fetcher);
 
-    const handleMutateFetchBusinesses = () => {
-        mutate();
-    };
-
     // 비즈니스 목록을 담을 상태
     const [businessItems, setBusinessItems] = useState<MenuItem[]>(initialBusinessItems);
 
@@ -91,7 +87,7 @@ const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
             return await props.navState.setNavState('사업 등록');
         }
         await handleButtonClick(key.toString());
-        await props.navState.setNavState('사업 목록');
+        return await props.navState.setNavState('사업 목록');
     };
 
     return useObserver(() => (
