@@ -1,5 +1,5 @@
 import React from "react";
-import {Layout, Typography} from "antd";
+import {Col, Dropdown, Layout, Menu, Row, Typography} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content, Footer} from "antd/es/layout/layout";
 import UserView from "./views/user";
@@ -9,10 +9,28 @@ import fetcher from "../../utils/fetcher";
 import CompanyListTable from "./views/table";
 import CompanyRegister from "./register";
 import PieChart from "./charts/Pie";
+import {LogoutOutlined, UserOutlined} from "@ant-design/icons";
+import {useHistory} from "react-router-dom";
 
 const { Title } = Typography;
 
 const Management = () => {
+
+    const history = useHistory();
+
+    const handleLogout = () => {
+        console.log("로그아웃");
+        localStorage.removeItem("interiorjung-token");
+        const redirectUrl = '/auth';
+        history.push(redirectUrl);
+        window.location.reload();
+    };
+
+    const menuUserAccount = (
+        <Menu>
+            <Menu.Item onClick={handleLogout}>로그아웃 <LogoutOutlined /></Menu.Item>
+        </Menu>
+    );
 
     const {data:userData, error, mutate} = useSWR(
         'http://api-interiorjung.shop:7077/api/me',
@@ -45,7 +63,18 @@ const Management = () => {
                     </Content>
                 </Sider>
                 <Layout>
-                    <Content style={{ height: 300, marginLeft: 20, marginTop: 70 }}>
+                    <Row justify="space-between">
+                        <Col/>
+                        <Col>
+                            <Dropdown.Button
+                                overlay={menuUserAccount}
+                                icon={<UserOutlined />}
+                            >
+                                <strong>{userData && userData.name}</strong>&nbsp;님
+                            </Dropdown.Button>
+                        </Col>
+                    </Row>
+                    <Content style={{ height: 300, marginLeft: 20, marginTop: 60 }}>
                         <Title level={3}>사업체 리스트</Title>
                         <Content style={{ display: 'flex', justifyContent: 'flex-end' }}>
                             <CompanyRegister onEvent={handleApiMeMutate}/>
