@@ -15,7 +15,7 @@ import {
     ArrowDownOutlined,
     UserOutlined,
     LogoutOutlined,
-    EditOutlined, DeleteOutlined, ExclamationCircleFilled,
+    EditOutlined, DeleteOutlined, ExclamationCircleFilled, DownOutlined,
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -42,9 +42,9 @@ const { Title } = Typography;
 
 const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void;}) => {
 
-    const confirmDelete: (materialId: (string | number)) => void = (materialId:string | number) => {
+    const confirmDelete: (materialId: (string | number)) => void = async (materialId:string | number) => {
 
-        axios
+       await axios
             .delete(`http://api-interiorjung.shop:7077/api/businesses/${businessId}/materials/${materialId}`, {
             // .delete(`http://localhost:7070/api/businesses/${businessId}/materials/${materialId}`, {
                     withCredentials: true,
@@ -102,16 +102,32 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
             key: 'operation',
             fixed: 'right',
             width: 30,
-            render: (_, record) =>
-                <Popconfirm
-                    title="삭제"
-                    description="해당 재료를 삭제하시겠습니까?"
-                    onConfirm={() => confirmDelete(record.id)}
-                    okText="예"
-                    cancelText="아니요"
+            render: (_, record) => (
+                <Dropdown
+                    overlay={
+                        <Menu>
+                            <Menu.Item>수정(개발예정)</Menu.Item>
+                            <Menu.Item>
+                                <Popconfirm
+                                title="재료 삭제"
+                                description="해당 재료를 삭제하시겠습니까?"
+                                onConfirm={() => confirmDelete(record.id)}
+                                okText="예"
+                                cancelText="아니요"
+                            >
+                                <div style={{ cursor: 'pointer'}}>
+                                    삭제
+                                </div>
+                            </Popconfirm></Menu.Item>
+                        </Menu>
+                    }
+                    trigger={['click']}
                 >
-                    <Button danger>삭제</Button>
-                </Popconfirm>,
+                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                        수정/삭제 <DownOutlined />
+                    </a>
+                </Dropdown>
+            ),
         },
     ];
 
