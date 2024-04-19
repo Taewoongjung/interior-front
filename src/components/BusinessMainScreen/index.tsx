@@ -257,8 +257,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                 }
             })
             .catch((error) => {
-                console.log("error = ", error.response.message);
-                errorModal(error.response.message);
+                errorModal(error.response.data.message);
             })
 
         setOpen(false);
