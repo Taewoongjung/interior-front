@@ -15,16 +15,12 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
     };
 
     const [form] = Form.useForm();
+
     const onClose = () => {
         setOpen(false);
     };
 
     const [value, setValue] = useState<string | number | null>('0');
-
-    const onChange: InputNumberProps['onChange'] = (value) => {
-        console.log('changed', value);
-        setValue(value);
-    };
 
     const onFinish = async (values: any) => {
         const materialAmount = values.materialAmount;
@@ -32,7 +28,6 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
         const materialMemo = values.materialMemo;
         const materialName = values.materialName;
 
-        // Axios 요청 보내기
         await axios
             .post(`http://api-interiorjung.shop:7077/api/businesses/${businessIdParam}/materials`, {
             // .post(`http://localhost:7070/api/businesses/${businessIdParam[0]}/materials`, {
@@ -47,11 +42,10 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                 console.log('Response:', response);
                 onClose();
                 onEvent();
+                form.resetFields();
             })
             .catch(error => {
                 console.error('Error:', error);
-                // 실패 처리
-                // 필요한 작업 수행
             });
     };
 

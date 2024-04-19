@@ -9,13 +9,13 @@ import {
     Table,
     TableColumnsType,
     Typography,
-    Form
+    Form, Popconfirm
 } from "antd";
 import {
     ArrowDownOutlined,
     UserOutlined,
     LogoutOutlined,
-    EditOutlined,
+    EditOutlined, DeleteOutlined, ExclamationCircleFilled,
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -27,61 +27,94 @@ import {useObserver} from "mobx-react";
 import MainNavState from "../../statemanager/mainNavState";
 import axios from "axios";
 
+const { confirm } = Modal;
+
 interface DataType {
     key: React.Key;
+    id: string;
     name: string;
     category: number;
     amount: string;
     memo: string;
 }
 
-const columns: TableColumnsType<DataType> = [
-    {
-        title: 'No',
-        width: 20,
-        dataIndex: 'key',
-        key: 'id',
-        // fixed: 'left',
-    },
-    {
-        title: '재료 명',
-        width: 100,
-        dataIndex: 'name',
-        key: 'name',
-        // fixed: 'left',
-    },
-    {
-        title: '카테고리',
-        width: 40,
-        dataIndex: 'category',
-        key: 'category',
-        // fixed: 'left',
-    },
-    {
-        title: '수량',
-        dataIndex: 'amount',
-        key: 'category',
-        width: 50,
-        // fixed: 'left',
-    },
-    {
-        title: '메모',
-        dataIndex: 'memo',
-        key: 'memo',
-        width: 150,
-    },
-    {
-        title: '-',
-        key: 'operation',
-        fixed: 'right',
-        width: 30,
-        render: () => <a>삭제</a>,
-    },
-];
-
 const { Title } = Typography;
 
 const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void;}) => {
+
+    const confirmDelete: (materialId: (string | number)) => void = (materialId:string | number) => {
+
+        axios
+            .patch(`http://api-interiorjung.shop:7077/api/businesses/${businessId}/materials/${materialId}`, {
+            // .delete(`http://localhost:7070/api/businesses/${businessId}/materials/${materialId}`, {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: localStorage.getItem("interiorjung-token")
+                    }
+                }
+            ).then((response) => {
+            if (response.data === true) {
+                mutate();
+                message.success('재료 삭제 완료');
+            }})
+            .catch((error) => {
+                errorModal(error.response.data.message);
+            })
+    };
+
+    const columns: TableColumnsType<DataType> = [
+        {
+            title: 'No',
+            width: 20,
+            dataIndex: 'key',
+            key: 'id',
+            // fixed: 'left',
+        },
+        {
+            title: '재료 명',
+            width: 100,
+            dataIndex: 'name',
+            key: 'name',
+            // fixed: 'left',
+        },
+        {
+            title: '카테고리',
+            width: 40,
+            dataIndex: 'category',
+            key: 'category',
+            // fixed: 'left',
+        },
+        {
+            title: '수량',
+            dataIndex: 'amount',
+            key: 'category',
+            width: 50,
+            // fixed: 'left',
+        },
+        {
+            title: '메모',
+            dataIndex: 'memo',
+            key: 'memo',
+            width: 150,
+        },
+        {
+            title: '-',
+            key: 'operation',
+            fixed: 'right',
+            width: 30,
+            render: (_, record) =>
+                <Popconfirm
+                    title="삭제"
+                    description="해당 재료를 삭제하시겠습니까?"
+                    onConfirm={() => confirmDelete(record.id)}
+                    okText="예"
+                    cancelText="아니요"
+                >
+                    <Button danger>삭제</Button>
+                </Popconfirm>,
+        },
+    ];
+
     const {user, onEvent} = props;
 
     const { companyId } = useParams();
@@ -181,17 +214,18 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         console.log("businessesMaterial = ", businessesMaterial)
         if (businessesMaterial) {
             // 새로운 데이터를 추가하기 위해 이전 데이터를 복제
-            const newData: ((prevState: DataType[]) => DataType[]) | { key: any; name: any; category: any; amount: any; memo: any; }[] = [];
+            const newData: ((prevState: DataType[]) => DataType[]) | { key: any; id:any; name: any; category: any; amount: any; memo: any; }[] = [];
 
             let count = 1;
             // 새로운 데이터를 추가
             businessesMaterial.businessMaterialList.forEach((business: { id:any; name: any; category: any; amount: any; memo:any; }, index: any) => {
                 // 이미 존재하는 아이템인지 확인
-                const existingItemIndex = newData.findIndex(item => item.key === business.id);
+                const existingItemIndex = newData.findIndex(item => item.id === business.id);
                 if (existingItemIndex === -1) {
                     // 존재하지 않는 경우에만 추가
                     newData.push({
                         key: count,
+                        id: business.id,
                         name: business.name,
                         category: business.category,
                         amount: business.amount,
@@ -254,6 +288,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                     setBusinessName('');
                     success('사업 수정 성공');
                     mutate();
+                    window.location.reload();
                 }
             })
             .catch((error) => {
@@ -265,6 +300,39 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
     const handleCancel = () => {
         setOpen(false);
+    };
+
+    const showDeleteConfirm = () => {
+        confirm({
+            title: '사업을 삭제 하시겠습니까?',
+            icon: <ExclamationCircleFilled />,
+            content: '삭제를 하시면 모든 재료도 함께 삭제 됩니다.',
+            okText: '삭제',
+            okType: 'danger',
+            cancelText: '취소',
+            onOk() {
+                axios
+                    .patch(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses/${businessId}`, {
+                    // .delete(`http://localhost:7070/api/companies/${companyId}/businesses/${businessId}`, {
+                            withCredentials: true, // CORS 처리 옵션
+                            headers: {
+                                Authorization: localStorage.getItem("interiorjung-token")
+                            }
+                        }
+                    ).then((response) => {
+                        if (response.data === true) {
+                            const redirectUrl = `/main/${companyId}`;
+                            history.push(redirectUrl);
+                            window.location.reload();
+                        }
+                    })
+                    .catch((error) => {
+                        errorModal(error.response.data.message);
+                    })
+            },
+            onCancel() {
+            },
+        });
     };
 
     const [reviseBusinessName, setBusinessName] = useState('');
@@ -305,6 +373,12 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                         </Form.Item>
                                     </Form>
                                 </Modal>
+
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                                {businessesMaterial &&
+                                    <DeleteOutlined onClick={showDeleteConfirm} />
+                                }
                             </Row>
                         }
                         <Col>
