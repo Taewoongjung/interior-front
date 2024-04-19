@@ -45,7 +45,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
     const confirmDelete: (materialId: (string | number)) => void = (materialId:string | number) => {
 
         axios
-            .patch(`http://api-interiorjung.shop:7077/api/businesses/${businessId}/materials/${materialId}`, {
+            .delete(`http://api-interiorjung.shop:7077/api/businesses/${businessId}/materials/${materialId}`, {
             // .delete(`http://localhost:7070/api/businesses/${businessId}/materials/${materialId}`, {
                     withCredentials: true,
                     headers: {
@@ -312,7 +312,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
             cancelText: '취소',
             onOk() {
                 axios
-                    .patch(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses/${businessId}`, {
+                    .delete(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses/${businessId}`, {
                     // .delete(`http://localhost:7070/api/companies/${companyId}/businesses/${businessId}`, {
                             withCredentials: true, // CORS 처리 옵션
                             headers: {
