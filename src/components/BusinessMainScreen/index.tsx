@@ -19,7 +19,7 @@ import {
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
-import {useHistory, useLocation} from "react-router-dom";
+import {useHistory, useLocation, useParams} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 import RegisterBusiness from "../../pages/RegisterBusiness";
@@ -83,6 +83,8 @@ const { Title } = Typography;
 
 const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void;}) => {
     const {user, onEvent} = props;
+
+    const { companyId } = useParams();
 
     const history = useHistory();
 
@@ -239,8 +241,8 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
         try {
             await axios
-                .patch(`http://api-interiorjung.shop:7077/api/businesses/${businessId}`, {
-                // .patch(`http://localhost:7070/api/businesses/${businessId}`, {
+                .patch(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses/${businessId}`, {
+                // .patch(`http://localhost:7070/api/companies/${companyId}/businesses/${businessId}`, {
                         changeBusinessName
                     }, {
                         withCredentials: true, // CORS 처리 옵션
