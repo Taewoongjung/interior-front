@@ -239,28 +239,29 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
         const changeBusinessName = reviseBusinessName;
 
-        try {
-            await axios
-                .patch(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses/${businessId}`, {
-                // .patch(`http://localhost:7070/api/companies/${companyId}/businesses/${businessId}`, {
-                        changeBusinessName
-                    }, {
-                        withCredentials: true, // CORS 처리 옵션
-                        headers: {
-                            Authorization: localStorage.getItem("interiorjung-token")
-                        }
+        await axios
+            .patch(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses/${businessId}`, {
+            // .patch(`http://localhost:7070/api/companies/${companyId}/businesses/${businessId}`, {
+                    changeBusinessName
+                }, {
+                    withCredentials: true, // CORS 처리 옵션
+                    headers: {
+                        Authorization: localStorage.getItem("interiorjung-token")
                     }
-                ).then((response) => {
-                    if (response.data === true) {
-                        setBusinessName('');
-                        success('사업 수정 성공');
-                        mutate();
-                    }
-                })
-            setOpen(false);
-        } catch (error) {
-            errorModal(error);
-        }
+                }
+            ).then((response) => {
+                if (response.data === true) {
+                    setBusinessName('');
+                    success('사업 수정 성공');
+                    mutate();
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                errorModal(error);
+            })
+
+        setOpen(false);
     };
 
     const handleCancel = () => {
