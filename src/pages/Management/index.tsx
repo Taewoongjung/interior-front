@@ -11,6 +11,7 @@ import CompanyRegister from "./register";
 import PieChart from "./charts/Pie";
 import {LogoutOutlined, UserOutlined} from "@ant-design/icons";
 import {useHistory} from "react-router-dom";
+import {useObserver} from "mobx-react";
 
 const { Title } = Typography;
 
@@ -50,7 +51,7 @@ const Management = () => {
         mutate();
     };
 
-    return (
+    return useObserver(() => (
         <div>
             <Layout style={{ height: 920 }}>
                 <Sider width={300} style={{backgroundColor:'#eee1'}}>
@@ -102,7 +103,7 @@ const Management = () => {
                 </Footer>
             </Layout>
         </div>
-    );
+    ));
 }
 
 export default Management;

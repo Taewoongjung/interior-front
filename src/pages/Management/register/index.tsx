@@ -1,8 +1,10 @@
 import React, {useState} from "react";
-import {Button, Col, Drawer, Form, Input, message, Row, Select, Space} from "antd";
-import {PlusOutlined} from "@ant-design/icons";
+import {Button, Col, Drawer, Form, Input, message, Popover, Row, Space} from "antd";
+import {PlusOutlined, SearchOutlined} from "@ant-design/icons";
 import axios from "axios";
 import {SIGNUP_ERROR_CODES} from "../../../codes/ErrorCodes";
+import SearchAddressPopUp from "../../../components/SearchAddressPopUp";
+import {useObserver} from "mobx-react";
 
 const CompanyRegister = (props:{onEvent: () => void}) => {
     const {onEvent} = props;
@@ -37,12 +39,12 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
     const [form] = Form.useForm();
 
     const onFinish = async (values: any) => {
-        const {companyName, mainAddress, subAddress, tel} = values;
-        const bdgNumber = "1";
+        const {companyName, zipCode, mainAddress, subAddress, tel} = values;
+        const bdgNumber = addressBuildingNum;
         await axios
             .post("http://api-interiorjung.shop:7077/api/companies", {
                 // .post("http://localhost:7070/api/companies", {
-                    companyName, mainAddress, subAddress, bdgNumber, tel
+                    companyName, zipCode, mainAddress, subAddress, bdgNumber, tel
                 },
                 {
                     withCredentials: true, // CORS 처리 옵션
@@ -55,6 +57,10 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
                     success('등록 완료');
                     onClose();
                     onEvent();
+                    form.resetFields();
+                    setAddress('');
+                    setAddressZoneCode('');
+                    setAddressBuildingNum('');
                 }}
             )
             .catch((error) => {
@@ -69,7 +75,50 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
             });
     }
 
-    return (
+    const [openSearchAddr, setOpenSearchAddr] = useState(false);
+
+    const handleOpenSearchAddrChange = (newOpen: boolean) => {
+        setOpenSearchAddr(newOpen);
+    };
+
+    const [address, setAddress] = useState('');
+    const [addressZoneCode, setAddressZoneCode] = useState("");
+    const [addressBuildingNum, setAddressBuildingNum] = useState("");
+
+    const handleAddress = (newAddress:any) => {
+        setAddress(newAddress.address);
+        setAddressZoneCode(newAddress.zonecode);
+        setAddressBuildingNum(newAddress.buildingCode);
+    };
+
+    console.log("🙇🏻‍♂️ = ", address);
+    console.log("🙇🏻‍♂️ = ", addressZoneCode);
+    console.log("❤️ = ", openSearchAddr);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+        setAddress(e.target.value);
+    };
+
+    const formFields = [
+        { name: ['zipCode'], value: addressZoneCode },
+        { name: ['mainAddress'], value: address },
+    ];
+
+    return useObserver(() => (
         <>
             {contextHolder}
             <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
@@ -94,7 +143,7 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
                     </Space>
                 }
             >
-                <Form layout="vertical" hideRequiredMark form={form} onFinish={onFinish}>
+                <Form layout="vertical" hideRequiredMark form={form} onFinish={onFinish} fields={formFields}>
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
@@ -113,30 +162,57 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
-                                name="mainAddress"
+                                name="zipCode"
                                 label="사업체 메인주소"
                                 rules={[{ required: true, message: '⚠️ 주소는 필수 응답 항목입니다.' }]}
                             >
-                                <Input
-                                    style={{ width: '100%' }}
-                                    id="company_main_address"
-                                    type="text"
+                                <Input addonAfter={
+                                    (
+                                        <Popover
+                                            content={<SearchAddressPopUp setAddress={handleAddress} setOpenSearchAddr={setOpenSearchAddr}/>}
+                                            trigger="click"
+                                            open={openSearchAddr}
+                                            placement="bottom"
+                                            onOpenChange={handleOpenSearchAddrChange}
+                                        >
+                                            <SearchOutlined onClick={(e) => {
+                                                e.preventDefault();
+                                                showModal();
+                                            }}
+                                            />
+                                        </Popover>
+                                    )
+                                } style={{width:"200px"}} readOnly
                                 />
                             </Form.Item>
                         </Col>
-                        <Col span={12}>
+                        <Col span={12}/>
+                    </Row>
+                    <Row gutter={16}>
+                        <Col>
                             <Form.Item
-                                name="subAddress"
-                                label="사업체 부 주소"
+                                name="mainAddress"
                             >
                                 <Input
-                                    style={{ width: '100%' }}
+                                    style={{ width: '300px' }}
+                                    readOnly
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col>
+                            <Form.Item
+                                name="subAddress"
+                            >
+                                <Input
+                                    style={{ width: '300px' }}
                                     id="company_sub_address"
                                     type="text"
+                                    placeholder = "사업체 나머지 주소"
                                 />
                             </Form.Item>
                         </Col>
                     </Row>
+                    <br/>
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item
@@ -158,7 +234,7 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
                 </Form>
             </Drawer>
         </>
-    )
+    ));
 }
 
 export default CompanyRegister;
