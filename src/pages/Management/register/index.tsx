@@ -18,7 +18,7 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
         });
     };
 
-    const error = (errorMsg:string) => {
+    const errorModal = (errorMsg:string) => {
         messageApi.open({
             type: 'error',
             content: errorMsg
@@ -64,10 +64,8 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
                 }}
             )
             .catch((error) => {
-                const errorCode = error.response.data.errorCode;
-
-                if (SIGNUP_ERROR_CODES.includes(errorCode)) {
-
+                if (error.response.data.errorCode === 1201) {
+                    errorModal(error.response.data.message);
                 }
                 else{
                     console.dir(error);
@@ -99,18 +97,6 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
 
     const showModal = () => {
         setIsModalOpen(true);
-    };
-
-    const handleOk = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleCancel = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-        setAddress(e.target.value);
     };
 
     const formFields = [

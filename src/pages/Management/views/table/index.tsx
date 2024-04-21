@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {Table, TableColumnsType, TableProps} from "antd";
+import {message, Modal, Table, TableColumnsType, TableProps} from "antd";
 import {Link} from "react-router-dom";
+import {DeleteOutlined, ExclamationCircleFilled} from "@ant-design/icons";
+import axios from "axios";
 
 type OnChange = NonNullable<TableProps<DataType>['onChange']>;
 type Filters = Parameters<OnChange>[1];
@@ -16,7 +18,10 @@ interface DataType {
     address: string;
 }
 
-const CompanyListTable = (props:{tableData:any;}) => {
+const { confirm } = Modal;
+
+const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
+
 
     const [filteredInfo, setFilteredInfo] = useState<Filters>({});
     const [sortedInfo, setSortedInfo] = useState<Sorts>({});
@@ -35,18 +40,68 @@ const CompanyListTable = (props:{tableData:any;}) => {
         setSortedInfo({});
     };
 
-const columns: TableColumnsType<DataType> = [
+    const [messageApi, contextHolder] = message.useMessage();
+
+    const success = (successMsg:string) => {
+        messageApi.open({
+            type: 'success',
+            content: successMsg,
+        });
+    };
+
+    const errorModal = (errorMsg:string) => {
+        messageApi.open({
+            type: 'error',
+            content: errorMsg
+        });
+    };
+
+    const showDeleteConfirm = (companyId:any) => {
+
+        confirm({
+            title: '사업체를 삭제 하시겠습니까?',
+            icon: <ExclamationCircleFilled />,
+            content: '삭제를 하시면 모든 사업과 재료도 함께 삭제 됩니다.',
+            okText: '삭제',
+            okType: 'danger',
+            cancelText: '취소',
+            onOk() {
+                axios
+                    .delete(`http://api-interiorjung.shop:7077/api/companies/${companyId}`, {
+                    // .delete(`http://localhost:7070/api/companies/${companyId}`, {
+                            withCredentials: true, // CORS 처리 옵션
+                            headers: {
+                                Authorization: localStorage.getItem("interiorjung-token")
+                            }
+                        }
+                    ).then((response) => {
+                        if (response.data === true) {
+                            success("사업체 삭제 완료");
+                            props.onEvent();
+                        }
+                    })
+                    .catch((error) => {
+                        errorModal(error.response.data.message);
+                    })
+            },
+            onCancel() {
+            },
+        });
+    };
+
+    const columns: TableColumnsType<DataType> = [
         {
             title: 'No',
             dataIndex: 'key',
             key: 'id',
             ellipsis: true,
-            width:100
+            width: 100
         },
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+            width: 200,
             filteredValue: filteredInfo.name || null,
             onFilter: (value, record) => record.name.includes(value as string),
             sorter: (a, b) => a.name.localeCompare(b.name, 'ko-KR'),
@@ -57,12 +112,20 @@ const columns: TableColumnsType<DataType> = [
             title: 'Address',
             dataIndex: 'address',
             key: 'address',
+            width: 300,
             ellipsis: true,
         },
         {
             title: '',
-            key: 'operation',
+            key: 'moveMain',
+            width: 80,
             render: (company) => <Link to={`/main/${company.id}`}><button>→</button></Link>,
+        },
+        {
+            title: '',
+            key: 'removeCompany',
+            width: 40,
+            render: (company) => <DeleteOutlined onClick={() => showDeleteConfirm(company.id)} />,
         }
     ];
 
@@ -97,6 +160,7 @@ const columns: TableColumnsType<DataType> = [
 
     return (
         <>
+            {contextHolder}
             <Table columns={columns} dataSource={tableData} onChange={handleChange} />
         </>
     )
