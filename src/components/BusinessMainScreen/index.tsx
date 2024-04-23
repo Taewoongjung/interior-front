@@ -244,7 +244,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                 <Row style={{ fontSize: 12 }}>
                                     <br />
                                 </Row>
-                                {businessesMaterial && <Row> 조회 결과&nbsp;<strong>(businessesMaterial.count)</strong></Row>}
+                                {businessesMaterial && <Row> 조회 결과&nbsp;<strong>({businessesMaterial.count})</strong></Row>}
                             </Col>
                             <Col>
                                 <Row style={{ fontSize: 12 }}>
