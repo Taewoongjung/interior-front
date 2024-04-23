@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {Button, Col, Drawer, Form, Input, message, Popover, Row, Space} from "antd";
 import {PlusOutlined, SearchOutlined} from "@ant-design/icons";
 import axios from "axios";
-import {SIGNUP_ERROR_CODES} from "../../../codes/ErrorCodes";
 import SearchAddressPopUp from "../../../components/SearchAddressPopUp";
 import {useObserver} from "mobx-react";
 

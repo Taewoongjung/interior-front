@@ -6,7 +6,6 @@ import {
     Layout,
     Menu, message, Modal,
     Row,
-    Table,
     TableColumnsType,
     Typography,
     Form, Popconfirm
@@ -26,6 +25,7 @@ import RegisterBusiness from "../../pages/RegisterBusiness";
 import {useObserver} from "mobx-react";
 import MainNavState from "../../statemanager/mainNavState";
 import axios from "axios";
+import BusinessMainScreenTable from "./BusinessMaterialTable";
 
 const { confirm } = Modal;
 
@@ -54,8 +54,8 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                 }
             ).then((response) => {
             if (response.data === true) {
-                mutate();
                 message.success('재료 삭제 완료');
+                mutate();
             }})
             .catch((error) => {
                 errorModal(error.response.data.message);
@@ -186,19 +186,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         </Menu>
     );
 
-    // 정렬된 데이터를 생성하는 함수
-    const getSortedData = (data: DataType[]) => {
-        if (!sortKey) return data;
-
-        return data.slice().sort((a, b) => {
-            // @ts-ignore
-            if (a[sortKey] < b[sortKey]) return -1;
-            // @ts-ignore
-            if (a[sortKey] > b[sortKey]) return 1;
-            return 0;
-        });
-    };
-
     const menuUserAccount = (
         <Menu>
             <Menu.Item onClick={handleGoBackManagement}>대시보드 이동</Menu.Item>
@@ -222,39 +209,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
     };
 
     const [tableData, setTableData] = useState<DataType[]>([]);
-
-    const sortedData = getSortedData(tableData);
-
-    // 데이터가 업데이트될 때마다 실행되는 useEffect
-    useEffect(() => {
-        console.log("businessesMaterial = ", businessesMaterial)
-        if (businessesMaterial) {
-            // 새로운 데이터를 추가하기 위해 이전 데이터를 복제
-            const newData: ((prevState: DataType[]) => DataType[]) | { key: any; id:any; name: any; category: any; amount: any; memo: any; }[] = [];
-
-            let count = 1;
-            // 새로운 데이터를 추가
-            businessesMaterial.businessMaterialList.forEach((business: { id:any; name: any; category: any; amount: any; memo:any; }, index: any) => {
-                // 이미 존재하는 아이템인지 확인
-                const existingItemIndex = newData.findIndex(item => item.id === business.id);
-                if (existingItemIndex === -1) {
-                    // 존재하지 않는 경우에만 추가
-                    newData.push({
-                        key: count,
-                        id: business.id,
-                        name: business.name,
-                        category: business.category,
-                        amount: business.amount,
-                        memo: business.memo,
-                    });
-                    count++;
-                }
-            });
-
-            // 업데이트된 데이터를 상태에 저장
-            setTableData(newData);
-        }
-    }, [businessesMaterial]);
 
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -362,7 +316,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                         {props.navState.getNavState() === '사업 등록' &&<Col></Col>}
                         {props.navState.getNavState() !== '사업 등록' &&
                             <Row justify="space-between">
-                                    <Title level={2}>{businessesMaterial && businessesMaterial.name}</Title>
+                                    <Title level={2}>{businessesMaterial && businessesMaterial.businessName}</Title>
                                 &nbsp;&nbsp;
                                 {businessesMaterial &&
                                     <EditOutlined onClick={showModal}/>
@@ -441,11 +395,17 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                     <br />
                                 </Row>
                                 <Row>
-                                    <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />
+                                    {businessId !== undefined &&
+                                    <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />}
                                 </Row>
                             </Col>
                         </Row>
-                        <Table columns={columns} dataSource={sortedData} scroll={{ x: 1500, y: 700 }} />
+                        {businessesMaterial !== undefined &&
+                            <BusinessMainScreenTable businessesMaterial={businessesMaterial.businessMaterials}
+                                                     businessId={businessId}
+                                                     onEvent={handleMutate}
+                            />
+                        }
                     </Content>
                 }
             </Layout>

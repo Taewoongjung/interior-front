@@ -1,5 +1,5 @@
 import React from "react";
-import {Col, Dropdown, Layout, Menu, Row, Typography, Tooltip, Divider} from "antd";
+import {Col, Dropdown, Layout, Menu, Row, Typography, Tooltip, Divider, Empty, Spin, Alert} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content, Footer} from "antd/es/layout/layout";
 import UserView from "./views/user";
@@ -9,7 +9,7 @@ import fetcher from "../../utils/fetcher";
 import CompanyListTable from "./views/table";
 import CompanyRegister from "./register";
 import PieChart from "./charts/Pie";
-import {LogoutOutlined, UserOutlined} from "@ant-design/icons";
+import {LogoutOutlined, PieChartOutlined, UserOutlined} from "@ant-design/icons";
 import {useHistory} from "react-router-dom";
 import {useObserver} from "mobx-react";
 
@@ -60,6 +60,19 @@ const Management = () => {
                     </Content>
                     <Content style={{ height: 300, marginTop: 50}}>
                         <Divider orientation="center"><Title level={4}>재료 사용 현황</Title></Divider>
+                        {businessesMaterial === undefined || businessesMaterial.length === 0 &&
+                            <Spin tip="재료를 추가하세요">
+                                <div className="container"
+                                     style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                     }}
+                                >
+                                    <PieChartOutlined style={{fontSize: "100px"}}/>
+                                </div>
+                            </Spin>
+                        }
                         <PieChart businessesMaterial={businessesMaterial}/>
                         <Divider />
                     </Content>
@@ -85,6 +98,9 @@ const Management = () => {
                         <Content style={{ display: 'flex', justifyContent: 'flex-end' }}>
                                 <CompanyRegister onEvent={handleApiMeMutate}/>
                         </Content>
+                        {(userData?.companyList.length === 0 || userData?.companyList.length === undefined) &&
+                            <Empty />
+                        }
                         {userData?.companyList.length !== 0 &&
                             <CompanyListTable tableData={userData?.companyList} onEvent={handleApiMeMutate}/>
                         }

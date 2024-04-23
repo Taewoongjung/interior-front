@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from "react";
 import {message, Modal, Table, TableColumnsType, TableProps} from "antd";
 import {Link} from "react-router-dom";
-import {DeleteOutlined, ExclamationCircleFilled} from "@ant-design/icons";
+import {
+    ArrowRightOutlined,
+    DeleteOutlined,
+    ExclamationCircleFilled
+} from "@ant-design/icons";
 import axios from "axios";
 
 type OnChange = NonNullable<TableProps<DataType>['onChange']>;
@@ -29,15 +33,6 @@ const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
     const handleChange: OnChange = (pagination, filters, sorter) => {
         setFilteredInfo(filters);
         setSortedInfo(sorter as Sorts);
-    };
-
-    const clearFilters = () => {
-        setFilteredInfo({});
-    };
-
-    const clearAll = () => {
-        setFilteredInfo({});
-        setSortedInfo({});
     };
 
     const [messageApi, contextHolder] = message.useMessage();
@@ -98,7 +93,7 @@ const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
             width: 100
         },
         {
-            title: 'Name',
+            title: '사업체 명',
             dataIndex: 'name',
             key: 'name',
             width: 200,
@@ -109,7 +104,7 @@ const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
             ellipsis: true,
         },
         {
-            title: 'Address',
+            title: '사업체 주소',
             dataIndex: 'address',
             key: 'address',
             width: 300,
@@ -119,7 +114,7 @@ const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
             title: '',
             key: 'moveMain',
             width: 80,
-            render: (company) => <Link to={`/main/${company.id}`}><button>→</button></Link>,
+            render: (company) => <Link to={`/main/${company.id}`}><ArrowRightOutlined /></Link>,
         },
         {
             title: '',
