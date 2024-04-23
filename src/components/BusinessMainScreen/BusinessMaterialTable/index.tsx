@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Button, Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag} from "antd";
-import {DownOutlined, EditOutlined} from "@ant-design/icons";
+import {Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag} from "antd";
+import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
 import axios from "axios";
 
 // 랜덤 색상 목록
@@ -21,7 +21,6 @@ const colors = [
 const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; onEvent: () => void;}) => {
     const [usageCategory, setUsageCategory] = useState('');
     const [usageCategoryName, setUsageCategoryName] = useState('');
-    console.log("asas = ", usageCategoryName);
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -73,15 +72,95 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
     // 확장된 테이블 렌더링 함수
     const expandedRowRender = (record: { subData: readonly Record<string | number | symbol, any>[] | undefined; }) => {
         const columns = [
-            { title: '재료 명', dataIndex: 'name', key: 'name' },
-            { title: '카테고리', dataIndex: 'category', key: 'category' },
-            { title: '수량', dataIndex: 'amount', key: 'amount' },
-            { title: '단위', dataIndex: 'unit', key: 'unit' },
-            { title: '메모', dataIndex: 'memo', key: 'memo' },
+            { title: '카테고리', dataIndex: 'category', key: 'category', width: '100px', editable: true },
+            { title: '재료 명', dataIndex: 'name', key: 'name', width: '130px' },
+            { title: '수량', dataIndex: 'amount', key: 'amount', width: '100px', editable: true },
+            { title: '단위', dataIndex: 'unit', key: 'unit', width: '100px', editable: true },
+            {
+                title: '비용',
+                children: [
+                    {
+                        title: '재료비',
+                        dataIndex: 'street',
+                        key: 'street',
+                        width: 150,
+                        children: [
+                            {
+                                title: '단가',
+                                dataIndex: 'building',
+                                key: 'building',
+                                width: 100,
+                                editable: true
+                            },
+                            {
+                                title: '금액',
+                                dataIndex: 'number',
+                                key: 'number',
+                                width: 100,
+                                editable: true
+                            },
+                        ],
+                    },
+                    {
+                        title: '노무비',
+                        children: [
+                            {
+                                title: '단가',
+                                dataIndex: 'building',
+                                key: 'building',
+                                width: 100,
+                                editable: true
+                            },
+                            {
+                                title: '금액',
+                                dataIndex: 'number',
+                                key: 'number',
+                                width: 100,
+                                editable: true
+                            },
+                        ],
+                    },
+                    {
+                        title: '합계',
+                        children: [
+                            {
+                                title: '단가',
+                                dataIndex: 'building',
+                                key: 'building',
+                                width: 100,
+                            },
+                            {
+                                title: '금액',
+                                dataIndex: 'number',
+                                key: 'number',
+                                width: 100,
+                            },
+                        ],
+                    },
+                ],
+            },
+            {
+                title: '비고',
+                dataIndex: 'memo',
+                key: 'memo',
+                width: '70px',
+                editable: true,
+                render: (_: any, record: { id: string | number; category:any; name:any; memo:any; }) => (
+                    <Popconfirm
+                        title={<>[{record.category}] {record.name} </>}
+                        description={<div style={{paddingTop:10, paddingBottom: 10}}>{record.memo}</div>}
+                        icon={<MessageOutlined/>}
+                        showCancel={false}
+                        okText="닫기"
+                    >
+                        <MessageOutlined />
+                    </Popconfirm>
+                )
+            },
             {
                 title: '',
                 key: 'operation',
-                width: '103px',
+                width: '30px',
                 render: (_: any, record: { id: string | number; }) => (
                     <Dropdown
                         overlay={
@@ -102,9 +181,11 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                             </Menu>
                         }
                         trigger={['click']}
+                        placement="bottom"
+                        arrow={{ pointAtCenter: true }}
                     >
                         <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                            수정/삭제 <DownOutlined/>
+                            <MoreOutlined />
                         </a>
                     </Dropdown>
                 ),
@@ -134,9 +215,6 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
     // 클릭 이벤트 핸들러
     const handleEditClick = async (subData: any[]) => {
         const subDataIds: any[] = [];
-        const subDataIdList = subData.map(item => subDataIds.push(item.id)); // 하위 데이터의 id를 배열로 추출
-        console.log('하위 데이터의 모든 id:', subDataIdList);
-        console.log('하위 데이터의 모든 id:', subDataIds);
 
         await axios
             .patch(`http://api-interiorjung.shop:7077/api/businesses/${businessId}`,
@@ -172,7 +250,6 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
     const columns = [
         { title: '공사', dataIndex: 'businessName', key: 'businessName' },
         { title: '', key: 'operation', width: '103px',
-            // render: (_: any, record: { subData: any; }) => <a onClick={() => handleEditClick(record.subData)}>수정</a> }
             render: (_: any, record: { businessName:any; subData: any; }) => (
                 <>
                     <Popconfirm
@@ -195,7 +272,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                             }
                         }}
                     >
-                        <Button type="primary" onClick={() => setDefaultValueOfReviseUsageCategory(record.businessName)}>수정</Button>
+                        <EditOutlined onClick={() => setDefaultValueOfReviseUsageCategory(record.businessName)}>수정</EditOutlined>
                     </Popconfirm>
                 </>
             ) }
@@ -228,6 +305,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                     columns={columns}
                     expandable={{ expandedRowRender, defaultExpandAllRows: true }}
                     dataSource={data}
+                    bordered
                 />
             }
         </>

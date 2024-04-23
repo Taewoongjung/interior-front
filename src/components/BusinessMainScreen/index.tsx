@@ -6,15 +6,13 @@ import {
     Layout,
     Menu, message, Modal,
     Row,
-    TableColumnsType,
     Typography,
-    Form, Popconfirm
+    Form,
 } from "antd";
 import {
-    ArrowDownOutlined,
     UserOutlined,
     LogoutOutlined,
-    EditOutlined, DeleteOutlined, ExclamationCircleFilled, DownOutlined,
+    EditOutlined, DeleteOutlined, ExclamationCircleFilled,
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -29,107 +27,9 @@ import BusinessMainScreenTable from "./BusinessMaterialTable";
 
 const { confirm } = Modal;
 
-interface DataType {
-    key: React.Key;
-    id: string;
-    name: string;
-    category: number;
-    amount: string;
-    memo: string;
-}
-
 const { Title } = Typography;
 
 const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void;}) => {
-
-    const confirmDelete: (materialId: (string | number)) => void = async (materialId:string | number) => {
-
-       await axios
-            .delete(`http://api-interiorjung.shop:7077/api/businesses/${businessId}/materials/${materialId}`, {
-            // .delete(`http://localhost:7070/api/businesses/${businessId}/materials/${materialId}`, {
-                    withCredentials: true,
-                    headers: {
-                        Authorization: localStorage.getItem("interiorjung-token")
-                    }
-                }
-            ).then((response) => {
-            if (response.data === true) {
-                message.success('재료 삭제 완료');
-                mutate();
-            }})
-            .catch((error) => {
-                errorModal(error.response.data.message);
-            })
-    };
-
-    const columns: TableColumnsType<DataType> = [
-        {
-            title: 'No',
-            width: 20,
-            dataIndex: 'key',
-            key: 'id',
-            // fixed: 'left',
-        },
-        {
-            title: '재료 명',
-            width: 100,
-            dataIndex: 'name',
-            key: 'name',
-            // fixed: 'left',
-        },
-        {
-            title: '카테고리',
-            width: 40,
-            dataIndex: 'category',
-            key: 'category',
-            // fixed: 'left',
-        },
-        {
-            title: '수량',
-            dataIndex: 'amount',
-            key: 'category',
-            width: 50,
-            // fixed: 'left',
-        },
-        {
-            title: '메모',
-            dataIndex: 'memo',
-            key: 'memo',
-            width: 150,
-        },
-        {
-            title: '-',
-            key: 'operation',
-            fixed: 'right',
-            width: 30,
-            render: (_, record) => (
-                <Dropdown
-                    overlay={
-                        <Menu>
-                            <Menu.Item>수정(개발예정)</Menu.Item>
-                            <Menu.Item>
-                                <Popconfirm
-                                title="재료 삭제"
-                                description="해당 재료를 삭제하시겠습니까?"
-                                onConfirm={() => confirmDelete(record.id)}
-                                okText="예"
-                                cancelText="아니요"
-                            >
-                                <div style={{ cursor: 'pointer'}}>
-                                    삭제
-                                </div>
-                            </Popconfirm></Menu.Item>
-                        </Menu>
-                    }
-                    trigger={['click']}
-                >
-                    <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                        수정/삭제 <DownOutlined />
-                    </a>
-                </Dropdown>
-            ),
-        },
-    ];
 
     const {user, onEvent} = props;
 
@@ -163,29 +63,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         window.location.reload();
     };
 
-    const [sortKey, setSortKey] = useState(null);
-    const [sortValue, setSortValue] = useState('');
-
-    const handleMenuClick = (e:any) => {
-        const keyToValueMap = {
-            no: 'No',
-            name: '재료 명',
-            category: '카테고리'
-        };
-
-        setSortKey(e.key);
-        // @ts-ignore
-        setSortValue(keyToValueMap[e.key]);
-    };
-
-    const menuSortBy = (
-        <Menu onClick={handleMenuClick}>
-            <Menu.Item key="no">No</Menu.Item>
-            <Menu.Item key="name">재료 명</Menu.Item>
-            <Menu.Item key="category">카테고리</Menu.Item>
-        </Menu>
-    );
-
     const menuUserAccount = (
         <Menu>
             <Menu.Item onClick={handleGoBackManagement}>대시보드 이동</Menu.Item>
@@ -207,8 +84,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
     const handleMutate = () => {
         mutate();
     };
-
-    const [tableData, setTableData] = useState<DataType[]>([]);
 
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -239,7 +114,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
         setTimeout(() => {
             setLoading(false);
-        }, 5000);
+        }, 2000);
 
         const changeBusinessName = reviseBusinessName;
 
@@ -369,26 +244,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                 <Row style={{ fontSize: 12 }}>
                                     <br />
                                 </Row>
-                                <Row>조회 결과&nbsp;<strong>({tableData.length})</strong></Row>
-                            </Col>
-                            <Col>
-                                {tableData.length !== 0 &&
-                                    <Row>
-                                        <span style={{ fontSize: 10 }}>- 정렬 조건 -</span>
-                                    </Row>
-                                }
-                                {tableData.length !== 0 &&
-                                    <Row>
-                                        <Dropdown overlay={menuSortBy}>
-                                            <Button style={{ borderRadius: '15px 0 0 2px' }}>
-                                                {sortValue ? sortValue : '-'}
-                                            </Button>
-                                        </Dropdown>
-                                        <Button style={{ borderLeft: 0, borderRadius: '0 15px 2px 0' }}>
-                                            <ArrowDownOutlined />
-                                        </Button>
-                                    </Row>
-                                }
+                                {businessesMaterial && <Row> 조회 결과&nbsp;<strong>(businessesMaterial.count)</strong></Row>}
                             </Col>
                             <Col>
                                 <Row style={{ fontSize: 12 }}>
