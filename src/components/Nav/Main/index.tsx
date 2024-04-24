@@ -100,7 +100,8 @@ const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
                 style={{
                     background: '#e7a19a',
                     color: 'white',
-                    height: 'calc(100vh)'
+                    height: 'calc(100vh)',
+                    minWidth: 0, flex: "auto"
                 }}
                 items={menuItems}
                 onClick={({ key }) => handleMenuClick(key.toString())}

@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag} from "antd";
+import {Dropdown, Empty, Input, InputNumber, Menu, message, Popconfirm, Table, Tag} from "antd";
 import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
 import axios from "axios";
 
@@ -49,6 +49,10 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
         });
     };
 
+    const addCommasToNumber = (number: any): string | undefined => {
+        return number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    };
+
     const confirmDelete: (materialId: (string | number)) => void = async (materialId:string | number) => {
 
         await axios
@@ -87,14 +91,14 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                         children: [
                             {
                                 title: '단가',
-                                dataIndex: 'building',
+                                dataIndex: 'materialCostPerUnit',
                                 key: 'building',
                                 width: 100,
                                 editable: true
                             },
                             {
                                 title: '금액',
-                                dataIndex: 'number',
+                                dataIndex: 'allMaterialCostPerUnit',
                                 key: 'number',
                                 width: 100,
                                 editable: true
@@ -106,14 +110,14 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                         children: [
                             {
                                 title: '단가',
-                                dataIndex: 'building',
+                                dataIndex: 'laborCostPerUnit',
                                 key: 'building',
                                 width: 100,
                                 editable: true
                             },
                             {
                                 title: '금액',
-                                dataIndex: 'number',
+                                dataIndex: 'allLaborCostPerUnit',
                                 key: 'number',
                                 width: 100,
                                 editable: true
@@ -190,7 +194,6 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                     </Dropdown>
                 ),
             },
-            // 추가적인 필드들을 필요에 따라 나열
         ];
 
         // 데이터 구조에 따라 필요한 필드를 가져옴
@@ -201,6 +204,8 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             amount: item.amount,
             unit: item.unit,
             memo: item.memo,
+            materialCostPerUnit: addCommasToNumber(item.businessMaterialExpense?.materialCostPerUnit),
+            laborCostPerUnit: addCommasToNumber(item.businessMaterialExpense?.laborCostPerUnit)
         }));
 
         return (
@@ -208,6 +213,25 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                 columns={columns}
                 dataSource={subData} // 확장된 데이터 소스를 사용
                 pagination={false}
+                summary={() => (
+                    <Table.Summary fixed={'bottom'}>
+                        <Table.Summary.Row style={{backgroundColor:"lightskyblue"}}>
+                            <Table.Summary.Cell index={0} colSpan={5} align={"right"}>
+                                <strong>소계</strong>
+                            </Table.Summary.Cell>
+                            <Table.Summary.Cell index={5}>
+                                {addCommasToNumber("50000")}
+                            </Table.Summary.Cell>
+                            <Table.Summary.Cell index={6} align={"right"}></Table.Summary.Cell>
+                            <Table.Summary.Cell index={7} align={"right"}>
+                                {addCommasToNumber("50000000")}
+                            </Table.Summary.Cell>
+                            <Table.Summary.Cell index={8} align={"right"}></Table.Summary.Cell>
+                            <Table.Summary.Cell index={9} align={"right"}>{addCommasToNumber("500000000")}</Table.Summary.Cell>
+                        </Table.Summary.Row>
+                    </Table.Summary>
+                )}
+                bordered
             />
         );
     };
@@ -305,7 +329,6 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                     columns={columns}
                     expandable={{ expandedRowRender, defaultExpandAllRows: true }}
                     dataSource={data}
-                    bordered
                 />
             }
         </>

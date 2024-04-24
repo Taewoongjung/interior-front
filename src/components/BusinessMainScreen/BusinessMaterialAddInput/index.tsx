@@ -31,14 +31,14 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
         const materialMemo = values.materialMemo;
         const materialAmountUnit = values.materialAmountUnit;
         const materialName = values.materialName;
-
-        console.log("materialUsageCategory = ", materialUsageCategory);
-        console.log("materialAmountUnit = ", materialAmountUnit);
+        const laborCostPerUnit = values.laborCostPerUnit;
+        const materialCostPerUnit = values.materialCostPerUnit;
 
         await axios
             .post(`http://api-interiorjung.shop:7077/api/businesses/${businessIdParam}/materials`, {
             // .post(`http://localhost:7070/api/businesses/${businessIdParam[0]}/materials`, {
-                materialAmount, materialUsageCategory, materialCategory, materialMemo, materialAmountUnit, materialName
+                materialAmount, materialUsageCategory, materialCategory, materialMemo, materialAmountUnit, materialName,
+                materialCostPerUnit, laborCostPerUnit
         }, {
             withCredentials: true, // CORS 처리 옵션
             headers: {
@@ -78,6 +78,7 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
         setSelectedValue(value); // 선택된 값 업데이트
         form.setFieldsValue({ materialAmountUnit: value }); // Form 필드에 선택된 값 업데이트
     };
+
     return (
         <>
             <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
@@ -164,6 +165,26 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                                         ))}
                                     </Select>
                                 </Space>
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row gutter={16}>
+                        <Col span={10}>
+                            <Form.Item
+                                name="materialCostPerUnit"
+                                label="재료 단가"
+                                style={{ width: "200px" }}
+                            >
+                                <Input suffix="₩"/>
+                            </Form.Item>
+                        </Col>
+                        <Col span={5}>
+                            <Form.Item
+                                name="laborCostPerUnit"
+                                label="노무비 단가"
+                                style={{ width: "200px" }}
+                            >
+                                <Input suffix="₩"/>
                             </Form.Item>
                         </Col>
                     </Row>
