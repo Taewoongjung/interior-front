@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Dropdown, Empty, Input, InputNumber, Menu, message, Popconfirm, Table, Tag} from "antd";
+import {Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag, Badge} from "antd";
 import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
 import axios from "axios";
 
@@ -210,9 +210,11 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
 
         return (
             <Table
+                size={"small"}
                 columns={columns}
                 dataSource={subData} // 확장된 데이터 소스를 사용
                 pagination={false}
+                tableLayout={"fixed"}
                 summary={() => (
                     <Table.Summary fixed={'bottom'}>
                         <Table.Summary.Row style={{backgroundColor:"lightskyblue"}}>
@@ -316,7 +318,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
         const color = getNextColor(); // 다음 색상 가져오기
         return {
             key: index.toString(),
-            businessName: <Tag color={color}><strong>{key}</strong></Tag>, // 다음 순서의 색상을 가진 태그 생성
+            businessName: <Badge count={businessesMaterial[key]?.length} size="small"><Tag color={color}><strong>{key}</strong></Tag></Badge>, // 다음 순서의 색상을 가진 태그 생성
             subData: businessesMaterial[key], // 해당 카테고리의 배열 데이터를 사용
         };
     });

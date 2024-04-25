@@ -1,5 +1,5 @@
 import React from "react";
-import {Col, Dropdown, Layout, Menu, Row, Typography, Tooltip, Divider, Empty, Spin, Alert} from "antd";
+import {Col, Dropdown, Layout, Menu, Row, Typography, Tooltip, Divider, Empty, Spin} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content, Footer} from "antd/es/layout/layout";
 import UserView from "./views/user";

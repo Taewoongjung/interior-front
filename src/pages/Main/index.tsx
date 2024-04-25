@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Layout, Button} from 'antd';
+import React, {useState} from "react";
+import {Layout, Button, FloatButton} from 'antd';
 import {MenuFoldOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
 import NavMain from "../../components/Nav/Main";
 import BusinessMainScreen from "../../components/BusinessMainScreen";
@@ -32,7 +32,7 @@ const Main = () => {
 
     return useObserver(() => (
         <>
-            <Layout style={{ height: '100%' }} hasSider>
+            <Layout style={{ height: '100%', width: '100%' }} hasSider>
                 <div style={{background: '#e7a19a'}}>
                     <div style={{background: '#e7a19a'}}>
                         <Button
@@ -47,6 +47,7 @@ const Main = () => {
                     </div>
                 </div>
                 <BusinessMainScreen navState={navState} user={userData} onEvent={handleApiMeMutate}/>
+                <FloatButton.BackTop />
             </Layout>
         </>
     ));

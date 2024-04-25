@@ -81,9 +81,10 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
 
     return (
         <>
-            <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
+            <Button onClick={showDrawer} icon={<PlusOutlined />}>
                 재료 추가
             </Button>
+
             <Drawer
                 title="인테리어 재료 추가하기"
                 width={720}

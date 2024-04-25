@@ -238,7 +238,16 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                 </Header>
                 {props.navState.getNavState() === '사업 등록' && <RegisterBusiness/>}
                 {props.navState.getNavState() !== '사업 등록' &&
-                    <Content style={{ background: 'white', padding: 48 }}>
+                    <Content style={{ background: 'white', padding: 28 }}>
+                        <Row gutter={8}>
+                            <Col flex={100}/>
+                            <Col flex={1}>
+                                <Row>
+                                    {businessId !== undefined &&
+                                        <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />}
+                                </Row>
+                            </Col>
+                        </Row>
                         <Row gutter={8} style={{ alignItems: 'center' }}>
                             <Col flex={1}>
                                 <Row style={{ fontSize: 12 }}>
@@ -249,10 +258,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                             <Col>
                                 <Row style={{ fontSize: 12 }}>
                                     <br />
-                                </Row>
-                                <Row>
-                                    {businessId !== undefined &&
-                                    <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />}
                                 </Row>
                             </Col>
                         </Row>
