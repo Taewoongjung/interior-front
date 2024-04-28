@@ -1,6 +1,5 @@
 import React, {useState} from "react";
-import {Layout, Button, FloatButton} from 'antd';
-import {MenuFoldOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
+import {Layout, FloatButton} from 'antd';
 import NavMain from "../../components/Nav/Main";
 import BusinessMainScreen from "../../components/BusinessMainScreen";
 import {useObserver} from "mobx-react";
@@ -12,6 +11,7 @@ const { Header, Sider, Content } = Layout;
 
 const Main = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const [tourOpen, setTourOpen] = useState<boolean>(false);
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
@@ -28,6 +28,10 @@ const Main = () => {
         mutate();
     };
 
+    const handleTourOpen = (e:boolean) => {
+        setTourOpen(e);
+    }
+
     const navState = new MainNavState();
 
     return useObserver(() => (
@@ -35,18 +39,10 @@ const Main = () => {
             <Layout style={{ height: '100%', width: '100%' }} hasSider>
                 <div style={{background: '#e7a19a'}}>
                     <div style={{background: '#e7a19a'}}>
-                        <Button
-                            id={"menuBtn"}
-                            type="text"
-                            onClick={toggleCollapsed}
-                            style={{
-                                // background: '#e7a19a',
-                            }}
-                        >{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</Button>
-                        <NavMain inlineCollapsed={collapsed} navState={navState}/>
+                        <NavMain navState={navState} tourOpen={tourOpen} onTourEvent={handleTourOpen}/>
                     </div>
                 </div>
-                <BusinessMainScreen navState={navState} user={userData} onEvent={handleApiMeMutate}/>
+                <BusinessMainScreen navState={navState} user={userData} onEvent={handleApiMeMutate} onTourEvent={handleTourOpen}/>
                 <FloatButton.BackTop />
             </Layout>
         </>

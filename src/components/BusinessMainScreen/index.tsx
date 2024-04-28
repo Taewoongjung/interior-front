@@ -7,12 +7,14 @@ import {
     Menu, message, Modal,
     Row,
     Typography,
-    Form,
+    Form, Result,
 } from "antd";
 import {
     UserOutlined,
     LogoutOutlined,
-    EditOutlined, DeleteOutlined, ExclamationCircleFilled,
+    EditOutlined,
+    DeleteOutlined,
+    ExclamationCircleFilled,
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -29,9 +31,9 @@ const { confirm } = Modal;
 
 const { Title } = Typography;
 
-const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void;}) => {
+const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void; onTourEvent: (e:boolean) => void;}) => {
 
-    const {user, onEvent} = props;
+    const {user, onEvent, onTourEvent} = props;
 
     const { companyId } = useParams();
 
@@ -243,7 +245,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                             <Col flex={100}/>
                             <Col flex={1}>
                                 <Row>
-                                    {businessId !== undefined &&
+                                    {businessId !== null &&
                                         <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />}
                                 </Row>
                             </Col>
@@ -261,6 +263,19 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                 </Row>
                             </Col>
                         </Row>
+                        {businessesMaterial === undefined &&
+                            <Result
+                                icon={null}
+                                title={<div style={{color:'#cc5800'}}>반갑습니다. 귀하의 사업을 응원합니다.</div>}
+                                subTitle={<div style={{color:'#d5a47f'}}>"새로운 사업을 등록 하시거나, 기존 사업을 이어나가보세요."
+                                    <br/><br/>
+                                    <Button onClick={() => onTourEvent(true)}>가이드 보기</Button></div>}
+                                extra={
+                                <>
+                                    <img src="/mainScreen/정.png" alt="로그인 이미지" width="495" height="528"/>
+                                </>}
+                            />
+                        }
                         {businessesMaterial !== undefined &&
                             <BusinessMainScreenTable businessesMaterial={businessesMaterial.businessMaterials}
                                                      businessId={businessId}

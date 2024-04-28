@@ -101,7 +101,7 @@ const Management = () => {
                         {(userData?.companyList.length === 0 || userData?.companyList.length === undefined) &&
                             <Empty />
                         }
-                        {userData?.companyList.length !== 0 &&
+                        {(userData?.companyList.length !== 0 && userData !== undefined) &&
                             <CompanyListTable tableData={userData?.companyList} onEvent={handleApiMeMutate}/>
                         }
                     </Content>

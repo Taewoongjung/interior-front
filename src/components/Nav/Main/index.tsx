@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useHistory, useParams} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../../utils/fetcher";
-import {Menu, MenuProps} from "antd";
-import {AppstoreOutlined, PlusSquareOutlined} from "@ant-design/icons";
+import {Button, Menu, MenuProps, Tour, TourProps} from "antd";
+import {AppstoreOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PlusSquareOutlined} from "@ant-design/icons";
 import {useObserver} from "mobx-react";
 import MainNavState from "../../../statemanager/mainNavState";
 
@@ -28,13 +28,23 @@ function getItem(
 // 초기 메뉴 아이템 설정
 const initialBusinessItems: MenuItem[] = [];
 
-const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
+const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: any) => void;}) => {
 
-    const {inlineCollapsed} = props;
+    const {tourOpen, onTourEvent} = props;
 
     const { companyId } = useParams();
 
     const history = useHistory();
+
+    const [collapsed, setCollapsed] = useState(true);
+
+    const step1 = useRef(null);
+    const step2 = useRef(null);
+    const step3 = useRef(null);
+
+    const toggleCollapsed = () => {
+        setCollapsed(!collapsed);
+    };
 
     const handleButtonClick = async (businessId: string) => {
         mutate();
@@ -78,8 +88,8 @@ const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
 
     // "사업 목록" 아래에 새로운 비즈니스 아이템을 추가하여 전체 메뉴 아이템 배열 생성
     const menuItems: MenuProps['items'] = [
-        getItem('사업 등록', 'main1', <PlusSquareOutlined/>),
-        getItem('사업 목록', 'main2', <AppstoreOutlined/>, businessItems)
+        getItem('사업 등록', 'main1', <PlusSquareOutlined ref={step2}/>),
+        getItem('사업 목록', 'main2', <AppstoreOutlined ref={step3}/>, businessItems)
     ];
 
     // 메뉴 클릭 이벤트 핸들러
@@ -91,22 +101,71 @@ const NavMain =(props:{inlineCollapsed:any; navState:MainNavState;}) => {
         return await props.navState.setNavState('사업 목록');
     };
 
+    const steps: TourProps['steps'] = [
+        {
+            title: '메뉴 접기/펴기',
+            description: '해당 버튼은 왼쪽 메뉴바를 접거나 펼 수 있습니다.',
+            cover: (
+                <img
+                    alt="tour.png"
+                    src="/mainScreen/가이드1.png"
+                />
+            ),
+            target: () => step1.current,
+        },
+        {
+            title: '사업 등록',
+            description: '사업을 등록할 수 있습니다.',
+            cover: (
+                <img
+                    alt="tour.png"
+                    src="/mainScreen/가이드2.png"
+                    width="195" height="328"
+                />
+            ),
+            target: () => step2.current,
+        },
+        {
+            title: '사업 목록',
+            description: `등록 된 사업 목록을 보여줍니다. ["사업 등록"]에서 사업을 등록하시면 해당 목록에 추가됩니다.`,
+            cover: (
+                <img
+                    alt="tour.png"
+                    src="/mainScreen/가이드3.png"
+                />
+            ),
+            target: () => step3.current,
+        }
+    ];
+
     return useObserver(() => (
         <>
-            <Menu
-                theme="light"
-                mode="vertical"
-                defaultSelectedKeys={['1']}
-                style={{
-                    background: '#e7a19a',
-                    color: 'white',
-                    height: 'calc(100vh)',
-                    minWidth: 0, flex: "auto"
-                }}
-                items={menuItems}
-                onClick={({ key }) => handleMenuClick(key.toString())}
-                inlineCollapsed={inlineCollapsed}
-            />
+            <div style={{background: '#e7a19a'}}>
+                <Button
+                    id={"menuBtn"}
+                    type="text"
+                    onClick={toggleCollapsed}
+                    style={{
+                        // background: '#e7a19a',
+                    }}
+                    ref={step1}
+                >{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</Button>
+                <Menu
+                    theme="light"
+                    mode="vertical"
+                    defaultSelectedKeys={['1']}
+                    style={{
+                        background: '#e7a19a',
+                        color: 'white',
+                        height: 'calc(100vh)',
+                        minWidth: 0, flex: "auto"
+                    }}
+                    items={menuItems}
+                    onClick={({ key }) => handleMenuClick(key.toString())}
+                    inlineCollapsed={collapsed}
+                />
+            </div>
+            <Tour open={tourOpen} onClose={() => onTourEvent(false)} steps={steps}/>
         </>
     ));
 }
