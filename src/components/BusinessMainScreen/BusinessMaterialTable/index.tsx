@@ -129,14 +129,14 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                         children: [
                             {
                                 title: '단가',
-                                dataIndex: 'building',
-                                key: 'building',
+                                dataIndex: 'totalUnitPrice',
+                                key: 'totalUnitPrice',
                                 width: 100,
                             },
                             {
                                 title: '금액',
-                                dataIndex: 'number',
-                                key: 'number',
+                                dataIndex: 'totalPrice',
+                                key: 'totalPrice',
                                 width: 100,
                             },
                         ],
@@ -205,7 +205,11 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             unit: item.unit,
             memo: item.memo,
             materialCostPerUnit: addCommasToNumber(item.businessMaterialExpense?.materialCostPerUnit),
-            laborCostPerUnit: addCommasToNumber(item.businessMaterialExpense?.laborCostPerUnit)
+            allMaterialCostPerUnit: addCommasToNumber(item?.allMaterialCostPerUnit),
+            laborCostPerUnit: addCommasToNumber(item.businessMaterialExpense?.laborCostPerUnit),
+            allLaborCostPerUnit: addCommasToNumber(item?.allLaborCostPerUnit),
+            totalUnitPrice: addCommasToNumber(item?.totalUnitPrice),
+            totalPrice: addCommasToNumber(item?.totalPrice)
         }));
 
         return (

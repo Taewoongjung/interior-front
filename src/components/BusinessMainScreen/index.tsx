@@ -15,6 +15,7 @@ import {
     EditOutlined,
     DeleteOutlined,
     ExclamationCircleFilled,
+    DownloadOutlined,
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -256,6 +257,11 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                     <br />
                                 </Row>
                                 {businessesMaterial && <Row> 조회 결과&nbsp;<strong>({businessesMaterial.count})</strong></Row>}
+                            </Col>
+                            <Col>
+                                <Button type="dashed" icon={<img src="/mainScreen/excel-icon.png" alt="엑셀 다운로드 이미지" width="20" height="20"/>} size={"middle"}>
+                                    엑셀 다운로드
+                                </Button>
                             </Col>
                             <Col>
                                 <Row style={{ fontSize: 12 }}>
