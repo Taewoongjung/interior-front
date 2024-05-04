@@ -219,24 +219,24 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                 dataSource={subData} // 확장된 데이터 소스를 사용
                 pagination={false}
                 tableLayout={"fixed"}
-                summary={() => (
-                    <Table.Summary fixed={'bottom'}>
-                        <Table.Summary.Row style={{backgroundColor:"lightskyblue"}}>
-                            <Table.Summary.Cell index={0} colSpan={5} align={"right"}>
-                                <strong>소계</strong>
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell index={5}>
-                                {addCommasToNumber("50000")}
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell index={6} align={"right"}></Table.Summary.Cell>
-                            <Table.Summary.Cell index={7} align={"right"}>
-                                {addCommasToNumber("50000000")}
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell index={8} align={"right"}></Table.Summary.Cell>
-                            <Table.Summary.Cell index={9} align={"right"}>{addCommasToNumber("500000000")}</Table.Summary.Cell>
-                        </Table.Summary.Row>
-                    </Table.Summary>
-                )}
+                // summary={() => (
+                //     <Table.Summary fixed={'bottom'}>
+                //         <Table.Summary.Row style={{backgroundColor:"lightskyblue"}}>
+                //             <Table.Summary.Cell index={0} colSpan={5} align={"right"}>
+                //                 <strong>소계</strong>
+                //             </Table.Summary.Cell>
+                //             <Table.Summary.Cell index={5}>
+                //                 {addCommasToNumber("50000")}
+                //             </Table.Summary.Cell>
+                //             <Table.Summary.Cell index={6} align={"right"}></Table.Summary.Cell>
+                //             <Table.Summary.Cell index={7} align={"right"}>
+                //                 {addCommasToNumber("50000000")}
+                //             </Table.Summary.Cell>
+                //             <Table.Summary.Cell index={8} align={"right"}></Table.Summary.Cell>
+                //             <Table.Summary.Cell index={9} align={"right"}>{addCommasToNumber("500000000")}</Table.Summary.Cell>
+                //         </Table.Summary.Row>
+                //     </Table.Summary>
+                // )}
                 bordered
             />
         );
