@@ -79,7 +79,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             { title: '카테고리', dataIndex: 'category', key: 'category', width: '100px', editable: true },
             { title: '재료 명', dataIndex: 'name', key: 'name', width: '130px' },
             { title: '수량', dataIndex: 'amount', key: 'amount', width: '100px', editable: true },
-            { title: '단위', dataIndex: 'unit', key: 'unit', width: '100px', editable: true },
+            { title: '단위', dataIndex: 'unit', key: 'unit', width: '70px', editable: true },
             {
                 title: '비용',
                 children: [
