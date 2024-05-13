@@ -1,6 +1,6 @@
 import React, {useState} from "react";
-import {Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag, Badge} from "antd";
-import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
+import {Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag, Badge, Button} from "antd";
+import {EditOutlined, MessageOutlined, MoreOutlined, PlusOutlined} from "@ant-design/icons";
 import axios from "axios";
 
 // 랜덤 색상 목록
@@ -18,13 +18,13 @@ const colors = [
     'purple'
 ];
 
-const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; onEvent: () => void;}) => {
+const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; onEvent: () => void; fold:any}) => {
     const [usageCategory, setUsageCategory] = useState('');
     const [usageCategoryName, setUsageCategoryName] = useState('');
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    const {businessesMaterial, businessId, onEvent} = props;
+    const {businessesMaterial, businessId, onEvent, fold} = props;
 
     // 데이터 로딩 중이거나 에러가 발생한 경우를 처리
     if (!businessesMaterial) {
@@ -333,7 +333,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             {businessesMaterial !== undefined &&
                 <Table
                     columns={columns}
-                    expandable={{ expandedRowRender, defaultExpandAllRows: true }}
+                    expandable={{ expandedRowRender, defaultExpandAllRows: false }}
                     dataSource={data}
                 />
             }

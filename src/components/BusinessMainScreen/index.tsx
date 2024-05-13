@@ -7,7 +7,7 @@ import {
     Menu, message, Modal,
     Row,
     Typography,
-    Form, Result,
+    Form, Result, Tooltip,
 } from "antd";
 import {
     UserOutlined,
@@ -15,7 +15,7 @@ import {
     EditOutlined,
     DeleteOutlined,
     ExclamationCircleFilled,
-    DownloadOutlined,
+    DownloadOutlined, PlusOutlined, SearchOutlined, PlusCircleOutlined, MinusOutlined,
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -90,6 +90,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
+    const [fold, setFold] = useState(true);
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -185,6 +186,50 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
     const [reviseBusinessName, setBusinessName] = useState('');
 
+    const foldTable = () => {
+        setFold(false);
+        if (!fold) {
+            setFold(true);
+        }
+    };
+
+    const getExcel = async () => {
+
+        const companyId = 1
+
+
+        try {
+            const response = await axios.get(
+                `http://api-interiorjung.shop:7077/api/excels/companies/${companyId}/businesses`,
+                // `http://localhost:7070/api/excels/companies/${companyId}/businesses`,
+                {
+                    responseType: 'blob', // 요청의 응답 형식을 'blob'으로 지정
+                    withCredentials: true, // CORS 처리 옵션
+                    headers: {
+                        Authorization: localStorage.getItem('interiorjung-token')
+                    }
+                }
+            );
+            console.log("excel file = ", response.data);
+            console.log("excel file = ", response.headers);
+            // console.log("excel file = ", response.);
+
+            const blob = new Blob([response.data], {type: response.headers['content-type']});
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '재료리스트.xlsx';
+            a.click();
+
+            window.URL.revokeObjectURL(url); // 사용한 URL 객체 해제
+        }  catch (error) {
+            console.error('Error downloading excel file:', error);
+        }
+            // .catch((error) => {
+            //     errorModal(error.response.data.message);
+            // })
+    }
+
     return useObserver(() => (
         <>
             {contextHolder}
@@ -243,7 +288,11 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                 {props.navState.getNavState() !== '사업 등록' &&
                     <Content style={{ background: 'white', padding: 28 }}>
                         <Row gutter={8}>
-                            <Col flex={100}/>
+                            <Col flex={100}>
+                                <Tooltip title={fold ? '테이블 펴기' : '테이블 접기'}>
+                                    <Button onClick={foldTable} shape="circle" icon={ fold ? <PlusOutlined /> : <MinusOutlined />} />
+                                </Tooltip>
+                            </Col>
                             <Col flex={1}>
                                 <Row>
                                     {businessId !== null &&
@@ -259,9 +308,16 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                 {businessesMaterial && <Row> 조회 결과&nbsp;<strong>({businessesMaterial.count})</strong></Row>}
                             </Col>
                             <Col>
-                                <Button type="dashed" icon={<img src="/mainScreen/excel-icon.png" alt="엑셀 다운로드 이미지" width="20" height="20"/>} size={"middle"}>
+                                {(businessesMaterial && businessesMaterial.count > 0) &&
+                                    <Button
+                                        onClick={getExcel}
+                                        type="dashed"
+                                        icon={<img src="/mainScreen/excel-icon.png" alt="엑셀 다운로드 이미지" width="20" height="20"/>}
+                                        size={"middle"}
+                                    >
                                     엑셀 다운로드
                                 </Button>
+                                }
                             </Col>
                             <Col>
                                 <Row style={{ fontSize: 12 }}>
@@ -286,6 +342,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                             <BusinessMainScreenTable businessesMaterial={businessesMaterial.businessMaterials}
                                                      businessId={businessId}
                                                      onEvent={handleMutate}
+                                                     fold={fold}
                             />
                         }
                     </Content>
