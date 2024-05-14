@@ -194,14 +194,13 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
     };
 
     const getExcel = async () => {
-
-        const companyId = 1
-
+        console.log("companyId = ", companyId);
+        console.log("businessId = ", businessId);
 
         try {
             const response = await axios.get(
-                `http://api-interiorjung.shop:7077/api/excels/companies/${companyId}/businesses`,
-                // `http://localhost:7070/api/excels/companies/${companyId}/businesses`,
+                `http://api-interiorjung.shop:7077/api/excels/companies/${companyId}/businesses/${businessId}`,
+                // `http://localhost:7070/api/excels/companies/${companyId}/businesses/${businessId}`,
                 {
                     responseType: 'blob', // 요청의 응답 형식을 'blob'으로 지정
                     withCredentials: true, // CORS 처리 옵션

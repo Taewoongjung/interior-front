@@ -42,15 +42,15 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
         const bdgNumber = addressBuildingNum;
         await axios
             .post("http://api-interiorjung.shop:7077/api/companies", {
-                // .post("http://localhost:7070/api/companies", {
-                    companyName, zipCode, mainAddress, subAddress, bdgNumber, tel
-                },
-                {
-                    withCredentials: true, // CORS 처리 옵션
-                    headers: {
-                        Authorization: localStorage.getItem("interiorjung-token")
-                    }
+            // .post("http://localhost:7070/api/companies", {
+                companyName, zipCode, mainAddress, subAddress, bdgNumber, tel
+            },
+            {
+                withCredentials: true, // CORS 처리 옵션
+                headers: {
+                    Authorization: localStorage.getItem("interiorjung-token")
                 }
+            }
             ).then((response) => {
                 if (response.data === true) {
                     success('등록 완료');
