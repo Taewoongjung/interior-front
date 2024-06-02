@@ -15,7 +15,8 @@ import {
     EditOutlined,
     DeleteOutlined,
     ExclamationCircleFilled,
-    DownloadOutlined, PlusOutlined, SearchOutlined, PlusCircleOutlined, MinusOutlined,
+    PlusOutlined,
+    MinusOutlined,
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -27,6 +28,8 @@ import {useObserver} from "mobx-react";
 import MainNavState from "../../statemanager/mainNavState";
 import axios from "axios";
 import BusinessMainScreenTable from "./BusinessMaterialTable";
+import BusinessMaterialLogTable from "./BusinessMaterialLogTable";
+import {DataType} from "../../definitions/BusinessMaterialLogTable/ILogTableDataType";
 
 const { confirm } = Modal;
 
@@ -40,6 +43,8 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
     const history = useHistory();
 
+    const [materialLogData, setMaterialLogData] = useState<DataType[]>([]);
+
     useEffect(() => {
         const token = localStorage.getItem("interiorjung-token");
 
@@ -48,17 +53,34 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
             history.push(redirectUrl);
             window.location.reload();
         }
+
+        // 재료 변경 로그 API 조회
+        axios
+            .get(`http://api-interiorjung.shop:7077/api/businesses/${businessId}/logs`, {
+            // .get(`http://localhost:7070/api/businesses/${businessId}/logs`, {
+                    withCredentials: true, // CORS 처리 옵션
+                    headers: {
+                        Authorization: localStorage.getItem("interiorjung-token")
+                    }
+                }
+            ).then((response) => {
+                if (response.data !== undefined) {
+                    setMaterialLogData(response.data);
+                }
+            })
+            .catch((error) => {
+                errorModal(error.response.data.message);
+            })
+
     }, []);
 
     const handleGoBackManagement = () => {
-        console.log("대시보드로 이동");
         const redirectUrl = '/management';
         history.push(redirectUrl);
         window.location.reload();
     }
 
     const handleLogout = () => {
-        console.log("로그아웃");
         onEvent();
         localStorage.removeItem("interiorjung-token");
         const redirectUrl = '/auth';
@@ -194,9 +216,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
     };
 
     const getExcel = async () => {
-        console.log("companyId = ", companyId);
-        console.log("businessId = ", businessId);
-
         try {
             const response = await axios.get(
                 `http://api-interiorjung.shop:7077/api/excels/companies/${companyId}/businesses/${businessId}`,
@@ -209,9 +228,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                     }
                 }
             );
-            console.log("excel file = ", response.data);
-            console.log("excel file = ", response.headers);
-            // console.log("excel file = ", response.);
 
             const blob = new Blob([response.data], {type: response.headers['content-type']});
             const url = window.URL.createObjectURL(blob);
@@ -224,9 +240,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         }  catch (error) {
             console.error('Error downloading excel file:', error);
         }
-            // .catch((error) => {
-            //     errorModal(error.response.data.message);
-            // })
     }
 
     return useObserver(() => (
@@ -344,6 +357,11 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                                      fold={fold}
                             />
                         }
+
+                        <hr/>
+                        <br/><br/>
+
+                        <BusinessMaterialLogTable logData={materialLogData}/>
                     </Content>
                 }
             </Layout>

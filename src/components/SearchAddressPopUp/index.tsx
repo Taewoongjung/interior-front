@@ -21,8 +21,6 @@ const SearchAddressPopUp = (props:{ setAddress:any; setOpenSearchAddr:any;}) => 
         }
         console.log(extraAddress)
         setAddress(data);
-        // console.log(fullAddress)
-        // console.log(data.zonecode)
         setOpenSearchAddr(false);
     }
 

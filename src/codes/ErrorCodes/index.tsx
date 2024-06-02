@@ -1,1 +1,1 @@
-export const SIGNUP_ERROR_CODES = [1100];
+export const SIGNUP_ERROR_CODES = [102, 1100];

@@ -1,0 +1,10 @@
+table {
+    margin: auto;
+    border-collapse: collapse;
+    width: 80%;
+}
+
+th, td {
+    border: 1px solid white;
+    padding: 8px;
+}

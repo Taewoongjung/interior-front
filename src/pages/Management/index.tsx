@@ -61,7 +61,7 @@ const Management = () => {
                     <Content style={{ height: 300, marginTop: 50}}>
                         <Divider orientation="center"><Title level={4}>재료 사용 현황</Title></Divider>
                         {businessesMaterial === undefined || businessesMaterial.length === 0 &&
-                            <Spin tip="재료를 추가하세요">
+                            <Spin tip="재료를 추가 해보세요">
                                 <div className="container"
                                      style={{
                                         display: "flex",
