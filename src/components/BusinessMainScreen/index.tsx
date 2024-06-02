@@ -350,9 +350,11 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                         }
 
                         <hr/>
+                        <h2>재료 변경 이력</h2>
                         <br/><br/>
-
-                        <BusinessMaterialLogTable logData={materialLogData}/>
+                        {materialLogData !== undefined &&
+                            <BusinessMaterialLogTable logData={materialLogData}/>
+                        }
                     </Content>
                 }
             </Layout>

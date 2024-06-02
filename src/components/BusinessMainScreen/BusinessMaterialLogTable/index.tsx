@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useState} from "react";
 import './style.css';
 import {DataType} from "../../../definitions/BusinessMaterialLogTable/ILogTableDataType";
 import {Table} from "antd";
+import bottomButton from "../../BottomButton";
 
 const BusinessMaterialLogTable = (props:{logData:DataType[]}) => {
 
@@ -30,18 +31,19 @@ const BusinessMaterialLogTable = (props:{logData:DataType[]}) => {
         },
     ];
 
-
     return (
         <>
-            <table>
-                {(logData !== null || logData !== undefined) &&
-                    <Table
-                        dataSource={logData}
-                        columns={columns}
-                        showHeader={false}
-                    />
-                }
-            </table>
+            {(logData !== null || logData !== undefined) &&
+                <Table
+                    dataSource={logData}
+                    columns={columns}
+                    showHeader={false}
+                    size={'small'}
+                    pagination={false}
+                    scroll={{ y: 300 }}
+                    virtual
+                />
+            }
         </>
     );
 }
