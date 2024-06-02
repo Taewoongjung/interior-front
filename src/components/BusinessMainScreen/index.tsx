@@ -29,7 +29,6 @@ import MainNavState from "../../statemanager/mainNavState";
 import axios from "axios";
 import BusinessMainScreenTable from "./BusinessMaterialTable";
 import BusinessMaterialLogTable from "./BusinessMaterialLogTable";
-import {DataType} from "../../definitions/BusinessMaterialLogTable/ILogTableDataType";
 
 const { confirm } = Modal;
 
@@ -43,8 +42,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
     const history = useHistory();
 
-    const [materialLogData, setMaterialLogData] = useState<DataType[]>([]);
-
     useEffect(() => {
         const token = localStorage.getItem("interiorjung-token");
 
@@ -53,25 +50,6 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
             history.push(redirectUrl);
             window.location.reload();
         }
-
-        // 재료 변경 로그 API 조회
-        axios
-            .get(`http://api-interiorjung.shop:7077/api/businesses/${businessId}/logs`, {
-            // .get(`http://localhost:7070/api/businesses/${businessId}/logs`, {
-                    withCredentials: true, // CORS 처리 옵션
-                    headers: {
-                        Authorization: localStorage.getItem("interiorjung-token")
-                    }
-                }
-            ).then((response) => {
-                if (response.data !== undefined) {
-                    setMaterialLogData(response.data);
-                }
-            })
-            .catch((error) => {
-                errorModal(error.response.data.message);
-            })
-
     }, []);
 
     const handleGoBackManagement = () => {
@@ -99,12 +77,19 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
     const queryParams = new URLSearchParams(location.search);
     const businessId = queryParams.get('businessId');
 
-    const url = businessId ?
-        `http://api-interiorjung.shop:7077/api/businesses/${businessId}`
-        // `http://localhost:7070/api/businesses/${businessId}`
-        : null;
+    const {data:businessesMaterial, error, mutate} = useSWR(
+            businessId ?
+            `http://api-interiorjung.shop:7077/api/businesses/${businessId}`
+            // `http://localhost:7070/api/businesses/${businessId}`
+            : null,
+        fetcher);
 
-    const {data:businessesMaterial, error, mutate} = useSWR(url, fetcher);
+    const {data:materialLogData} = useSWR(
+        businessId ?
+            `http://api-interiorjung.shop:7077/api/businesses/${businessId}/logs`
+            // `http://localhost:7070/api/businesses/${businessId}/logs`
+            : null,
+        fetcher);
 
     const handleMutate = () => {
         mutate();
