@@ -84,7 +84,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
             : null,
         fetcher);
 
-    const {data:materialLogData} = useSWR(
+    const {data:materialLogData, error:logError, mutate:logMutate} = useSWR(
         businessId ?
             `http://api-interiorjung.shop:7077/api/businesses/${businessId}/logs`
             // `http://localhost:7070/api/businesses/${businessId}/logs`
@@ -94,6 +94,10 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
     const handleMutate = () => {
         mutate();
     };
+
+    const handleLogMutate = () => {
+        logMutate();
+    }
 
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
@@ -144,6 +148,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                     setBusinessName('');
                     success('사업 수정 성공');
                     mutate();
+                    logMutate();
                     window.location.reload();
                 }
             })
@@ -293,7 +298,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                             <Col flex={1}>
                                 <Row>
                                     {businessId !== null &&
-                                        <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} />}
+                                        <BusinessMaterialAddInput businessIdParam={businessId} onEvent={handleMutate} onLogEvent={handleLogMutate}/>}
                                 </Row>
                             </Col>
                         </Row>
@@ -339,6 +344,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                             <BusinessMainScreenTable businessesMaterial={businessesMaterial.businessMaterials}
                                                      businessId={businessId}
                                                      onEvent={handleMutate}
+                                                     onLogEvent={handleLogMutate}
                                                      fold={fold}
                             />
                         }

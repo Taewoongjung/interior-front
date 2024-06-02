@@ -20,13 +20,13 @@ const colors = [
     'purple'
 ];
 
-const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; onEvent: () => void; fold:any}) => {
+const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; onEvent: () => void; onLogEvent: () => void; fold:any}) => {
     const [usageCategory, setUsageCategory] = useState('');
     const [usageCategoryName, setUsageCategoryName] = useState('');
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    const {businessesMaterial, businessId, onEvent, fold} = props;
+    const {businessesMaterial, businessId, onEvent, onLogEvent, fold} = props;
 
     // 데이터 로딩 중이거나 에러가 발생한 경우를 처리
     if (!businessesMaterial) {
@@ -69,6 +69,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                 if (response.data === true) {
                     success('재료 삭제 완료');
                     onEvent();
+                    onLogEvent();
                 }})
             .catch((error) => {
                 errorModal(error.response.data.message);

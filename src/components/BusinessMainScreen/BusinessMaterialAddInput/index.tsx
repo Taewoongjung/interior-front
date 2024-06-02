@@ -6,9 +6,9 @@ import {amountUnitOptions, categoryOptions} from "./select";
 
 let index = 0;
 
-const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () => void;}) => {
+const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () => void; onLogEvent: () => void;}) => {
 
-    const {businessIdParam, onEvent} = props;
+    const {businessIdParam, onEvent, onLogEvent} = props;
 
     const [open, setOpen] = useState(false);
 
@@ -46,9 +46,9 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
             }
         })
             .then(response => {
-                console.log('Response:', response);
                 onClose();
                 onEvent();
+                onLogEvent();
                 form.resetFields();
             })
             .catch(error => {
