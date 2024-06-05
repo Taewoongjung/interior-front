@@ -36,7 +36,7 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
 
     const history = useHistory();
 
-    const [collapsed, setCollapsed] = useState(true);
+    const [collapsed, setCollapsed] = useState(false);
 
     const step1 = useRef(null);
     const step2 = useRef(null);

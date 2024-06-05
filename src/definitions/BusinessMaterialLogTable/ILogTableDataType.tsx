@@ -1,6 +1,6 @@
 export interface DataType {
-    updaterName: string;
     changeField: string;
     changeDetail: string;
+    updaterName: string;
     createdAt: string;
 }

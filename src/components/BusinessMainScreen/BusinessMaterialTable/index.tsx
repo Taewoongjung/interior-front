@@ -318,7 +318,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             {businessesMaterial !== undefined &&
                 <Table
                     columns={columns}
-                    expandable={{ expandedRowRender, defaultExpandAllRows: false }}
+                    expandable={{ expandedRowRender, defaultExpandAllRows: true }}
                     dataSource={data}
                 />
             }

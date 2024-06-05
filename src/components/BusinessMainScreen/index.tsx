@@ -7,7 +7,7 @@ import {
     Menu, message, Modal,
     Row,
     Typography,
-    Form, Result, Tooltip,
+    Form, Result, Tooltip, Collapse,
 } from "antd";
 import {
     UserOutlined,
@@ -29,10 +29,13 @@ import MainNavState from "../../statemanager/mainNavState";
 import axios from "axios";
 import BusinessMainScreenTable from "./BusinessMaterialTable";
 import BusinessMaterialLogTable from "./BusinessMaterialLogTable";
+import {v4 as uuidv4} from 'uuid';
+import ProgressBar from "../ProgressBar";
 
 const { confirm } = Modal;
 
 const { Title } = Typography;
+
 
 const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void; onTourEvent: (e:boolean) => void;}) => {
 
@@ -57,6 +60,9 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         history.push(redirectUrl);
         window.location.reload();
     }
+
+    const [taskId, setTaskId] = useState('');
+    const [progressBarModalOpen, setProgressBarModalOpen] = useState(false);
 
     const handleLogout = () => {
         onEvent();
@@ -205,31 +211,44 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         }
     };
 
-    const getExcel = async () => {
-        try {
-            const response = await axios.get(
-                `http://api-interiorjung.shop:7077/api/excels/companies/${companyId}/businesses/${businessId}`,
-                // `http://localhost:7070/api/excels/companies/${companyId}/businesses/${businessId}`,
-                {
-                    responseType: 'blob', // 요청의 응답 형식을 'blob'으로 지정
-                    withCredentials: true, // CORS 처리 옵션
-                    headers: {
-                        Authorization: localStorage.getItem('interiorjung-token')
-                    }
+    useEffect(() => {
+        const fetchExcel = async () => {
+            if (taskId) {
+                try {
+                    const response = await axios.get(
+                        `http:///api-interiorjung.shop:7077/api/excels/companies/${companyId}/businesses/${businessId}?taskId=${taskId}`,
+                        // `http://localhost:7070/api/excels/companies/${companyId}/businesses/${businessId}?taskId=${taskId}`,
+                        {
+                            responseType: 'blob', // 요청의 응답 형식을 'blob'으로 지정
+                            withCredentials: true, // CORS 처리 옵션
+                            headers: {
+                                Authorization: localStorage.getItem('interiorjung-token')
+                            }
+                        }
+                    );
+
+                    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = '재료리스트.xlsx';
+                    a.click();
+
+                    window.URL.revokeObjectURL(url); // 사용한 URL 객체 해제
+                } catch (error) {
+                    console.error('Error downloading excel file:', error);
+                } finally {
+                    setTaskId('');
                 }
-            );
+            }
+        };
 
-            const blob = new Blob([response.data], {type: response.headers['content-type']});
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '재료리스트.xlsx';
-            a.click();
+        fetchExcel();
+    }, [taskId]); // taskId가 변경될 때마다 실행
 
-            window.URL.revokeObjectURL(url); // 사용한 URL 객체 해제
-        }  catch (error) {
-            console.error('Error downloading excel file:', error);
-        }
+    const getExcel = async () => {
+        await setTaskId(uuidv4());
+        await setProgressBarModalOpen(true);
     }
 
     return useObserver(() => (
@@ -317,9 +336,23 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                         icon={<img src="/mainScreen/excel-icon.png" alt="엑셀 다운로드 이미지" width="20" height="20"/>}
                                         size={"middle"}
                                     >
-                                    엑셀 다운로드
-                                </Button>
+                                        엑셀 다운로드
+                                    </Button>
                                 }
+                                <Modal
+                                    title="재료 리스트 엑셀 다운로드"
+                                    open={progressBarModalOpen}
+                                    footer={null}
+                                    style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        minHeight: '200px', // 높이를 조정하여 중앙에 위치하도록 설정
+                                    }}
+                                >
+                                    <ProgressBar taskId={taskId} setProgressBarModalOpen={setProgressBarModalOpen}/>
+                                </Modal>
                             </Col>
                             <Col>
                                 <Row style={{ fontSize: 12 }}>
@@ -348,12 +381,13 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                                                      fold={fold}
                             />
                         }
-
-                        <hr/>
-                        <h2>재료 변경 이력</h2>
                         <br/><br/>
-                        {materialLogData !== undefined &&
-                            <BusinessMaterialLogTable logData={materialLogData}/>
+                        {materialLogData &&
+                            <Collapse
+                                size="large"
+                                defaultActiveKey={['1']}
+                                items={[{ key: '1', label: <strong>재료 변경 이력</strong>, children: <BusinessMaterialLogTable logData={materialLogData}/> }]}
+                            />
                         }
                     </Content>
                 }

@@ -88,10 +88,6 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
         setAddressBuildingNum(newAddress.buildingCode);
     };
 
-    console.log("🙇🏻‍♂️ = ", address);
-    console.log("🙇🏻‍♂️ = ", addressZoneCode);
-    console.log("❤️ = ", openSearchAddr);
-
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const showModal = () => {
