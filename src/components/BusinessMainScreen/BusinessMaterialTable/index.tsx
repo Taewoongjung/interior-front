@@ -229,7 +229,8 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
 
     // 클릭 이벤트 핸들러
     const handleEditClick = async (subData: any[]) => {
-        const subDataIds: any[] = [];
+
+        const subDataIds = subData.map(item => item.id);
 
         await axios
             .patch(`http://api-interiorjung.shop:7077/api/businesses/${businessId}`,
@@ -279,7 +280,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                         onConfirm={() => confirm(record.businessName, record.subData)} // subData를 confirm 함수에 전달
                         onOpenChange={(open: boolean) => {
                             if (open) {
-                                setUsageCategory(record.businessName.props.children.props.children);
+                                setUsageCategory(record.businessName.props.children.props.children.props.children);
                             }
                             if (!open) {
                                 // 팝업이 닫힐 때의 로직

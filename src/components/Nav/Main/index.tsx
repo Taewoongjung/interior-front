@@ -3,7 +3,13 @@ import {useHistory, useParams} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../../utils/fetcher";
 import {Button, Menu, MenuProps, Tour, TourProps} from "antd";
-import {AppstoreOutlined, MenuFoldOutlined, MenuUnfoldOutlined, PlusSquareOutlined} from "@ant-design/icons";
+import {
+    AppstoreOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    PlusSquareOutlined,
+    SlidersOutlined
+} from "@ant-design/icons";
 import {useObserver} from "mobx-react";
 import MainNavState from "../../../statemanager/mainNavState";
 
@@ -41,12 +47,13 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
     const step1 = useRef(null);
     const step2 = useRef(null);
     const step3 = useRef(null);
+    const step4 = useRef(null);
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
     };
 
-    const handleButtonClick = async (businessId: string) => {
+    const handleButtonMain3Click = async (businessId: string) => {
         mutate();
         // 이벤트 발생 시 쿼리 파라미터를 추가하여 URL을 업데이트
         const newQueryParams = new URLSearchParams(history.location.search);
@@ -89,7 +96,8 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
     // "사업 목록" 아래에 새로운 비즈니스 아이템을 추가하여 전체 메뉴 아이템 배열 생성
     const menuItems: MenuProps['items'] = [
         getItem('사업 등록', 'main1', <PlusSquareOutlined ref={step2}/>),
-        getItem('사업 목록', 'main2', <AppstoreOutlined ref={step3}/>, businessItems)
+        getItem('사업 관리', 'main2', <SlidersOutlined ref={step3}/>),
+        getItem('사업 목록', 'main3', <AppstoreOutlined ref={step4}/>, businessItems)
     ];
 
     // 메뉴 클릭 이벤트 핸들러
@@ -97,7 +105,12 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
         if (key === 'main1') {
             return await props.navState.setNavState('사업 등록');
         }
-        await handleButtonClick(key.toString());
+
+        if (key === 'main2') {
+            return await props.navState.setNavState('사업 관리');
+        }
+
+        await handleButtonMain3Click(key.toString());
         return await props.navState.setNavState('사업 목록');
     };
 
@@ -126,6 +139,17 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
             target: () => step2.current,
         },
         {
+            title: '사업 관리',
+            description: `업자님의 사업들을 전체적으로 관리할 수 있는 페이지 입니다.`,
+            cover: (
+                <img
+                    alt="tour.png"
+                    // src="/mainScreen/가이드3.png"
+                />
+            ),
+            target: () => step3.current,
+        },
+        {
             title: '사업 목록',
             description: `등록 된 사업 목록을 보여줍니다. ["사업 등록"]에서 사업을 등록하시면 해당 목록에 추가됩니다.`,
             cover: (
@@ -134,7 +158,7 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
                     src="/mainScreen/가이드3.png"
                 />
             ),
-            target: () => step3.current,
+            target: () => step4.current,
         }
     ];
 

@@ -31,6 +31,7 @@ import BusinessMainScreenTable from "./BusinessMaterialTable";
 import BusinessMaterialLogTable from "./BusinessMaterialLogTable";
 import {v4 as uuidv4} from 'uuid';
 import ProgressBar from "../ProgressBar";
+import BusinessManagement from "../../pages/BusinessManagement";
 
 const { confirm } = Modal;
 
@@ -258,7 +259,8 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                 <Header style={{ background: 'white' }}>
                     <Row justify="space-between">
                         {props.navState.getNavState() === '사업 등록' &&<Col></Col>}
-                        {props.navState.getNavState() !== '사업 등록' &&
+                        {props.navState.getNavState() === '사업 관리' &&<Col></Col>}
+                        {(props.navState.getNavState() !== '사업 등록' && props.navState.getNavState() !== '사업 관리')  &&
                             <Row justify="space-between">
                                     <Title level={2}>{businessesMaterial && businessesMaterial.businessName}</Title>
                                 &nbsp;&nbsp;
@@ -306,7 +308,8 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                     </Row>
                 </Header>
                 {props.navState.getNavState() === '사업 등록' && <RegisterBusiness/>}
-                {props.navState.getNavState() !== '사업 등록' &&
+                {props.navState.getNavState() === '사업 관리' && <BusinessManagement/>}
+                {(props.navState.getNavState() !== '사업 등록' && props.navState.getNavState() !== '사업 관리') &&
                     <Content style={{ background: 'white', padding: 28 }}>
                         <Row gutter={8}>
                             <Col flex={100}>

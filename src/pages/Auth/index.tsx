@@ -4,7 +4,10 @@ import './styles.scss';
 import {useForm} from "react-hook-form";
 import {IFormValues} from "../../definitions/Auth/IFormValues";
 import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
-import {message} from "antd";
+import {Button, Input, message, Modal, Statistic} from "antd";
+import {MailOutlined, CheckOutlined} from "@ant-design/icons";
+
+const { Countdown } = Statistic;
 
 const Auth = () => {
     const [isLogIn, setIsLogIn] = useState(false);
@@ -19,6 +22,9 @@ const Auth = () => {
         setPassword('');
         setEmailError('');
         setPasswordError('');
+        setIsVerified(false);
+        setVerifyTargetEmail('');
+        setIsInProgressVerifyingEmail(false);
         clearErrors();
         reset();
     }
@@ -26,7 +32,7 @@ const Auth = () => {
     const onSubmitSignUp = async (data: { name: any; email: any; tel: any; password: any; reCheckPassword: any; }) => {
         const {name, email, tel, password, reCheckPassword} = data;
 
-        const role = "ADMIN";
+        const role = "CUSTOMER";
 
         if (password !== reCheckPassword) {
             errorModal("비밀번호가 다릅니다. 다시 확인해주세요.")
@@ -124,7 +130,7 @@ const Auth = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("interiorjung-token");
-        console.log("token= ",token);
+
         if (token !== null) {
             if (token !== undefined) {
                 axios.get(
@@ -174,6 +180,91 @@ const Auth = () => {
         });
     };
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const verifyEmailOkHandler = () => {
+        axios.get(
+            `http://api-interiorjung.shop:7077/api/emails/validations?targetEmail=${verifyTargetEmail}&compNumber=${verifyCompareNumber}`,
+            // `http://localhost:7070/api/emails/validations?targetEmail=${verifyTargetEmail}&compNumber=${verifyCompareNumber}`,
+            {
+                withCredentials: true
+            })
+            .then((response) => {
+                if (response.data === true) {
+                    success("인증 완료")
+                    setIsModalOpen(false);
+                    setIsInProgressVerifyingEmail(false);
+                    setIsVerified(true);
+                }
+            })
+            .catch((error) => {
+                errorModal(error.response.data.message);
+            });
+    };
+
+    const handleCancel = () => {
+        stopLoading(2);
+        setIsVerified(false);
+        setIsModalOpen(false);
+        setIsInProgressVerifyingEmail(false);
+    };
+
+    const [verifyTargetEmail, setVerifyTargetEmail] = useState('');
+    const [verifyCompareNumber, setVerifyCompareNumber] = useState('');
+    const [isInProgressVerifyingEmail, setIsInProgressVerifyingEmail] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
+    const [loadings, setLoadings] = useState<boolean[]>([]);
+
+    const emailVerificationDeadline = Date.now() + 1000 * 60 * 3;
+
+    const enterLoading = (index: number) => {
+        if (verifyTargetEmail !== "" && verifyTargetEmail !== undefined && verifyTargetEmail !== null) {
+            setLoadings((prevLoadings) => {
+                const newLoadings = [...prevLoadings];
+                newLoadings[index] = true;
+                return newLoadings;
+            })
+        }
+    };
+
+    const stopLoading = (index: number) => {
+        setLoadings((prevLoadings) => {
+            const newLoadings = [...prevLoadings];
+            newLoadings[index] = false;
+            return newLoadings;
+        })};
+
+    const verifyEmail = () => {
+
+        if (verifyTargetEmail !== "" && verifyTargetEmail !== undefined && verifyTargetEmail !== null) {
+
+            const targetEmail = verifyTargetEmail;
+
+            axios.post(
+                "http://api-interiorjung.shop:7077/api/emails/validations",
+                // "http://localhost:7070/api/emails/validations",
+                {
+                    targetEmail
+                }, {withCredentials: true, })
+                .then((response) => {
+                    if (response.data === true) {
+                        stopLoading(2);
+                        setIsModalOpen(true);
+                        setIsInProgressVerifyingEmail(true);
+                    }
+                })
+                .catch((error) => {
+                    errorModal(error.response.data.message);
+                });
+        }
+    }
+
+    const onFinishCountDown = () => {
+        stopLoading(2);
+        setIsInProgressVerifyingEmail(false);
+        setIsModalOpen(false);
+    };
+
     return (
         <>
             {contextHolder}
@@ -193,18 +284,49 @@ const Auth = () => {
                                         },
                                     })} />
                                 {errors.name && <div>{errors.name?.message}</div>}
-
-                                <input
-                                    type="email" placeholder="이메일"
-                                    {...register("email", {
-                                        required: "이메일은 필수 응답 항목입니다.",
-                                        pattern: {
-                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
-                                            message: "이메일 형식이 아닙니다."
-                                        }
-                                    })} />
-                                {errors.email && <div>{errors.email?.message}</div>}
-
+                                <div className="email-input-group">
+                                    <input
+                                        type="email" placeholder="이메일"
+                                        {...register("email", {
+                                            required: "이메일은 필수 응답 항목입니다.",
+                                            pattern: {
+                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
+                                                message: "이메일 형식이 아닙니다."
+                                            }
+                                        })}
+                                        onChange={(e) => setVerifyTargetEmail(e.target.value)}
+                                    />
+                                    {errors.email && <div>{errors.email?.message}</div>}
+                                    {!isInProgressVerifyingEmail &&
+                                        <Button
+                                            loading={loadings[2]}
+                                            onClick={() => {
+                                                enterLoading(2);
+                                                verifyEmail();
+                                            }}
+                                        >
+                                            {isVerified ? <CheckOutlined /> : "인증"}
+                                        </Button>
+                                    }
+                                </div>
+                                <Modal title="이메일 인증" 
+                                       centered 
+                                       open={isModalOpen}
+                                       onOk={verifyEmailOkHandler}
+                                       okText={"인증"}
+                                       onCancel={handleCancel}
+                                       cancelText={"취소"}
+                                >
+                                    <div className="verify-email-input-group">
+                                        <Input className="verification-input"
+                                               size="large"
+                                               placeholder="인증번호"
+                                               prefix={<MailOutlined/>}
+                                               onChange={(e) => setVerifyCompareNumber(e.target.value)}
+                                        />
+                                        <Countdown className="verification-count" value={emailVerificationDeadline} onFinish={onFinishCountDown} />
+                                    </div>
+                                </Modal>
                                 <input
                                     type="tel" placeholder="전화번호"
                                     {...register("tel", {

@@ -141,3 +141,30 @@ section {
     }
   }
 }
+.email-input-group {
+  display: flex;
+  align-items: center;
+
+  input {
+    flex: 1;
+    margin-right: 8px; // input과 버튼 사이의 간격 조정
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+  button {
+    white-space: nowrap; // 버튼 텍스트가 줄바꿈되지 않도록 함
+  }
+}
+.verify-email-input-group {
+  display: flex;
+  align-items: center;
+
+  .verification-input {
+    margin-right: 10%; // Input 요소와 Countdown 요소 사이의 간격을 조정
+  }
+  .verification-count {
+    margin-right: 5%; // Input 요소와 Countdown 요소 사이의 간격을 조정
+  }
+}

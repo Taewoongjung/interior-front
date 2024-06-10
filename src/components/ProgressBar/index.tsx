@@ -14,8 +14,6 @@ const ProgressBar = (props:{ taskId:string; setProgressBarModalOpen:any; }) => {
 
     const [percentage, setPercentage] = useState(0);
 
-    console.log("progress", taskId);
-
     useEffect(() => {
         if (!taskId) return;
 
@@ -29,7 +27,6 @@ const ProgressBar = (props:{ taskId:string; setProgressBarModalOpen:any; }) => {
         };
 
         eventSource.addEventListener(taskId, (e:any) => {
-            console.log("11 = ",e.data);
             if (e && e.data) {
                 try {
                     const streamData = JSON.parse(e.data);
@@ -57,7 +54,6 @@ const ProgressBar = (props:{ taskId:string; setProgressBarModalOpen:any; }) => {
         return () => {
             setProgressBarModalOpen(false);
             eventSource.close(); // 컴포넌트 언마운트 시 EventSource를 닫습니다.
-            setPercentage(0);
             console.log("EventSource closed.");
         };
     }, [taskId, setProgressBarModalOpen]);
