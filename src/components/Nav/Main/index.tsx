@@ -176,7 +176,7 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
                 >{collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}</Button>
                 <Menu
                     theme="light"
-                    mode="vertical"
+                    mode="inline"
                     defaultSelectedKeys={['1']}
                     style={{
                         background: '#e7a19a',
@@ -185,6 +185,7 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
                         minWidth: 0, flex: "auto"
                     }}
                     items={menuItems}
+                    defaultOpenKeys={["main3"]}
                     onClick={({ key }) => handleMenuClick(key.toString())}
                     inlineCollapsed={collapsed}
                 />
