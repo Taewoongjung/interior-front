@@ -145,8 +145,8 @@ const Auth = () => {
                     .then((response) => {
                         window.location.href = '/management';
                     })
-                    .catch((error) => {}
-                    );
+                    .catch((error) => {
+                    });
             }
         }
     }, []);
@@ -198,6 +198,7 @@ const Auth = () => {
                 }
             })
             .catch((error) => {
+                stopLoading(2);
                 errorModal(error.response.data.message);
             });
     };
@@ -255,6 +256,7 @@ const Auth = () => {
                 })
                 .catch((error) => {
                     errorModal(error.response.data.message);
+                    stopLoading(2);
                 });
         }
     }
