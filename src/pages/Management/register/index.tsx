@@ -183,6 +183,9 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
                         <Col>
                             <Form.Item
                                 name="subAddress"
+                                rules={[
+                                    { required: true, message: '⚠️ 나머지 주소는 필수 응답 항목입니다.' },
+                                ]}
                             >
                                 <Input
                                     style={{ width: '300px' }}
