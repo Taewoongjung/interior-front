@@ -255,7 +255,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
     return useObserver(() => (
         <>
             {contextHolder}
-            <Layout>
+            <Layout style={{ marginLeft: 200 }}>
                 <Header style={{ background: 'white' }}>
                     <Row justify="space-between">
                         {props.navState.getNavState() === '사업 등록' &&<Col></Col>}
