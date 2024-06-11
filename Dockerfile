@@ -15,7 +15,7 @@ RUN npm install --force
 COPY . .
 
 # .env 파일 복사
-COPY .env .env
+COPY .env .
 
 # npm build
 RUN npm run build
