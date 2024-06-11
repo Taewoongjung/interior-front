@@ -9,7 +9,11 @@ import {MailOutlined, CheckOutlined} from "@ant-design/icons";
 
 const { Countdown } = Statistic;
 
+const apiUrl = process.env.REACT_APP_REQUEST_API_URL;
+
 const Auth = () => {
+    console.log("?? = ", apiUrl);
+
     const [isLogIn, setIsLogIn] = useState(false);
 
     const toggleForm = () => {

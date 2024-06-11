@@ -14,6 +14,9 @@ RUN npm install --force
 # 호스트 머신의 현재 디렉토리 파일들을 컨테이너 내부로 전부 복사
 COPY . .
 
+# .env 파일 복사
+COPY .env .env
+
 # npm build
 RUN npm run build
 
