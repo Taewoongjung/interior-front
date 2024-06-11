@@ -33,6 +33,8 @@ import {v4 as uuidv4} from 'uuid';
 import ProgressBar from "../ProgressBar";
 import BusinessManagement from "../../pages/BusinessManagement";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 const { confirm } = Modal;
 
 const { Title } = Typography;
@@ -86,15 +88,13 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
 
     const {data:businessesMaterial, error, mutate} = useSWR(
             businessId ?
-            `http://api-interiorjung.shop:7077/api/businesses/${businessId}`
-            // `http://localhost:7070/api/businesses/${businessId}`
+                `${API_URL}/api/businesses/${businessId}`
             : null,
         fetcher);
 
     const {data:materialLogData, error:logError, mutate:logMutate} = useSWR(
         businessId ?
-            `http://api-interiorjung.shop:7077/api/businesses/${businessId}/logs`
-            // `http://localhost:7070/api/businesses/${businessId}/logs`
+                `${API_URL}/api/businesses/${businessId}/logs`
             : null,
         fetcher);
 
@@ -141,8 +141,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
         const changeBusinessName = reviseBusinessName;
 
         await axios
-            .patch(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses/${businessId}`, {
-            // .patch(`http://localhost:7070/api/companies/${companyId}/businesses/${businessId}`, {
+            .patch(`${API_URL}/api/companies/${companyId}/businesses/${businessId}`, {
                     changeBusinessName
                 }, {
                     withCredentials: true, // CORS 처리 옵션
@@ -180,8 +179,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
             cancelText: '취소',
             onOk() {
                 axios
-                    .delete(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses/${businessId}`, {
-                    // .delete(`http://localhost:7070/api/companies/${companyId}/businesses/${businessId}`, {
+                    .delete(`${API_URL}/api/companies/${companyId}/businesses/${businessId}`, {
                             withCredentials: true, // CORS 처리 옵션
                             headers: {
                                 Authorization: localStorage.getItem("interiorjung-token")
@@ -217,8 +215,7 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
             if (taskId) {
                 try {
                     const response = await axios.get(
-                        `http:///api-interiorjung.shop:7077/api/excels/companies/${companyId}/businesses/${businessId}?taskId=${taskId}`,
-                        // `http://localhost:7070/api/excels/companies/${companyId}/businesses/${businessId}?taskId=${taskId}`,
+                        `${API_URL}/api/excels/companies/${companyId}/businesses/${businessId}?taskId=${taskId}`,
                         {
                             responseType: 'blob', // 요청의 응답 형식을 'blob'으로 지정
                             withCredentials: true, // CORS 처리 옵션

@@ -5,6 +5,8 @@ import axios from "axios";
 import SearchAddressPopUp from "../../../components/SearchAddressPopUp";
 import {useObserver} from "mobx-react";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 const CompanyRegister = (props:{onEvent: () => void}) => {
     const {onEvent} = props;
 
@@ -41,8 +43,7 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
         const {companyName, zipCode, mainAddress, subAddress, tel} = values;
         const bdgNumber = addressBuildingNum;
         await axios
-            .post("http://api-interiorjung.shop:7077/api/companies", {
-            // .post("http://localhost:7070/api/companies", {
+            .post(`${API_URL}/api/companies`, {
                 companyName, zipCode, mainAddress, subAddress, bdgNumber, tel
             },
             {

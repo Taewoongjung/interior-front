@@ -13,6 +13,8 @@ import {LogoutOutlined, PieChartOutlined, UserOutlined} from "@ant-design/icons"
 import {useHistory} from "react-router-dom";
 import {useObserver} from "mobx-react";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 const { Title } = Typography;
 
 const Management = () => {
@@ -33,16 +35,12 @@ const Management = () => {
         </Menu>
     );
 
-    const {data:userData, error, mutate} = useSWR(
-        'http://api-interiorjung.shop:7077/api/me',
-        // 'http://localhost:7070/api/me',
+    const {data:userData, error, mutate} = useSWR(`${API_URL}/api/me`,
         fetcher,{
             dedupingInterval: 2000
         });
 
-    const {data:businessesMaterial} = useSWR(
-        `http://api-interiorjung.shop:7077/api/businesses`,
-        // `http://localhost:7070/api/businesses`,
+    const {data:businessesMaterial} = useSWR(`${API_URL}/api/businesses`,
         fetcher,{
             dedupingInterval: 2000
         });

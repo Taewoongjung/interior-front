@@ -13,6 +13,8 @@ import {
 import {useObserver} from "mobx-react";
 import MainNavState from "../../../statemanager/mainNavState";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
@@ -65,8 +67,7 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
     };
 
     const {data:businesses, error, mutate} = useSWR(
-        `http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses`,
-        // `http://localhost:7070/api/companies/${companyId}/businesses`,
+        `${API_URL}/api/companies/${companyId}/businesses`,
         fetcher);
 
     // 비즈니스 목록을 담을 상태

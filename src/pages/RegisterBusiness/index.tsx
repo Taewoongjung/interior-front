@@ -14,6 +14,8 @@ import axios from "axios";
 import {useHistory, useParams} from "react-router-dom";
 import { Header } from "antd/es/layout/layout";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 type NotificationPlacement = NotificationArgsProps['placement'];
 
 const items: DescriptionsProps['items'] = [
@@ -56,8 +58,7 @@ const RegisterBusiness = () => {
     const onSubmitCreateBusiness = useCallback(async (e: { preventDefault: () => void; }) => {
 
             await axios
-                .post(`http://api-interiorjung.shop:7077/api/companies/${companyId}/businesses`, {
-                // .post(`http://localhost:7070/api/companies/${companyId}/businesses`, {
+                .post(`${API_URL}/api/companies/${companyId}/businesses`, {
                         businessName
                     }, {
                         withCredentials: true, // CORS 처리 옵션

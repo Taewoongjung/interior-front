@@ -5,6 +5,8 @@ import axios from "axios";
 import useSWR from "swr";
 import fetcher from "../../../utils/fetcher";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 // 랜덤 색상 목록
 const colors = [
     'magenta',
@@ -58,8 +60,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
     const confirmDelete: (materialId: (string | number)) => void = async (materialId:string | number) => {
 
         await axios
-            .delete(`http://api-interiorjung.shop:7077/api/businesses/${businessId}/materials/${materialId}`, {
-            // .delete(`http://localhost:7070/api/businesses/${businessId}/materials/${materialId}`, {
+            .delete(`${API_URL}/api/businesses/${businessId}/materials/${materialId}`, {
                     withCredentials: true,
                     headers: {
                         Authorization: localStorage.getItem("interiorjung-token")
@@ -233,8 +234,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
         const subDataIds = subData.map(item => item.id);
 
         await axios
-            .patch(`http://api-interiorjung.shop:7077/api/businesses/${businessId}`,
-            // .patch(`http://localhost:7070/api/businesses/${businessId}`,
+            .patch(`${API_URL}/api/businesses/${businessId}`,
                 {subDataIds, usageCategoryName},
                 {
                     withCredentials: true,

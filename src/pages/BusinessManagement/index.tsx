@@ -2,11 +2,12 @@ import React from "react";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 const BusinessManagement = () => {
 
     const {data:userData, error, mutate} = useSWR(
-        'http://api-interiorjung.shop:7077/api/me',
-        // 'http://localhost:7070/api/me',
+        `${API_URL}/api/me`,
         fetcher,{
             dedupingInterval: 2000
         });

@@ -4,6 +4,8 @@ import {Button, Col, Drawer, Form, Input, Row, Select, Space, InputNumber, Alert
 import {PlusOutlined} from "@ant-design/icons";
 import {amountUnitOptions, categoryOptions} from "./select";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 let index = 0;
 
 const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () => void; onLogEvent: () => void;}) => {
@@ -35,8 +37,7 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
         const materialCostPerUnit = values.materialCostPerUnit;
 
         await axios
-            .post(`http://api-interiorjung.shop:7077/api/businesses/${businessIdParam}/materials`, {
-            // .post(`http://localhost:7070/api/businesses/${businessIdParam[0]}/materials`, {
+            .post(`${API_URL}/api/businesses/${businessIdParam}/materials`, {
                 materialAmount, materialUsageCategory, materialCategory, materialMemo, materialAmountUnit, materialName,
                 materialCostPerUnit, laborCostPerUnit
         }, {

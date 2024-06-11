@@ -2,6 +2,8 @@ import React, {useEffect, useState} from "react";
 import {Progress, ProgressProps} from "antd";
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 const conicColors: ProgressProps['strokeColor'] = {
     '0%': '#87d068',
     '50%': '#ffe58f',
@@ -18,8 +20,7 @@ const ProgressBar = (props:{ taskId:string; setProgressBarModalOpen:any; }) => {
         if (!taskId) return;
 
         const eventSource = new EventSource(
-            `http://api-interiorjung.shop:7077/api/excels/tasks/${taskId}`,
-            // `http://localhost:7070/api/excels/tasks/${taskId}`
+            `${API_URL}/api/excels/tasks/${taskId}`,
         );
 
         eventSource.onopen = () => {

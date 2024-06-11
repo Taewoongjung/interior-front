@@ -8,6 +8,8 @@ import {
 } from "@ant-design/icons";
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 type OnChange = NonNullable<TableProps<DataType>['onChange']>;
 type Filters = Parameters<OnChange>[1];
 
@@ -62,8 +64,7 @@ const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
             cancelText: '취소',
             onOk() {
                 axios
-                    .delete(`http://api-interiorjung.shop:7077/api/companies/${companyId}`, {
-                    // .delete(`http://localhost:7070/api/companies/${companyId}`, {
+                    .delete(`${API_URL}/api/companies/${companyId}`, {
                             withCredentials: true, // CORS 처리 옵션
                             headers: {
                                 Authorization: localStorage.getItem("interiorjung-token")

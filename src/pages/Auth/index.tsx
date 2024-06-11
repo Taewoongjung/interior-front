@@ -7,12 +7,11 @@ import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
 import {Button, Input, message, Modal, Statistic} from "antd";
 import {MailOutlined, CheckOutlined} from "@ant-design/icons";
 
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
 const { Countdown } = Statistic;
 
-const apiUrl = process.env.REACT_APP_REQUEST_API_URL;
-
 const Auth = () => {
-    console.log("?? = ", apiUrl);
 
     const [isLogIn, setIsLogIn] = useState(false);
 
@@ -43,9 +42,7 @@ const Auth = () => {
             return null;
         }
 
-        await axios
-            .post("http://api-interiorjung.shop:7077/api/signup", {
-            // .post("http://localhost:7070/api/signup", {
+        await axios.post(`${API_URL}/api/signup`, {
             name, email, password, tel, role
             }, {
                 withCredentials: true // CORS 처리 옵션
@@ -106,9 +103,7 @@ const Auth = () => {
             formData.append("password", password);
 
             await axios
-                .post(
-                    "http://api-interiorjung.shop:7077/api/login",
-                    // "http://localhost:7070/api/login",
+                .post(`${API_URL}/api/login`,
                     formData,
                     {
                         withCredentials: true,
@@ -137,9 +132,7 @@ const Auth = () => {
 
         if (token !== null) {
             if (token !== undefined) {
-                axios.get(
-                        "http://api-interiorjung.shop:7077/api/me",
-                        // "http://localhost:7070/api/me",
+                axios.get(`${API_URL}/api/me`,
                         {
                             headers: {
                                 Authorization: localStorage.getItem("interiorjung-token"),
@@ -187,9 +180,7 @@ const Auth = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const verifyEmailOkHandler = () => {
-        axios.get(
-            `http://api-interiorjung.shop:7077/api/emails/validations?targetEmail=${verifyTargetEmail}&compNumber=${verifyCompareNumber}`,
-            // `http://localhost:7070/api/emails/validations?targetEmail=${verifyTargetEmail}&compNumber=${verifyCompareNumber}`,
+        axios.get(`${API_URL}/api/emails/validations?targetEmail=${verifyTargetEmail}&compNumber=${verifyCompareNumber}`,
             {
                 withCredentials: true
             })
@@ -245,9 +236,7 @@ const Auth = () => {
 
             const targetEmail = verifyTargetEmail;
 
-            axios.post(
-                "http://api-interiorjung.shop:7077/api/emails/validations",
-                // "http://localhost:7070/api/emails/validations",
+            axios.post(`${API_URL}/api/emails/validations`,
                 {
                     targetEmail
                 }, {withCredentials: true, })
