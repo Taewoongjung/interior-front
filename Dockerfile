@@ -28,5 +28,9 @@ COPY --from=builder /app/build /usr/share/nginx/html
 # 컨테이너의 80번 포트를 열어준다.
 EXPOSE 80
 
+# .env 파일을 환경 변수로 전달
+# Docker 컨테이너를 실행할 때 이 부분을 환경 변수에 맞게 수정해주세요
+ENV REACT_APP_REQUEST_API_URL=http://api-interiorjung.shop:7077
+
 # nginx 서버를 실행하고 백그라운드로 동작하도록 한다.
 CMD ["nginx", "-g", "daemon off;"]
