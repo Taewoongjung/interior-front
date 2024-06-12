@@ -4,18 +4,10 @@ import EachBusinessManagement from "./EachBusinessManagement";
 import {useParams} from "react-router-dom";
 import BusinessStatistics from "./BusinessStatistics";
 import axios from "axios";
-import {FolderOpenOutlined} from "@ant-design/icons";
 import {useObserver} from "mobx-react";
 import mainNavStateInstance from "../../statemanager/mainNavState";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
-
-const customizeRenderEmpty = () => (
-    <div style={{ textAlign: 'center' }}>
-        <FolderOpenOutlined style={{ fontSize: 20 }} />
-        <p>Data Not Found</p>
-    </div>
-);
 
 const BusinessManagement = () => {
 
