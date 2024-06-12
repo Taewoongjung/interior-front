@@ -71,7 +71,7 @@ const PieChart =(props:{businessesMaterial:any; usageType:string}) => {
         <>
             <ResponsivePie
                 data={chartData}
-                margin={{ top: 40, right: 80, bottom: 80, left: 80 }}
+                margin={{ top: 10, right: 10, bottom: 60, left: 10 }}
                 innerRadius={0.5}
                 padAngle={0.7}
                 cornerRadius={3}

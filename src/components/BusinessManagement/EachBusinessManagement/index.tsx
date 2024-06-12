@@ -1,7 +1,7 @@
 import React from "react";
 import PieChart from "../../../pages/Management/charts/Pie";
 import {Content} from "antd/es/layout/layout";
-import {Row, DescriptionsProps, Descriptions, Badge} from "antd";
+import {Row, DescriptionsProps, Descriptions, Badge, Card} from "antd";
 
 const EachBusinessManagement = (props: { business:any; }) => {
 
@@ -56,6 +56,10 @@ const EachBusinessManagement = (props: { business:any; }) => {
         return grossCost;
     };
 
+    const getAddress = () => {
+        return`[${business.zipCode}] ${business.address} ${business.subAddress}`
+    }
+
     const items: DescriptionsProps['items'] = [
         {
             key: '1',
@@ -90,7 +94,7 @@ const EachBusinessManagement = (props: { business:any; }) => {
         {
             key: '6',
             label: 'Address',
-            children: '경기도 성남시 분당구 판교역로 166 (예시)',
+            children: `${getAddress()}`,
         },
     ];
 
@@ -102,7 +106,11 @@ const EachBusinessManagement = (props: { business:any; }) => {
                 <br/>
                 <Row style={{ height: 300}}>
                     {business && business !== undefined &&
-                        <PieChart  businessesMaterial={business} usageType={"사업 관리"}/>
+                        <Card title="재료 사용 현황" bordered={true} style={{ width: 350, height: 310 }}>
+                            <div style={{ height: 250}}>
+                                <PieChart  businessesMaterial={business} usageType={"사업 관리"}/>
+                            </div>
+                        </Card>
                     }
                 </Row>
             </Content>
