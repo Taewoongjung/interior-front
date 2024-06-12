@@ -31,7 +31,7 @@ import BusinessMainScreenTable from "./BusinessMaterialTable";
 import BusinessMaterialLogTable from "./BusinessMaterialLogTable";
 import {v4 as uuidv4} from 'uuid';
 import ProgressBar from "../ProgressBar";
-import BusinessManagement from "../../pages/BusinessManagement";
+import BusinessManagement from "../BusinessManagement";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
