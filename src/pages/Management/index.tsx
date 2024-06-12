@@ -57,7 +57,7 @@ const Management = () => {
                         <UserView name={userData?.name} email={userData?.email}/>
                     </Content>
                     <Content style={{ height: 300, marginTop: 50}}>
-                        <Divider orientation="center"><Title level={4}>재료 사용 현황</Title></Divider>
+                        <Divider orientation="center"><Title level={4}>전체 재료 사용 현황</Title></Divider>
                         {businessesMaterial === undefined || businessesMaterial.length === 0 &&
                             <Spin tip="재료를 추가 해보세요">
                                 <div className="container"
@@ -71,7 +71,7 @@ const Management = () => {
                                 </div>
                             </Spin>
                         }
-                        <PieChart businessesMaterial={businessesMaterial}/>
+                        <PieChart businessesMaterial={businessesMaterial} usageType={"대시보드"}/>
                         <Divider />
                     </Content>
                 </Sider>

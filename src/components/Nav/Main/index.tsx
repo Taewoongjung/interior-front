@@ -12,6 +12,7 @@ import {
 } from "@ant-design/icons";
 import {useObserver} from "mobx-react";
 import MainNavState from "../../../statemanager/mainNavState";
+import mainNavStateInstance from "../../../statemanager/mainNavState";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -36,7 +37,7 @@ function getItem(
 // 초기 메뉴 아이템 설정
 const initialBusinessItems: MenuItem[] = [];
 
-const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: any) => void;}) => {
+const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void;}) => {
 
     const {tourOpen, onTourEvent} = props;
 
@@ -104,15 +105,15 @@ const NavMain = (props:{navState:MainNavState; tourOpen:any; onTourEvent: (e: an
     // 메뉴 클릭 이벤트 핸들러
     const handleMenuClick = async (key: string) => {
         if (key === 'main1') {
-            return await props.navState.setNavState('사업 등록');
+            return await mainNavStateInstance.setNavState('사업 등록');
         }
 
         if (key === 'main2') {
-            return await props.navState.setNavState('사업 관리');
+            return await mainNavStateInstance.setNavState('사업 관리');
         }
 
         await handleButtonMain3Click(key.toString());
-        return await props.navState.setNavState('사업 목록');
+        return await mainNavStateInstance.setNavState('사업 목록');
     };
 
     const steps: TourProps['steps'] = [

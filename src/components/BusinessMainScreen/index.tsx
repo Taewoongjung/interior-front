@@ -32,6 +32,7 @@ import BusinessMaterialLogTable from "./BusinessMaterialLogTable";
 import {v4 as uuidv4} from 'uuid';
 import ProgressBar from "../ProgressBar";
 import BusinessManagement from "../BusinessManagement";
+import mainNavStateInstance from "../../statemanager/mainNavState";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -40,7 +41,7 @@ const { confirm } = Modal;
 const { Title } = Typography;
 
 
-const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () => void; onTourEvent: (e:boolean) => void;}) => {
+const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (e:boolean) => void;}) => {
 
     const {user, onEvent, onTourEvent} = props;
 
@@ -255,9 +256,9 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
             <Layout style={{ marginLeft: 200 }}>
                 <Header style={{ background: 'white' }}>
                     <Row justify="space-between">
-                        {props.navState.getNavState() === '사업 등록' &&<Col></Col>}
-                        {props.navState.getNavState() === '사업 관리' &&<Col></Col>}
-                        {(props.navState.getNavState() !== '사업 등록' && props.navState.getNavState() !== '사업 관리')  &&
+                        {mainNavStateInstance.getNavState() === '사업 등록' &&<Col></Col>}
+                        {mainNavStateInstance.getNavState() === '사업 관리' &&<Col></Col>}
+                        {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리')  &&
                             <Row justify="space-between">
                                     <Title level={2}>{businessesMaterial && businessesMaterial.businessName}</Title>
                                 &nbsp;&nbsp;
@@ -304,9 +305,9 @@ const BusinessMainScreen = (props:{navState:MainNavState; user:any; onEvent: () 
                         </Col>
                     </Row>
                 </Header>
-                {props.navState.getNavState() === '사업 등록' && <RegisterBusiness/>}
-                {props.navState.getNavState() === '사업 관리' && <BusinessManagement/>}
-                {(props.navState.getNavState() !== '사업 등록' && props.navState.getNavState() !== '사업 관리') &&
+                {mainNavStateInstance.getNavState() === '사업 등록' && <RegisterBusiness/>}
+                {mainNavStateInstance.getNavState() === '사업 관리' && <BusinessManagement/>}
+                {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리') &&
                     <Content style={{ background: 'white', padding: 28 }}>
                         <Row gutter={8}>
                             <Col flex={100}>

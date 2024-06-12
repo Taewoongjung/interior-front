@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {ResponsivePie} from "@nivo/pie";
 
-const PieChart =(props:{businessesMaterial:any;}) => {
+const PieChart =(props:{businessesMaterial:any; usageType:string}) => {
 
-    const {businessesMaterial} = props;
+    const {businessesMaterial, usageType} = props;
 
     const handle = {
         padClick: (data: any) => {
@@ -21,15 +21,28 @@ const PieChart =(props:{businessesMaterial:any;}) => {
 
     useEffect(() => {
         if (businessesMaterial !== undefined) {
-            const newMaterials: any[] | ((prevState: never[]) => never[]) = []; // 새로운 재료 배열 생성
-            businessesMaterial.forEach((business: { businessMaterialList: any[]; }) => {
-                business.businessMaterialList.forEach((material) => {
+
+            if (usageType === "대시보드") {
+                const newMaterials: any[] | ((prevState: never[]) => never[]) = []; // 새로운 재료 배열 생성
+                businessesMaterial.forEach((business: { businessMaterialList: any[]; }) => {
+                    business.businessMaterialList.forEach((material) => {
+                        newMaterials.push(material); // 새로운 재료를 새 배열에 추가
+                    });
+                });
+
+                // @ts-ignore
+                setMaterials(newMaterials); // 새로운 재료 배열로 상태 업데이트
+            }
+
+            if (usageType === "사업 관리") {
+                const newMaterials: any[] = []; // 새로운 재료 배열 생성
+                businessesMaterial.businessMaterialList.forEach((material:any) => {
                     newMaterials.push(material); // 새로운 재료를 새 배열에 추가
                 });
-            });
 
-            // @ts-ignore
-            setMaterials(newMaterials); // 새로운 재료 배열로 상태 업데이트
+                // @ts-ignore
+                setMaterials(newMaterials); // 새로운 재료 배열로 상태 업데이트
+            }
         }
     }, [businessesMaterial]);
 

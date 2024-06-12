@@ -16,4 +16,5 @@ class MainNavState {
     }
 }
 
-export default MainNavState;
+const mainNavStateInstance = new MainNavState();
+export default mainNavStateInstance;

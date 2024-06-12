@@ -128,7 +128,6 @@ const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
     const [tableData, setTableData] = useState<DataType[]>([]);
 
     useEffect(() => {
-        console.log("companyList = ", props.tableData);
         if (props.tableData) {
 
             const newData: ((prevState: DataType[]) => DataType[]) | {key: string; id: string; name: string; address: string; }[] = [];

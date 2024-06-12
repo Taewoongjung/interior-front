@@ -23,7 +23,7 @@ const BusinessStatistics = (props:{businesses:any;}) => {
                             <Statistic
                                 title="진행중인 사업"
                                 value={businesses.length}
-                                valueStyle={{ color: '#3f8600' }}
+                                valueStyle={{ color: '#0085f5' }}
                             />
                         </Card>
                     </Col>
