@@ -1,7 +1,8 @@
 import React from "react";
 import PieChart from "../../../pages/Management/charts/Pie";
 import {Content} from "antd/es/layout/layout";
-import {Row, DescriptionsProps, Descriptions, Badge, Card} from "antd";
+import {Row, DescriptionsProps, Descriptions, Badge, Card, Spin} from "antd";
+import {PieChartOutlined} from "@ant-design/icons";
 
 const EachBusinessManagement = (props: { business:any; }) => {
 
@@ -105,13 +106,30 @@ const EachBusinessManagement = (props: { business:any; }) => {
                 <Descriptions title="사업 정보" items={items} />
                 <br/>
                 <Row style={{ height: 300}}>
-                    {business && business !== undefined &&
-                        <Card title="재료 사용 현황" bordered={true} style={{ width: 350, height: 310 }}>
+                    <Card title="재료 사용 현황" bordered={true} style={{ width: 350, height: 310 }}>
+                        {business && business !== undefined && business.businessMaterialList.length > 0 &&
                             <div style={{ height: 250}}>
-                                <PieChart  businessesMaterial={business} usageType={"사업 관리"}/>
+                                <PieChart businessesMaterial={business} usageType={"사업 관리"}/>
                             </div>
-                        </Card>
-                    }
+                        }
+
+                        {business && business.businessMaterialList.length <= 0 &&
+                            <div style={{ height: 250}}>
+                                <Spin tip="재료를 추가 해보세요">
+                                    <div className="container"
+                                         style={{
+                                             display: "flex",
+                                             justifyContent: "center",
+                                             alignItems: "center",
+                                             height: "200px"
+                                         }}
+                                    >
+                                        <PieChartOutlined style={{fontSize: "100px"}}/>
+                                    </div>
+                                </Spin>
+                            </div>
+                        }
+                    </Card>
                 </Row>
             </Content>
         </>
