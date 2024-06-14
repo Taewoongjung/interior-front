@@ -25,7 +25,6 @@ import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 import RegisterBusiness from "../../pages/RegisterBusiness";
 import {useObserver} from "mobx-react";
-import MainNavState from "../../statemanager/mainNavState";
 import axios from "axios";
 import BusinessMainScreenTable from "./BusinessMaterialTable";
 import BusinessMaterialLogTable from "./BusinessMaterialLogTable";
@@ -243,6 +242,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
         };
 
         fetchExcel();
+
     }, [taskId]); // taskId가 변경될 때마다 실행
 
     const getExcel = async () => {
@@ -261,10 +261,11 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                         {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리')  &&
                             <Row justify="space-between">
                                     <Title level={2}>{businessesMaterial && businessesMaterial.businessName}</Title>
+
                                 &nbsp;&nbsp;
-                                {businessesMaterial &&
-                                    <EditOutlined onClick={showModal}/>
-                                }
+
+                                {businessesMaterial && <EditOutlined onClick={showModal}/>}
+
                                 <Modal
                                     open={open}
                                     width={300}
@@ -287,7 +288,6 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                                         </Form.Item>
                                     </Form>
                                 </Modal>
-
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
                                 {businessesMaterial &&
@@ -311,9 +311,9 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                     <Content style={{ background: 'white', padding: 28 }}>
                         <Row gutter={8}>
                             <Col flex={100}>
-                                <Tooltip title={fold ? '테이블 펴기' : '테이블 접기'}>
-                                    <Button onClick={foldTable} shape="circle" icon={ fold ? <PlusOutlined /> : <MinusOutlined />} />
-                                </Tooltip>
+                                {/*<Tooltip title={fold ? '테이블 펴기' : '테이블 접기'}>*/}
+                                {/*    <Button onClick={foldTable} shape="circle" icon={ fold ? <PlusOutlined /> : <MinusOutlined />} />*/}
+                                {/*</Tooltip>*/}
                             </Col>
                             <Col flex={1}>
                                 <Row>
