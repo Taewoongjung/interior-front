@@ -12,18 +12,6 @@ const EachBusinessManagement = (props: { business:any; }) => {
         return number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
-    const getBusinessStatus = () => {
-        if (business.status === "CREATED") {
-            return <Badge status="warning" text="생성됨" />;
-        }
-
-        if (business.status === "IN_PROGRESS") {
-            return <Badge status="processing" text="진행중" />;
-        }
-
-        return <Badge status="default" text="보류" />;
-    }
-
     const getBusinessGrossCost = () => {
         let grossCost = 0;
         business.businessMaterialList.forEach((material:any) => {
@@ -65,14 +53,12 @@ const EachBusinessManagement = (props: { business:any; }) => {
         {
             key: '1',
             label: '사업 명',
-            span: { xl: 1, xxl: 2 },
             children: business.name,
         },
         {
             key: '2',
-            label: '사업 상태',
-            span: { xl: 2, xxl: 2 },
-            children: getBusinessStatus(),
+            label: '사업 생성일',
+            children: business.createdAt,
         },
         {
             key: '3',
@@ -94,7 +80,7 @@ const EachBusinessManagement = (props: { business:any; }) => {
         },
         {
             key: '6',
-            label: 'Address',
+            label: '사업지 주소',
             children: `${getAddress()}`,
         },
     ];
