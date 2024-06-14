@@ -51,6 +51,11 @@ const Auth = () => {
             if (response.data.isSuccess === true) {
                 success("회원가입이 완료 되었습니다.");
                 setIsLogIn(false);
+
+                // 회원가입이 완료 되면 바로 로그인 하기
+                setTimeout(() => {
+                    logIn(email, password);
+                }, 370);
             }}
         )
         .catch((error) => {
@@ -95,34 +100,40 @@ const Auth = () => {
         }
     };
 
+    const logIn = (email:string, password:string) => {
+
+        const formData = new FormData();
+        formData.append("username", email);
+        formData.append("password", password);
+
+        axios
+            .post(`${API_URL}/api/login`,
+                formData,
+                {
+                    withCredentials: true,
+                },
+            )
+            .then((response) => {
+
+                const token = response.headers['authorization'];
+
+                localStorage.setItem("interiorjung-token", token); // 로그인 성공 시 로컬 스토리지에 토큰 저장
+
+                // 로그인 성공 시 리다이렉트
+                window.location.href = '/management'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
+            })
+            .catch((error) => {
+                if (error.response.status === 401) {
+                    errorModal('아이디나 비밀번호를 다시 확인해주세요.');
+                }
+            });
+    }
+
     const onSubmit = useCallback(async (e: { preventDefault: () => void; }) => {
             e.preventDefault();
 
-            const formData = new FormData();
-            formData.append("username", email);
-            formData.append("password", password);
+            logIn(email, password);
 
-            await axios
-                .post(`${API_URL}/api/login`,
-                    formData,
-                    {
-                        withCredentials: true,
-                    },
-                )
-                .then((response) => {
-
-                    const token = response.headers['authorization'];
-
-                    localStorage.setItem("interiorjung-token", token); // 로그인 성공 시 로컬 스토리지에 토큰 저장
-
-                    // 로그인 성공 시 리다이렉트
-                    window.location.href = '/management'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
-                })
-                .catch((error) => {
-                    if (error.response.status === 401) {
-                        errorModal('아이디나 비밀번호를 다시 확인해주세요.');
-                    }
-                });
         },
         [email, password]
     );
