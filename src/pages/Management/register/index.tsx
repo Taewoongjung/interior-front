@@ -7,8 +7,8 @@ import {useObserver} from "mobx-react";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
-const CompanyRegister = (props:{onEvent: () => void}) => {
-    const {onEvent} = props;
+const CompanyRegister = (props:{onEvent: () => void; tourRef:any}) => {
+    const {onEvent, tourRef} = props;
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -103,7 +103,7 @@ const CompanyRegister = (props:{onEvent: () => void}) => {
     return useObserver(() => (
         <>
             {contextHolder}
-            <Button type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
+            <Button ref={tourRef} type="primary" onClick={showDrawer} icon={<PlusOutlined />}>
                 사업체 등록
             </Button>
             <Drawer

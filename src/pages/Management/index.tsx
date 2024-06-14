@@ -1,5 +1,20 @@
-import React, {useState} from "react";
-import {Col, Dropdown, Layout, Menu, Row, Typography, Tooltip, Divider, Empty, Spin, Modal, Result} from "antd";
+import React, {useRef, useState} from "react";
+import {
+    Col,
+    Dropdown,
+    Layout,
+    Menu,
+    Row,
+    Typography,
+    Tooltip,
+    Divider,
+    Empty,
+    Spin,
+    Modal,
+    Result,
+    Button,
+    GetRef, TourProps, Tour
+} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content, Footer} from "antd/es/layout/layout";
 import UserView from "./views/user";
@@ -53,6 +68,18 @@ const Management = observer(() => {
         mutate();
     };
 
+    const ref = useRef<GetRef<typeof Button>>(null);
+
+    const [tourOpen, setTourOpen] = useState<boolean>(false);
+
+    const steps: TourProps['steps'] = [
+        {
+            title: '사업체 추가',
+            description: '클릭 해서 사업체를 추가해보세요.',
+            target: () => ref.current!,
+        }
+    ];
+
     const [welcomeModalOpen, setWelcomeModalOpen] = useState(true);
 
     const customIcon = (
@@ -67,18 +94,37 @@ const Management = observer(() => {
                         centered
                         open={welcomeModalOpen && (firstLogin === "true")}
                         footer={null}
-                        onCancel={() => {
-                            history.replace('/management');
-                            setWelcomeModalOpen(false)
-                        }}
+                        closeIcon={null}
                     >
                         <Result
                             icon={customIcon}
                             title="축하합니다!!"
                             subTitle="사업체 등록 부터 시작해보세요 ~"
+                            extra={[
+                                <Button
+                                    type="primary"
+                                    onClick={() => {
+                                        setTourOpen(true)
+                                        history.replace('/management');
+                                        setWelcomeModalOpen(false)
+                                    }}
+                                >
+                                    사업체 등록하러 가기
+                                </Button>,
+                            ]}
                         />
                     </Modal>
                 }
+                <Tour
+                    open={tourOpen}
+                    onClose={() => setTourOpen(false)}
+                    steps={steps}
+                    indicatorsRender={(current, total) => (
+                        <span>
+                            {current + 1} / {total}
+                        </span>
+                    )}
+                />
                 <Sider width={300} style={{backgroundColor: '#eee1'}}>
                     <Content style={{height: 300}}>
                         <UserView name={userData?.name} email={userData?.email}/>
@@ -121,7 +167,7 @@ const Management = observer(() => {
                             </Tooltip>
                         </Divider>
                         <Content style={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <CompanyRegister onEvent={handleApiMeMutate}/>
+                            <CompanyRegister onEvent={handleApiMeMutate} tourRef={ref}/>
                         </Content>
                         {(userData?.companyList.length === 0 || userData?.companyList.length === undefined) &&
                             <Empty/>
