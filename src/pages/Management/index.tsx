@@ -1,5 +1,5 @@
-import React from "react";
-import {Col, Dropdown, Layout, Menu, Row, Typography, Tooltip, Divider, Empty, Spin} from "antd";
+import React, {useState} from "react";
+import {Col, Dropdown, Layout, Menu, Row, Typography, Tooltip, Divider, Empty, Spin, Modal, Result} from "antd";
 import Sider from "antd/es/layout/Sider";
 import {Content, Footer} from "antd/es/layout/layout";
 import UserView from "./views/user";
@@ -10,16 +10,20 @@ import CompanyListTable from "./views/table";
 import CompanyRegister from "./register";
 import PieChart from "./charts/Pie";
 import {LogoutOutlined, PieChartOutlined, UserOutlined} from "@ant-design/icons";
-import {useHistory} from "react-router-dom";
-import {useObserver} from "mobx-react";
+import {useHistory, useLocation, useParams} from "react-router-dom";
+import {observer} from "mobx-react-lite";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
 const { Title } = Typography;
 
-const Management = () => {
+const Management = observer(() => {
 
     const history = useHistory();
+
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const firstLogin = params.get('firstLogin');
 
     const handleLogout = () => {
         console.log("로그아웃");
@@ -49,22 +53,45 @@ const Management = () => {
         mutate();
     };
 
-    return useObserver(() => (
+    const [welcomeModalOpen, setWelcomeModalOpen] = useState(true);
+
+    const customIcon = (
+        <span style={{ fontSize: '72px' }}>🎉</span> // Increase font size as needed
+    );
+
+    return (
         <div>
-            <Layout style={{ height: 920 }}>
-                <Sider width={300} style={{backgroundColor:'#eee1'}}>
-                    <Content style={{ height: 300 }}>
+            <Layout style={{height: 920}}>
+                {firstLogin === "true" &&
+                    <Modal
+                        centered
+                        open={welcomeModalOpen && (firstLogin === "true")}
+                        footer={null}
+                        onCancel={() => {
+                            history.replace('/management');
+                            setWelcomeModalOpen(false)
+                        }}
+                    >
+                        <Result
+                            icon={customIcon}
+                            title="축하합니다!!"
+                            subTitle="사업체 등록 부터 시작해보세요 ~"
+                        />
+                    </Modal>
+                }
+                <Sider width={300} style={{backgroundColor: '#eee1'}}>
+                    <Content style={{height: 300}}>
                         <UserView name={userData?.name} email={userData?.email}/>
                     </Content>
-                    <Content style={{ height: 300, marginTop: 50}}>
+                    <Content style={{height: 300, marginTop: 50}}>
                         <Divider orientation="center"><Title level={4}>전체 재료 사용 현황</Title></Divider>
                         {businessesMaterial === undefined || businessesMaterial.length === 0 &&
                             <Spin tip="재료를 추가 해보세요">
                                 <div className="container"
                                      style={{
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center"
+                                         display: "flex",
+                                         justifyContent: "center",
+                                         alignItems: "center"
                                      }}
                                 >
                                     <PieChartOutlined style={{fontSize: "100px"}}/>
@@ -72,7 +99,7 @@ const Management = () => {
                             </Spin>
                         }
                         <PieChart businessesMaterial={businessesMaterial} usageType={"대시보드"}/>
-                        <Divider />
+                        <Divider/>
                     </Content>
                 </Sider>
                 <Layout>
@@ -81,29 +108,29 @@ const Management = () => {
                         <Col>
                             <Dropdown.Button
                                 overlay={menuUserAccount}
-                                icon={<UserOutlined />}
+                                icon={<UserOutlined/>}
                             >
                                 <strong>{userData && userData.name}</strong>&nbsp;님
                             </Dropdown.Button>
                         </Col>
                     </Row>
-                    <Content style={{ height: 300, marginLeft: 20, marginTop: 60 }}>
+                    <Content style={{height: 300, marginLeft: 20, marginTop: 60}}>
                         <Divider orientation="center">
                             <Tooltip color={"#e5ccab"} title="사업체는 최대 5개 까지 등록 가능">
                                 <Title level={3}>사업체 리스트</Title>
                             </Tooltip>
                         </Divider>
-                        <Content style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                                <CompanyRegister onEvent={handleApiMeMutate}/>
+                        <Content style={{display: 'flex', justifyContent: 'flex-end'}}>
+                            <CompanyRegister onEvent={handleApiMeMutate}/>
                         </Content>
                         {(userData?.companyList.length === 0 || userData?.companyList.length === undefined) &&
-                            <Empty />
+                            <Empty/>
                         }
                         {(userData?.companyList.length !== 0 && userData !== undefined) &&
                             <CompanyListTable tableData={userData?.companyList} onEvent={handleApiMeMutate}/>
                         }
                     </Content>
-                    <Layout style={{ height: 600 }}>
+                    <Layout style={{height: 600}}>
                         <Content>
                             {/*<View5 data={filteredData}/>*/}
                         </Content>
@@ -114,7 +141,7 @@ const Management = () => {
                 </Layout>
             </Layout>
             <Layout>
-                <Footer style={{ height: 20 }}>
+                <Footer style={{height: 20}}>
                     <div style={{marginTop: -10}}>
                         produced by tws
                         Author <a href='https://ydontustudy.tistory.com/'>鄭</a>
@@ -122,7 +149,7 @@ const Management = () => {
                 </Footer>
             </Layout>
         </div>
-    ));
-}
+    );
+});
 
 export default Management;

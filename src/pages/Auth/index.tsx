@@ -6,14 +6,18 @@ import {IFormValues} from "../../definitions/Auth/IFormValues";
 import {SIGNUP_ERROR_CODES} from "../../codes/ErrorCodes";
 import {Button, Input, message, Modal, Statistic} from "antd";
 import {MailOutlined, CheckOutlined} from "@ant-design/icons";
+import {observer} from "mobx-react-lite";
+import {useStores} from "../../hooks/useStore";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
 const { Countdown } = Statistic;
 
-const Auth = () => {
+const Auth = observer(() => {
 
     const [isLogIn, setIsLogIn] = useState(false);
+
+    const { userState } = useStores();
 
     const toggleForm = () => {
         setIsLogIn(!isLogIn);
@@ -51,10 +55,12 @@ const Auth = () => {
             if (response.data.isSuccess === true) {
                 success("회원가입이 완료 되었습니다.");
                 setIsLogIn(false);
-
+                userState.setUserFirstLogInState("true");
+                console.log("signup = ", userState.userFirstLogInState);
+                console.log("zz = ", userState);
                 // 회원가입이 완료 되면 바로 로그인 하기
                 setTimeout(() => {
-                    logIn(email, password);
+                    logIn(email, password, "true");
                 }, 370);
             }}
         )
@@ -100,14 +106,13 @@ const Auth = () => {
         }
     };
 
-    const logIn = (email:string, password:string) => {
+    const logIn = (email:string, password:string, firstLogin:string) => {
 
         const formData = new FormData();
         formData.append("username", email);
         formData.append("password", password);
 
-        axios
-            .post(`${API_URL}/api/login`,
+        axios.post(`${API_URL}/api/login`,
                 formData,
                 {
                     withCredentials: true,
@@ -120,7 +125,11 @@ const Auth = () => {
                 localStorage.setItem("interiorjung-token", token); // 로그인 성공 시 로컬 스토리지에 토큰 저장
 
                 // 로그인 성공 시 리다이렉트
-                window.location.href = '/management'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
+                if (firstLogin === "true") {
+                    window.location.href = '/management?firstLogin=true'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
+                } else {
+                    window.location.href = '/management'; // 이 방법은 페이지를 새로고침하며 새로운 URL로 이동합니다.
+                }
             })
             .catch((error) => {
                 if (error.response.status === 401) {
@@ -132,7 +141,7 @@ const Auth = () => {
     const onSubmit = useCallback(async (e: { preventDefault: () => void; }) => {
             e.preventDefault();
 
-            logIn(email, password);
+            logIn(email, password, "false");
 
         },
         [email, password]
@@ -315,8 +324,8 @@ const Auth = () => {
                                         </Button>
                                     }
                                 </div>
-                                <Modal title="이메일 인증" 
-                                       centered 
+                                <Modal title="이메일 인증"
+                                       centered
                                        open={isModalOpen}
                                        onOk={verifyEmailOkHandler}
                                        okText={"인증"}
@@ -392,6 +401,6 @@ const Auth = () => {
             </section>
         </>
     );
-};
+});
 
 export default Auth;
