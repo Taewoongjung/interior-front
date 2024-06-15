@@ -12,10 +12,6 @@ const EachBusinessManagement = (props: { business:any; }) => {
     const [stepCurrent, setStepCurrent] = useState(0);
 
     const addCommasToNumber = (number: any): string | undefined => {
-        if (!(business.businessMaterialList && business.businessMaterialList.length > 0)) {
-            return '-';
-        }
-
         return number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " 원";
     };
 
