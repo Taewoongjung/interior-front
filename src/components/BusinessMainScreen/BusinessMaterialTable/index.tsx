@@ -1,9 +1,7 @@
 import React, {useState} from "react";
-import {Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag, Badge, Button} from "antd";
-import {EditOutlined, MessageOutlined, MoreOutlined, PlusOutlined} from "@ant-design/icons";
+import {Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag, Badge, Layout} from "antd";
+import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
 import axios from "axios";
-import useSWR from "swr";
-import fetcher from "../../../utils/fetcher";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -317,11 +315,13 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
         <>
             {contextHolder}
             {businessesMaterial !== undefined &&
-                <Table
-                    columns={columns}
-                    expandable={{ expandedRowRender, defaultExpandAllRows: true }}
-                    dataSource={data}
-                />
+                <Layout>
+                    <Table
+                        columns={columns}
+                        expandable={{ expandedRowRender, defaultExpandAllRows: true }}
+                        dataSource={data}
+                    />
+                </Layout>
             }
         </>
     );

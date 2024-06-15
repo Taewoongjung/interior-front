@@ -65,7 +65,7 @@ const BusinessManagement = () => {
                             tabPosition="top"
                             type="card"
                             size="middle"
-                            style={{ height: "100hr", width: "700px" }}
+                            style={{ height: "100hr", width: "1000px" }}
                             items={
                                     businesses.map((business:any, i:number) => {
                                         const id = String(i);

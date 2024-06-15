@@ -7,16 +7,14 @@ import {
     Menu, message, Modal,
     Row,
     Typography,
-    Form, Result, Tooltip, Collapse,
+    Form, Result, Collapse, Flex,
 } from "antd";
 import {
     UserOutlined,
     LogoutOutlined,
     EditOutlined,
     DeleteOutlined,
-    ExclamationCircleFilled,
-    PlusOutlined,
-    MinusOutlined,
+    ExclamationCircleFilled
 } from "@ant-design/icons";
 import BusinessMaterialAddInput from "./BusinessMaterialAddInput";
 import {Content, Header} from "antd/es/layout/layout";
@@ -375,12 +373,14 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                             />
                         }
                         {businessesMaterial !== undefined &&
-                            <BusinessMainScreenTable businessesMaterial={businessesMaterial.businessMaterials}
-                                                     businessId={businessId}
-                                                     onEvent={handleMutate}
-                                                     onLogEvent={handleLogMutate}
-                                                     fold={fold}
-                            />
+                            <Flex gap="middle">
+                                <BusinessMainScreenTable businessesMaterial={businessesMaterial.businessMaterials}
+                                                         businessId={businessId}
+                                                         onEvent={handleMutate}
+                                                         onLogEvent={handleLogMutate}
+                                                         fold={fold}
+                                />
+                            </Flex>
                         }
                         <br/><br/>
                         {materialLogData &&
