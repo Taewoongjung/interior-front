@@ -12,43 +12,57 @@ const EachBusinessManagement = (props: { business:any; }) => {
     const [stepCurrent, setStepCurrent] = useState(0);
 
     const addCommasToNumber = (number: any): string | undefined => {
-        return number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        if (!(business.businessMaterialList && business.businessMaterialList.length > 0)) {
+            return '-';
+        }
+
+        return number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + " 원";
     };
 
     const getBusinessGrossCost = () => {
         let grossCost = 0;
-        business.businessMaterialList.forEach((material:any) => {
-            if (material.allLaborCostPerUnit || material.allMaterialCostPerUnit) {
-                grossCost += (parseInt(material.allLaborCostPerUnit) + parseInt(material.allMaterialCostPerUnit));
-            }
-        });
+        if (business.businessMaterialList && business.businessMaterialList.length > 0) {
+            business.businessMaterialList.forEach((material: any) => {
+                if (material.allLaborCostPerUnit || material.allMaterialCostPerUnit) {
+                    grossCost += (parseInt(material.allLaborCostPerUnit) + parseInt(material.allMaterialCostPerUnit));
+                }
+            });
+        }
 
         return grossCost;
     };
 
     const getBusinessLaborGrossCost = () => {
         let grossCost = 0;
-        business.businessMaterialList.forEach((material:any) => {
-            if (material.allLaborCostPerUnit) {
-                grossCost += (parseInt(material.allLaborCostPerUnit));
-            }
-        });
+        if (business.businessMaterialList && business.businessMaterialList.length > 0) {
+            business.businessMaterialList.forEach((material: any) => {
+                if (material.allLaborCostPerUnit) {
+                    grossCost += (parseInt(material.allLaborCostPerUnit));
+                }
+            });
+        }
 
         return grossCost;
     };
 
     const getBusinessGrossMaterialCost = () => {
         let grossCost = 0;
-        business.businessMaterialList.forEach((material:any) => {
-            if (material.allMaterialCostPerUnit) {
-                grossCost += (parseInt(material.allMaterialCostPerUnit));
-            }
-        });
+        if (business.businessMaterialList && business.businessMaterialList.length > 0) {
+            business.businessMaterialList.forEach((material: any) => {
+                if (material.allMaterialCostPerUnit) {
+                    grossCost += (parseInt(material.allMaterialCostPerUnit));
+                }
+            });
+        }
 
         return grossCost;
     };
 
     const getAddress = () => {
+        if (!(business.businessMaterialList && business.businessMaterialList.length > 0)) {
+            return '-';
+        }
+        
         return`[${business.zipCode}] ${business.address} ${business.subAddress}`
     }
 
@@ -68,19 +82,19 @@ const EachBusinessManagement = (props: { business:any; }) => {
         {
             key: '3',
             label: '총 공사 비용',
-            children: `${addCommasToNumber(getBusinessGrossCost())} 원`,
+            children: `${addCommasToNumber(getBusinessGrossCost())}`,
             span: 4,
         },
         {
             key: '4',
             label: '총 공사 재료 비용',
-            children: `${addCommasToNumber(getBusinessGrossMaterialCost())} 원`,
+            children: `${addCommasToNumber(getBusinessGrossMaterialCost())}`,
             span: 4,
         },
         {
             key: '5',
             label: '총 공사 노무 비용',
-            children: `${addCommasToNumber(getBusinessLaborGrossCost())} 원`,
+            children: `${addCommasToNumber(getBusinessLaborGrossCost())}`,
             span: 4,
         },
         {
