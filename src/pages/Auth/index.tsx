@@ -39,7 +39,7 @@ const Auth = observer(() => {
     const onSubmitSignUp = async (data: { name: any; email: any; tel: any; password: any; reCheckPassword: any; }) => {
         const {name, email, tel, password, reCheckPassword} = data;
 
-        const role = "CUSTOMER";
+        const role = "BUSINESS_MAN";
 
         if (password !== reCheckPassword) {
             errorModal("비밀번호가 다릅니다. 다시 확인해주세요.")
