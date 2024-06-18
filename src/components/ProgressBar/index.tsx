@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {Progress, ProgressProps} from "antd";
-import axios from "axios";
+import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill';
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -16,11 +16,17 @@ const ProgressBar = (props:{ taskId:string; setProgressBarModalOpen:any; }) => {
 
     const [percentage, setPercentage] = useState(0);
 
+    const EventSource = EventSourcePolyfill || NativeEventSource;
     useEffect(() => {
         if (!taskId) return;
-
         const eventSource = new EventSource(
             `${API_URL}/api/excels/tasks/${taskId}`,
+            {
+                headers: {
+                    Authorization: `${localStorage.getItem("interiorjung-token")}`,
+                },
+                withCredentials: true,
+            }
         );
 
         eventSource.onopen = () => {
