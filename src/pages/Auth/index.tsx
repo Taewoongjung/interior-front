@@ -55,9 +55,9 @@ const Auth = observer(() => {
             if (response.data.isSuccess === true) {
                 success("회원가입이 완료 되었습니다.");
                 setIsLogIn(false);
+
                 userState.setUserFirstLogInState("true");
-                console.log("signup = ", userState.userFirstLogInState);
-                console.log("zz = ", userState);
+
                 // 회원가입이 완료 되면 바로 로그인 하기
                 setTimeout(() => {
                     logIn(email, password, "true");
