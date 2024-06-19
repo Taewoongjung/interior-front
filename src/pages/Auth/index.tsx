@@ -30,8 +30,8 @@ const Auth = observer(() => {
         setEmailError('');
         setPasswordError('');
         setIsVerified(false);
-        setVerifyTargetEmail('');
-        setIsInProgressVerifyingEmail(false);
+        setVerifyTargetPhoneNumber('');
+        setIsInProgressVerifyingPhoneNumber(false);
         clearErrors();
         reset();
     }
@@ -200,7 +200,7 @@ const Auth = observer(() => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const verifyEmailOkHandler = () => {
-        axios.get(`${API_URL}/api/emails/validations?targetEmail=${verifyTargetEmail}&compNumber=${verifyCompareNumber}`,
+        axios.get(`${API_URL}/api/phones/validations?targetPhoneNumber=${verifyTargetPhoneNumber}&compNumber=${verifyCompareNumber}`,
             {
                 withCredentials: true
             })
@@ -208,7 +208,7 @@ const Auth = observer(() => {
                 if (response.data === true) {
                     success("인증 완료")
                     setIsModalOpen(false);
-                    setIsInProgressVerifyingEmail(false);
+                    setIsInProgressVerifyingPhoneNumber(false);
                     setIsVerified(true);
                 }
             })
@@ -222,19 +222,19 @@ const Auth = observer(() => {
         stopLoading(2);
         setIsVerified(false);
         setIsModalOpen(false);
-        setIsInProgressVerifyingEmail(false);
+        setIsInProgressVerifyingPhoneNumber(false);
     };
 
-    const [verifyTargetEmail, setVerifyTargetEmail] = useState('');
+    const [verifyTargetPhoneNumber, setVerifyTargetPhoneNumber] = useState('');
     const [verifyCompareNumber, setVerifyCompareNumber] = useState('');
-    const [isInProgressVerifyingEmail, setIsInProgressVerifyingEmail] = useState(false);
+    const [isInProgressVerifyingPhoneNumber, setIsInProgressVerifyingPhoneNumber] = useState(false);
     const [isVerified, setIsVerified] = useState(false);
     const [loadings, setLoadings] = useState<boolean[]>([]);
 
     const emailVerificationDeadline = Date.now() + 1000 * 60 * 3;
 
     const enterLoading = (index: number) => {
-        if (verifyTargetEmail !== "" && verifyTargetEmail !== undefined && verifyTargetEmail !== null) {
+        if (verifyTargetPhoneNumber !== "" && verifyTargetPhoneNumber !== undefined && verifyTargetPhoneNumber !== null) {
             setLoadings((prevLoadings) => {
                 const newLoadings = [...prevLoadings];
                 newLoadings[index] = true;
@@ -250,21 +250,21 @@ const Auth = observer(() => {
             return newLoadings;
         })};
 
-    const verifyEmail = () => {
+    const verifyPhone = () => {
 
-        if (verifyTargetEmail !== "" && verifyTargetEmail !== undefined && verifyTargetEmail !== null) {
+        if (verifyTargetPhoneNumber !== "" && verifyTargetPhoneNumber !== undefined && verifyTargetPhoneNumber !== null) {
 
-            const targetEmail = verifyTargetEmail;
+            const targetPhoneNumber = verifyTargetPhoneNumber;
 
-            axios.post(`${API_URL}/api/emails/validations`,
+            axios.post(`${API_URL}/api/phones/validations`,
                 {
-                    targetEmail
+                    targetPhoneNumber
                 }, {withCredentials: true, })
                 .then((response) => {
                     if (response.data === true) {
                         stopLoading(2);
                         setIsModalOpen(true);
-                        setIsInProgressVerifyingEmail(true);
+                        setIsInProgressVerifyingPhoneNumber(true);
                     }
                 })
                 .catch((error) => {
@@ -276,7 +276,7 @@ const Auth = observer(() => {
 
     const onFinishCountDown = () => {
         stopLoading(2);
-        setIsInProgressVerifyingEmail(false);
+        setIsInProgressVerifyingPhoneNumber(false);
         setIsModalOpen(false);
     };
 
@@ -299,32 +299,44 @@ const Auth = observer(() => {
                                         },
                                     })} />
                                 {errors.name && <div>{errors.name?.message}</div>}
-                                <div className="email-input-group">
+                                <input
+                                    type="email" placeholder="이메일"
+                                    {...register("email", {
+                                        required: "이메일은 필수 응답 항목입니다.",
+                                        pattern: {
+                                            value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
+                                            message: "이메일 형식이 아닙니다."
+                                        }
+                                    })}
+                                />
+                                {errors.email && <div>{errors.email?.message}</div>}
+
+                                <div className="phone-input-group">
                                     <input
-                                        type="email" placeholder="이메일"
-                                        {...register("email", {
-                                            required: "이메일은 필수 응답 항목입니다.",
+                                        type="tel" placeholder="전화번호"
+                                        {...register("tel", {
+                                            required: '전화번호는 필수 입력입니다.',
                                             pattern: {
-                                                value: /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i,
-                                                message: "이메일 형식이 아닙니다."
-                                            }
+                                                value: /^010[0-9]{8}$/,
+                                                message: '전화번호 양식이 맞지 않습니다.',
+                                            },
                                         })}
-                                        onChange={(e) => setVerifyTargetEmail(e.target.value)}
+                                        onChange={(e) => setVerifyTargetPhoneNumber(e.target.value)}
                                     />
-                                    {errors.email && <div>{errors.email?.message}</div>}
-                                    {!isInProgressVerifyingEmail &&
+                                    {errors.tel && <div>{errors.tel?.message}</div>}
+                                    {!isInProgressVerifyingPhoneNumber &&
                                         <Button
                                             loading={loadings[2]}
                                             onClick={() => {
                                                 enterLoading(2);
-                                                verifyEmail();
+                                                verifyPhone();
                                             }}
                                         >
                                             {isVerified ? <CheckOutlined /> : "인증"}
                                         </Button>
                                     }
                                 </div>
-                                <Modal title="이메일 인증"
+                                <Modal title="휴대폰 인증"
                                        centered
                                        open={isModalOpen}
                                        onOk={verifyEmailOkHandler}
@@ -332,7 +344,7 @@ const Auth = observer(() => {
                                        onCancel={handleCancel}
                                        cancelText={"취소"}
                                 >
-                                    <div className="verify-email-input-group">
+                                    <div className="verify-phone-input-group">
                                         <Input className="verification-input"
                                                size="large"
                                                placeholder="인증번호"
@@ -342,17 +354,6 @@ const Auth = observer(() => {
                                         <Countdown className="verification-count" value={emailVerificationDeadline} onFinish={onFinishCountDown} />
                                     </div>
                                 </Modal>
-                                <input
-                                    type="tel" placeholder="전화번호"
-                                    {...register("tel", {
-                                        required: '전화번호는 필수 입력입니다.',
-                                        pattern: {
-                                            value: /^010[0-9]{8}$/,
-                                            message: '전화번호 양식이 맞지 않습니다.',
-                                        },
-                                    })} />
-                                {errors.tel && <div>{errors.tel?.message}</div>}
-
                                 <input
                                     type="password" placeholder="비밀번호"
                                     {...register("password", {

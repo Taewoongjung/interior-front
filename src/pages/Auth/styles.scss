@@ -141,7 +141,7 @@ section {
     }
   }
 }
-.email-input-group {
+.phone-input-group {
   display: flex;
   align-items: center;
 
@@ -157,7 +157,7 @@ section {
     white-space: nowrap; // 버튼 텍스트가 줄바꿈되지 않도록 함
   }
 }
-.verify-email-input-group {
+.verify-phone-input-group {
   display: flex;
   align-items: center;
 
