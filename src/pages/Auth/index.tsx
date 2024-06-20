@@ -55,7 +55,7 @@ const Auth = observer(() => {
             if (response.data.isSuccess === true) {
                 success("회원가입이 완료 되었습니다.");
                 setIsLogIn(false);
-
+                allReset();
                 userState.setUserFirstLogInState("true");
 
                 // 회원가입이 완료 되면 바로 로그인 하기
@@ -255,13 +255,14 @@ const Auth = observer(() => {
         if (verifyTargetPhoneNumber !== "" && verifyTargetPhoneNumber !== undefined && verifyTargetPhoneNumber !== null) {
 
             const targetPhoneNumber = verifyTargetPhoneNumber;
-
+            console.log("발송 전");
             axios.post(`${API_URL}/api/phones/validations`,
                 {
                     targetPhoneNumber
                 }, {withCredentials: true, })
                 .then((response) => {
                     if (response.data === true) {
+                        console.log("발송성공");
                         stopLoading(2);
                         setIsModalOpen(true);
                         setIsInProgressVerifyingPhoneNumber(true);
@@ -400,6 +401,9 @@ const Auth = observer(() => {
                     </div>
                 </div>
             </section>
+            <footer className="footer">
+                인트로 정일윤 | 주소 : 울산광역시남구삼산로318번길12,2층(삼산동) | 사업자등록번호 : 175-24-00881
+            </footer>
         </>
     );
 });
