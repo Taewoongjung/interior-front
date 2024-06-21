@@ -1,5 +1,20 @@
 import React, {useState} from "react";
-import {Dropdown, Empty, Input, Menu, message, Popconfirm, Table, Tag, Badge, Layout} from "antd";
+import {
+    Dropdown,
+    Empty,
+    Input,
+    Menu,
+    message,
+    Popconfirm,
+    Table,
+    Tag,
+    Badge,
+    Layout,
+    InputNumber,
+    Form,
+    Typography,
+    Button
+} from "antd";
 import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
 import axios from "axios";
 
@@ -20,6 +35,69 @@ const colors = [
     'purple'
 ];
 
+interface Item {
+    id : string;
+    name : string;
+    category : string;
+    amount : string;
+    unit : string;
+    memo : string;
+    materialCostPerUnit :  string | undefined;
+    allMaterialCostPerUnit :  string | undefined;
+    laborCostPerUnit :  string | undefined;
+    allLaborCostPerUnit :  string | undefined;
+    totalUnitPrice :  string | undefined;
+    totalPrice :  string | undefined;
+}
+
+
+interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
+    editing: boolean;
+    dataIndex: string;
+    title: any;
+    inputType: 'int' | 'text';
+    record: Item;
+    index: number;
+}
+
+const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
+        editing,
+        dataIndex,
+        title,
+        record,
+        index,
+        children,
+        ...restProps
+    }) => {
+
+    let inputNode = <Input />;
+
+    if (title === '수량') {
+        inputNode = <InputNumber />;
+    }
+
+    return (
+        <td {...restProps}>
+            {editing ? (
+                <Form.Item
+                    name={dataIndex}
+                    style={{ margin: 0 }}
+                    rules={[
+                        {
+                            required: true,
+                            message: `${title} 은 필수에요!`,
+                        },
+                    ]}
+                >
+                    {inputNode}
+                </Form.Item>
+            ) : (
+                children
+            )}
+        </td>
+    );
+};
+
 const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; onEvent: () => void; onLogEvent: () => void; fold:any}) => {
     const [usageCategory, setUsageCategory] = useState('');
     const [usageCategoryName, setUsageCategoryName] = useState('');
@@ -27,6 +105,12 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
     const [messageApi, contextHolder] = message.useMessage();
 
     const {businessesMaterial, businessId, onEvent, onLogEvent, fold} = props;
+
+    const [form] = Form.useForm();
+    const values = Form.useWatch([], form);
+
+    const [editingKey, setEditingKey] = useState('');
+    const isEditing = (id: string) => id === editingKey;
 
     // 데이터 로딩 중이거나 에러가 발생한 경우를 처리
     if (!businessesMaterial) {
@@ -75,71 +159,122 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             })
     };
 
+    const removeCommaInCost = (target:string) => {
+        if (target !== undefined) {
+            return target.replace(/,/g, '');
+        }
+    };
+
+    const confirmReviseMaterial: () => void = async () => {
+
+        await axios
+            .put(`${API_URL}/api/businesses/${businessId}/materials/${editingKey}`, {
+                    materialName: values.name,
+                    materialCategory: values.category,
+                    materialAmount: values.amount,
+                    materialAmountUnit: values.unit,
+                    materialMemo: values.memo,
+                    materialCostPerUnit: removeCommaInCost(values.materialCostPerUnit),
+                    laborCostPerUnit: removeCommaInCost(values.laborCostPerUnit)
+                },
+                {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: localStorage.getItem("interiorjung-token")
+                    }
+                }
+            ).then((response) => {
+                if (response.data === true) {
+                    success('재료 수정 완료');
+                    onEvent(); // 테이블 리랜더링
+                    onLogEvent(); // 로그 목록 리랜더링
+                    setEditingKey(''); // 수정 비활성화
+                }})
+            .catch((error) => {
+                errorModal("수정에 실패 하였습니다. 다시 확인 후 시도해주세요.");
+            })
+    };
+
+    const edit = (record: Partial<Item> & { id: React.Key }) => {
+        form.setFieldsValue({ name: '', category: '', amount: '', unit: '', memo: '', materialCostPerUnit: 0, allMaterialCostPerUnit: 0, laborCostPerUnit: 0, allLaborCostPerUnit: 0, totalUnitPrice: 0, totalPrice: 0, ...record });
+        setEditingKey(record.id);
+    };
+
     // 확장된 테이블 렌더링 함수
     const expandedRowRender = (record: { subData: readonly Record<string | number | symbol, any>[] | undefined; }) => {
         const columns = [
             { title: '카테고리', dataIndex: 'category', key: 'category', width: '100px', editable: true },
-            { title: '재료 명', dataIndex: 'name', key: 'name', width: '130px' },
+            { title: '재료 명', dataIndex: 'name', key: 'name', width: '130px', editable: false },
             { title: '수량', dataIndex: 'amount', key: 'amount', width: '100px', editable: true },
             { title: '단위', dataIndex: 'unit', key: 'unit', width: '70px', editable: true },
             {
                 title: '비용',
+                dataIndex: 'cost',
+                key: 'cost',
+                editable: true,
                 children: [
                     {
                         title: '재료비',
-                        dataIndex: 'street',
-                        key: 'street',
-                        width: 150,
+                        dataIndex: 'materialCost',
+                        key: 'materialCost',
+                        editable: true,
                         children: [
                             {
                                 title: '단가',
                                 dataIndex: 'materialCostPerUnit',
                                 key: 'building',
                                 width: 100,
-                                editable: true
+                                editable: true,
                             },
                             {
                                 title: '금액',
                                 dataIndex: 'allMaterialCostPerUnit',
                                 key: 'number',
                                 width: 100,
-                                editable: true
+                                editable: false
                             },
                         ],
                     },
                     {
                         title: '노무비',
+                        dataIndex: 'laborCost',
+                        key: 'laborCost',
+                        editable: true,
                         children: [
                             {
                                 title: '단가',
                                 dataIndex: 'laborCostPerUnit',
                                 key: 'building',
                                 width: 100,
-                                editable: true
+                                editable: true,
                             },
                             {
                                 title: '금액',
                                 dataIndex: 'allLaborCostPerUnit',
                                 key: 'number',
                                 width: 100,
-                                editable: true
+                                editable: false
                             },
                         ],
                     },
                     {
                         title: '합계',
+                        dataIndex: 'totalCost',
+                        key: 'totalCost',
                         children: [
                             {
                                 title: '단가',
                                 dataIndex: 'totalUnitPrice',
                                 key: 'totalUnitPrice',
                                 width: 100,
+                                editable: false
                             },
                             {
                                 title: '금액',
                                 dataIndex: 'totalPrice',
                                 key: 'totalPrice',
                                 width: 100,
+                                editable: false
                             },
                         ],
                     },
@@ -150,56 +285,91 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                 dataIndex: 'memo',
                 key: 'memo',
                 width: '70px',
-                editable: true,
                 render: (_: any, record: { id: string | number; category:any; name:any; memo:any; }) => (
                     <Popconfirm
                         title={<>[{record.category}] {record.name} </>}
-                        description={<div style={{paddingTop:10, paddingBottom: 10}}>{record.memo}</div>}
-                        icon={<MessageOutlined/>}
+                        description={<div style={{ paddingTop: 10, paddingBottom: 10 }}>{record.memo}</div>}
+                        icon={<MessageOutlined />}
                         showCancel={false}
                         okText="닫기"
                     >
                         <MessageOutlined />
                     </Popconfirm>
-                )
+                ),
             },
             {
                 title: '',
                 key: 'operation',
                 width: '30px',
-                render: (_: any, record: { id: string | number; }) => (
-                    <Dropdown
-                        overlay={
-                            <Menu>
-                                <Menu.Item>수정(개발예정)</Menu.Item>
-                                <Menu.Item>
-                                    <Popconfirm
-                                        title="재료 삭제"
-                                        description="해당 재료를 삭제하시겠습니까?"
-                                        onConfirm={() => confirmDelete(record.id)}
-                                        okText="예"
-                                        cancelText="아니요"
-                                    >
-                                        <div style={{cursor: 'pointer'}}>
-                                            삭제
-                                        </div>
-                                    </Popconfirm></Menu.Item>
-                            </Menu>
-                        }
-                        trigger={['click']}
-                        placement="bottom"
-                        arrow={{ pointAtCenter: true }}
-                    >
-                        <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
-                            <MoreOutlined />
-                        </a>
-                    </Dropdown>
-                ),
+                render: (_ : any, record :{id:string}) => {
+                    const editable = isEditing(record.id);
+                    return editable ? (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+
+                            <Popconfirm
+                                title="수정 완료"
+                                description="완료 하시겠습니까?"
+                                okText="예"
+                                onConfirm={() => confirmReviseMaterial()}
+                                cancelText="아니요"
+                            >
+                                <Button>
+                                  저장
+                                </Button>
+                            </Popconfirm>
+                            <Popconfirm
+                                title="수정 취소"
+                                description="정말 취소하시겠습니까?"
+                                okText="예"
+                                onConfirm={() => setEditingKey('')}
+                                cancelText="아니요"
+                            >
+                                <Button>
+                                    취소
+                                </Button>
+                            </Popconfirm>
+                        </span>
+                    ) : (
+                        <Dropdown
+                            overlay={
+                                <Menu>
+                                    <Menu.Item>
+                                        <Typography.Link onClick={() => edit(record)}>
+                                            수정
+                                        </Typography.Link>
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        <Popconfirm
+                                            title="재료 삭제"
+                                            description="해당 재료를 삭제하시겠습니까?"
+                                            onConfirm={() => confirmDelete(record.id)}
+                                            okText="예"
+                                            cancelText="아니요"
+                                        >
+                                            <div style={{ cursor: 'pointer' }}>
+                                                삭제
+                                            </div>
+                                        </Popconfirm>
+                                    </Menu.Item>
+                                </Menu>
+                            }
+                            trigger={['click']}
+                            placement="bottom"
+                            arrow={{ pointAtCenter: true }}
+                        >
+                            <a className="ant-dropdown-link" onClick={e => e.preventDefault()}>
+                                <MoreOutlined />
+                            </a>
+                        </Dropdown>
+                    );
+                },
             },
         ];
 
+        const originSubData: Item[] = [];
+
         // 데이터 구조에 따라 필요한 필드를 가져옴
-        const subData = record.subData?.map(item => ({
+        record.subData?.map(item => (originSubData.push({
             id: item.id,
             name: item.name,
             category: item.category,
@@ -212,17 +382,49 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             allLaborCostPerUnit: addCommasToNumber(item?.allLaborCostPerUnit),
             totalUnitPrice: addCommasToNumber(item?.totalUnitPrice),
             totalPrice: addCommasToNumber(item?.totalPrice)
-        }));
+        })));
+
+        // @ts-ignore
+        const processColumns = (columns) => {
+            return columns.map((col: { children: any; editable: any; dataIndex: any; title: any; }) => {
+                if (col.children) {
+                    return {
+                        ...col,
+                        children: processColumns(col.children),
+                    };
+                }
+                if (!col.editable) {
+                    return col;
+                }
+                return {
+                    ...col,
+                    onCell: (record: Item) => ({
+                        record,
+                        dataIndex: col.dataIndex,
+                        title: col.title,
+                        editing: isEditing(record.id),
+                    }),
+                };
+            });
+        };
+
+        const mergedColumns = processColumns(columns);
 
         return (
-            <Table
-                size={"small"}
-                columns={columns}
-                dataSource={subData} // 확장된 데이터 소스를 사용
-                pagination={false}
-                tableLayout={"fixed"}
-                bordered
-            />
+            <Form form={form} component={false}>
+                <Table
+                    size={"small"}
+                    components={{
+                        body: {
+                            cell: EditableCell,
+                        },
+                    }}
+                    columns={mergedColumns}
+                    dataSource={originSubData} // 확장된 데이터 소스를 사용
+                    pagination={false}
+                    bordered
+                />
+            </Form>
         );
     };
 
@@ -315,11 +517,14 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
         <>
             {contextHolder}
             {businessesMaterial !== undefined &&
-                <Layout>
+                <Layout style={{width:"100%"}}>
                     <Table
+                        bordered
                         columns={columns}
                         expandable={{ expandedRowRender, defaultExpandAllRows: true }}
                         dataSource={data}
+                        pagination={false}
+                        tableLayout={"fixed"}
                     />
                 </Layout>
             }

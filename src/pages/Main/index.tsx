@@ -35,7 +35,7 @@ const Main = () => {
     return useObserver(() => (
         <>
             <Layout style={{ height: '100%', width: '100%' }} hasSider>
-                <Sider style={{ overflow: 'auto', height: '100vh', position: 'fixed', left: 0, top: 0, bottom: 0 }}>
+                <Sider style={{ overflow: 'auto', height: '100%', position: 'fixed', left: 0, top: 0, bottom: 0 }}>
                 <div style={{background: '#e7a19a'}}>
                     <div style={{background: '#e7a19a'}}>
                         <NavMain tourOpen={tourOpen} onTourEvent={handleTourOpen}/>
