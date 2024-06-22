@@ -176,14 +176,6 @@ const Management = observer(() => {
                             <CompanyListTable tableData={userData?.companyList} onEvent={handleApiMeMutate}/>
                         }
                     </Content>
-                    <Layout style={{height: 600}}>
-                        <Content>
-                            {/*<View5 data={filteredData}/>*/}
-                        </Content>
-                        {/*<Sider width={300} style={{backgroundColor:'#eee'}}>*/}
-                        {/*    /!*<View6 data={filteredData} changeSelectUser={this.changeSelectUser}/>*!/*/}
-                        {/*</Sider>*/}
-                    </Layout>
                 </Layout>
             </Layout>
             <Layout>

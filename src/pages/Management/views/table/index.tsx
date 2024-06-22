@@ -91,13 +91,13 @@ const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
             dataIndex: 'key',
             key: 'id',
             ellipsis: true,
-            width: 100
+            width: 50
         },
         {
             title: '사업체 명',
             dataIndex: 'name',
             key: 'name',
-            width: 200,
+            width: 160,
             filteredValue: filteredInfo.name || null,
             onFilter: (value, record) => record.name.includes(value as string),
             sorter: (a, b) => a.name.localeCompare(b.name, 'ko-KR'),
@@ -156,7 +156,7 @@ const CompanyListTable = (props:{tableData:any; onEvent: () => void;}) => {
     return (
         <>
             {contextHolder}
-            <Table columns={columns} dataSource={tableData} onChange={handleChange} />
+            <Table columns={columns} dataSource={tableData} onChange={handleChange} pagination={false} />
         </>
     )
 }
