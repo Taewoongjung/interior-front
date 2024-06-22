@@ -32,11 +32,11 @@ const BusinessMaterialLogTable = (props: { logData: DataType[] }) => {
 
     const getColor = (type: any) => {
         if (type === '재료생성') {
-            return '#F44336';
+            return '#4CAF50';
         }
 
         if (type === '재료삭제') {
-            return '#4CAF50';
+            return '#F44336';
         }
 
         if (type === '재료명') {
