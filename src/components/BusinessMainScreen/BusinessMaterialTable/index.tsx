@@ -13,10 +13,12 @@ import {
     InputNumber,
     Form,
     Typography,
-    Button
+    Button,
+    TreeSelect
 } from "antd";
 import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
 import axios from "axios";
+import {amountUnitOptions, categoryOptionsForSelection} from "../BusinessMaterialAddInput/select";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -78,9 +80,34 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
     let inputNode = <Input />;
 
+    if (title === '카테고리') {
+        inputNode = <TreeSelect
+            showSearch
+            dropdownStyle={{maxHeight: 400, overflow: 'auto', minWidth: 300}}
+            placement={"bottomLeft"}
+            allowClear
+            treeDefaultExpandAll
+            defaultValue={record.unit}
+            treeData={categoryOptionsForSelection}
+        />;
+    }
+
     if (title === '수량') {
         inputNode = <InputNumber min={0}/>;
     }
+
+    if (title === '단위') {
+        inputNode = <TreeSelect
+            showSearch
+            dropdownStyle={{maxHeight: 400, overflow: 'auto', minWidth: 300}}
+            placement={"bottomLeft"}
+            allowClear
+            treeDefaultExpandAll
+            defaultValue={record.unit}
+            treeData={amountUnitOptions}
+        />;
+    }
+
 
     if (title === '단가' && dataIndex === 'materialCostPerUnit') {
         inputNode = <InputNumber min={0} defaultValue={removeCommaInCost(record.materialCostPerUnit)}/>;
@@ -214,7 +241,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             { title: '카테고리', dataIndex: 'category', key: 'category', width: '100px', editable: true },
             { title: '재료 명', dataIndex: 'name', key: 'name', width: '130px', editable: false },
             { title: '수량', dataIndex: 'amount', key: 'amount', width: '100px', editable: true },
-            { title: '단위', dataIndex: 'unit', key: 'unit', width: '70px', editable: true },
+            { title: '단위', dataIndex: 'unit', key: 'unit', width: '90px', editable: true },
             {
                 title: '비용',
                 dataIndex: 'cost',
@@ -309,13 +336,12 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             {
                 title: '',
                 key: 'operation',
-                width: '30px',
+                width: (editingKey === '') ? '30px' : '130px',
                 fixed: 'right',
                 render: (_ : any, record :{id:string}) => {
                     const editable = isEditing(record.id);
                     return editable ? (
                         <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-
                             <Popconfirm
                                 title="수정 완료"
                                 description="완료 하시겠습니까?"
