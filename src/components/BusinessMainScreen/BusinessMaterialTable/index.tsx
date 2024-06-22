@@ -60,6 +60,12 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     index: number;
 }
 
+const removeCommaInCost = (target: string | undefined) => {
+    if (target !== undefined) {
+        return parseInt(target.replace(/,/g, ''));
+    }
+};
+
 const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
         editing,
         dataIndex,
@@ -73,7 +79,15 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     let inputNode = <Input />;
 
     if (title === '수량') {
-        inputNode = <InputNumber />;
+        inputNode = <InputNumber min={0}/>;
+    }
+
+    if (title === '단가' && dataIndex === 'materialCostPerUnit') {
+        inputNode = <InputNumber min={0} defaultValue={removeCommaInCost(record.materialCostPerUnit)}/>;
+    }
+
+    if (title === '단가' && dataIndex === 'laborCostPerUnit') {
+        inputNode = <InputNumber min={0} defaultValue={removeCommaInCost(record.laborCostPerUnit)}/>;
     }
 
     return (
@@ -159,12 +173,6 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
             })
     };
 
-    const removeCommaInCost = (target:string) => {
-        if (target !== undefined) {
-            return target.replace(/,/g, '');
-        }
-    };
-
     const confirmReviseMaterial: () => void = async () => {
 
         await axios
@@ -174,8 +182,8 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                     materialAmount: values.amount,
                     materialAmountUnit: values.unit,
                     materialMemo: values.memo,
-                    materialCostPerUnit: removeCommaInCost(values.materialCostPerUnit),
-                    laborCostPerUnit: removeCommaInCost(values.laborCostPerUnit)
+                    materialCostPerUnit: values.materialCostPerUnit,
+                    laborCostPerUnit: values.laborCostPerUnit
                 },
                 {
                     withCredentials: true,
@@ -285,6 +293,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                 dataIndex: 'memo',
                 key: 'memo',
                 width: '70px',
+                fixed: 'right',
                 render: (_: any, record: { id: string | number; category:any; name:any; memo:any; }) => (
                     <Popconfirm
                         title={<>[{record.category}] {record.name} </>}
@@ -301,6 +310,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                 title: '',
                 key: 'operation',
                 width: '30px',
+                fixed: 'right',
                 render: (_ : any, record :{id:string}) => {
                     const editable = isEditing(record.id);
                     return editable ? (
@@ -422,6 +432,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                     columns={mergedColumns}
                     dataSource={originSubData} // 확장된 데이터 소스를 사용
                     pagination={false}
+                    scroll={{ x: 1000 }}
                     bordered
                 />
             </Form>

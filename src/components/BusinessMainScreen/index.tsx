@@ -38,9 +38,9 @@ const { confirm } = Modal;
 const { Title } = Typography;
 
 
-const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (e:boolean) => void;}) => {
+const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (e:boolean) => void; isCollapsed:boolean;}) => {
 
-    const {user, onEvent, onTourEvent} = props;
+    const {user, onEvent, onTourEvent, isCollapsed} = props;
 
     const { companyId } = useParams();
 
@@ -251,7 +251,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
     return useObserver(() => (
         <>
             {contextHolder}
-            <Layout style={{ marginLeft: 200, width: "100%"}}>
+            <Layout style={{ marginLeft: isCollapsed ? 65 : 185, width: "100%"}}>
                 <Header style={{ background: 'white' }}>
                     <Row justify="space-between">
                         {mainNavStateInstance.getNavState() === '사업 등록' &&<Col></Col>}

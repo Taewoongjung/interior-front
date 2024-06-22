@@ -37,9 +37,9 @@ function getItem(
 // 초기 메뉴 아이템 설정
 const initialBusinessItems: MenuItem[] = [];
 
-const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void;}) => {
+const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void; triggerCollapse: (e:any) => void;}) => {
 
-    const {tourOpen, onTourEvent} = props;
+    const {tourOpen, onTourEvent, triggerCollapse} = props;
 
     const { companyId } = useParams();
 
@@ -54,6 +54,7 @@ const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void;}) => {
 
     const toggleCollapsed = () => {
         setCollapsed(!collapsed);
+        triggerCollapse(collapsed);
     };
 
     const handleButtonMain3Click = async (businessId: string) => {

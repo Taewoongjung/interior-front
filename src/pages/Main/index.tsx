@@ -3,13 +3,12 @@ import {Layout, FloatButton} from 'antd';
 import NavMain from "../../components/Nav/Main";
 import BusinessMainScreen from "../../components/BusinessMainScreen";
 import {useObserver} from "mobx-react";
-import MainNavState from "../../statemanager/mainNavState";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
-const { Header, Sider, Content } = Layout;
+const { Sider } = Layout;
 
 const Main = () => {
     const [collapsed, setCollapsed] = useState(false);
@@ -35,14 +34,15 @@ const Main = () => {
     return useObserver(() => (
         <>
             <Layout style={{ height: '100%', width: '100%' }} hasSider>
-                <Sider style={{ overflow: 'auto', height: '100%', position: 'fixed', left: 0, top: 0, bottom: 0 }}>
+                <Sider trigger={null} collapsible collapsed={collapsed}
+                       style={{ overflow: 'auto', height: '100%', position: 'fixed', left: 0, top: 0, bottom: 0 }}>
                 <div style={{background: '#e7a19a'}}>
                     <div style={{background: '#e7a19a'}}>
-                        <NavMain tourOpen={tourOpen} onTourEvent={handleTourOpen}/>
+                        <NavMain tourOpen={tourOpen} onTourEvent={handleTourOpen} triggerCollapse={toggleCollapsed}/>
                     </div>
                 </div>
                 </Sider>
-                <BusinessMainScreen user={userData} onEvent={handleApiMeMutate} onTourEvent={handleTourOpen}/>
+                <BusinessMainScreen user={userData} onEvent={handleApiMeMutate} onTourEvent={handleTourOpen} isCollapsed={collapsed}/>
                 <FloatButton.BackTop />
             </Layout>
         </>
