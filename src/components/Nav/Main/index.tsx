@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {useHistory, useParams} from "react-router-dom";
 import useSWR from "swr";
 import fetcher from "../../../utils/fetcher";
-import {Button, Menu, MenuProps, Tour, TourProps} from "antd";
+import {Button, Menu, MenuProps, Tour, TourProps, Popover} from "antd";
 import {
     AppstoreOutlined,
     MenuFoldOutlined,
@@ -96,11 +96,26 @@ const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void; triggerColl
         }
     }, [businesses]);
 
+    const generatePopoverItem = (item:any) => (
+        <Popover
+            key={item.key}
+            placement="rightTop"
+            title={item.label}
+            content={<Button>RT</Button>}
+        >
+            <div>{item.label}</div>
+        </Popover>
+    );
+    businessItems.map(generatePopoverItem)
+    const childMenuItems: MenuProps['items'] = [
+        getItem('사업 목록', 'main4', <AppstoreOutlined ref={step4}/>, businessItems)
+    ];
+
     // "사업 목록" 아래에 새로운 비즈니스 아이템을 추가하여 전체 메뉴 아이템 배열 생성
     const menuItems: MenuProps['items'] = [
         getItem('사업 등록', 'main1', <PlusSquareOutlined ref={step2}/>),
         getItem('사업 관리', 'main2', <SlidersOutlined ref={step3}/>),
-        getItem('사업 목록', 'main3', <AppstoreOutlined ref={step4}/>, businessItems)
+        getItem('견적서 작성', 'main3', <SlidersOutlined ref={step3}/>, childMenuItems),
     ];
 
     // 메뉴 클릭 이벤트 핸들러
@@ -188,9 +203,10 @@ const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void; triggerColl
                         minWidth: 0, flex: "auto"
                     }}
                     items={menuItems}
-                    defaultOpenKeys={["main3"]}
+                    defaultOpenKeys={["main3", "main4"]}
                     onClick={({ key }) => handleMenuClick(key.toString())}
                     inlineCollapsed={collapsed}
+
                 />
             </div>
             <Tour open={tourOpen} onClose={() => onTourEvent(false)} steps={steps}/>
