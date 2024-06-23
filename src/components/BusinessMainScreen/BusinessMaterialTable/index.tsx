@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Dropdown,
     Empty,
@@ -14,7 +14,7 @@ import {
     Form,
     Typography,
     Button,
-    TreeSelect
+    TreeSelect, Row, Col
 } from "antd";
 import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
 import axios from "axios";
@@ -139,19 +139,45 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     );
 };
 
-const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; onEvent: () => void; onLogEvent: () => void; fold:any}) => {
+const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress:any; businessId:any; onEvent: () => void; onLogEvent: () => void; fold:any}) => {
     const [usageCategory, setUsageCategory] = useState('');
     const [usageCategoryName, setUsageCategoryName] = useState('');
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    const {businessesMaterial, businessId, onEvent, onLogEvent, fold} = props;
+    const {businessesMaterial, businessProgress, businessId, onEvent, onLogEvent, fold} = props;
+    const [isQuotationBtnDisable, setQuotationBtnDisable] = useState(false);
+    const [isQuotationBtnAppear, setQuotationBtnAppear] = useState(false);
 
     const [form] = Form.useForm();
     const values = Form.useWatch([], form);
 
     const [editingKey, setEditingKey] = useState('');
     const isEditing = (id: string) => id === editingKey;
+
+
+    useEffect(() => {
+        if (businessProgress) {
+            const size = businessProgress.length;
+            const progressType = businessProgress[size - 1]?.progressType;
+
+            // 만약 progress 상태값이 "MAKING_QUOTATION" 이거나 "CREATED" 이 아닌 그 외 이면 "견적서 초안 작성 완료" 버튼을 노출 시키지 않는다.
+            if (!(progressType === "MAKING_QUOTATION" || progressType === "CREATED")) {
+
+                setQuotationBtnAppear(true);
+
+            } else { // "견적서 초안 작성 완료" 버튼이 progress 상태값이 "MAKING_QUOTATION" 이거나 "CREATED" 이면 노출 한다.
+
+                if (progressType === "CREATED") { // 노출 된 상태에서 progress 상태값이 "CREATED" 이면 해당 버튼을 비활성화 시킨다.
+                    setQuotationBtnDisable(true);
+                } else {
+                    setQuotationBtnDisable(false);
+                }
+
+                setQuotationBtnAppear(false);
+            }
+        }
+    }, [businessId]);
 
     // 데이터 로딩 중이거나 에러가 발생한 경우를 처리
     if (!businessesMaterial) {
@@ -554,7 +580,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
         <>
             {contextHolder}
             {businessesMaterial !== undefined &&
-                <Layout style={{width:"100%"}}>
+                <Layout style={{ width:"100%", backgroundColor: "white" }}>
                     <Table
                         bordered
                         columns={columns}
@@ -563,6 +589,22 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessId:any; 
                         pagination={false}
                         tableLayout={"fixed"}
                     />
+                    <br/><br/>
+                    <Row justify="space-between">
+                        <Col></Col>
+
+                        <Col>
+                            {!isQuotationBtnAppear &&
+                                (
+                                    isQuotationBtnDisable ?
+                                        <Button type="primary" shape="round" size="large" disabled><strong>견적서 초안 작성 완료</strong></Button> :
+                                        <Button type="primary" shape="round" size="large" ><strong>견적서 초안 작성 완료</strong></Button>
+                                )
+                            }
+                        </Col>
+
+                        <Col></Col>
+                    </Row>
                 </Layout>
             }
         </>

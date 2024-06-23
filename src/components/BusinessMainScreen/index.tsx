@@ -46,6 +46,8 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
 
     const history = useHistory();
 
+    const [reviseBusinessName, setBusinessName] = useState('');
+
     useEffect(() => {
         const token = localStorage.getItem("interiorjung-token");
 
@@ -84,7 +86,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
     const queryParams = new URLSearchParams(location.search);
     const businessId = queryParams.get('businessId');
 
-    const {data:businessesMaterial, error, mutate} = useSWR(
+    const {data:businesses, error, mutate} = useSWR(
             businessId ?
                 `${API_URL}/api/businesses/${businessId}`
             : null,
@@ -199,8 +201,6 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
         });
     };
 
-    const [reviseBusinessName, setBusinessName] = useState('');
-
     const foldTable = () => {
         setFold(false);
         if (!fold) {
@@ -258,11 +258,11 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                         {mainNavStateInstance.getNavState() === '사업 관리' &&<Col></Col>}
                         {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리')  &&
                             <Row justify="space-between">
-                                <Title level={2}>{businessesMaterial && businessesMaterial.businessName}</Title>
+                                <Title level={2}>{businesses && businesses.businessName}</Title>
 
                                 &nbsp;&nbsp;
 
-                                {businessesMaterial && <EditOutlined onClick={showModal}/>}
+                                {businesses && <EditOutlined onClick={showModal}/>}
 
                                 <Modal
                                     open={open}
@@ -288,7 +288,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                                 </Modal>
                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                                {businessesMaterial &&
+                                {businesses &&
                                     <DeleteOutlined onClick={showDeleteConfirm} />
                                 }
                             </Row>
@@ -327,10 +327,10 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                                 <Row style={{ fontSize: 12 }}>
                                     <br />
                                 </Row>
-                                {businessesMaterial && <Row> 조회 결과&nbsp;<strong>({businessesMaterial.count})</strong></Row>}
+                                {businesses && <Row> 조회 결과&nbsp;<strong>({businesses.count})</strong></Row>}
                             </Col>
                             <Col>
-                                {(businessesMaterial && businessesMaterial.count > 0) &&
+                                {(businesses && businesses.count > 0) &&
                                     <Button
                                         onClick={getExcel}
                                         type="dashed"
@@ -361,7 +361,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                                 </Row>
                             </Col>
                         </Row>
-                        {businessesMaterial === undefined &&
+                        {businesses === undefined &&
                             <Result
                                 icon={null}
                                 title={<div style={{color:'#cc5800'}}>반갑습니다. 귀하의 사업을 응원합니다.</div>}
@@ -374,9 +374,10 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                                 </>}
                             />
                         }
-                        {businessesMaterial !== undefined &&
+                        {businesses !== undefined &&
                             <Flex gap="middle">
-                                <BusinessMainScreenTable businessesMaterial={businessesMaterial.businessMaterials}
+                                <BusinessMainScreenTable businessesMaterial={businesses.businessMaterials}
+                                                         businessProgress={businesses.businessProgressesList}
                                                          businessId={businessId}
                                                          onEvent={handleMutate}
                                                          onLogEvent={handleLogMutate}
@@ -384,7 +385,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                                 />
                             </Flex>
                         }
-                        <br/><br/>
+                        <br/><br/><br/>
                         {materialLogData &&
                             <Collapse
                                 size="large"
