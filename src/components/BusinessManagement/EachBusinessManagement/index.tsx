@@ -107,7 +107,7 @@ const EachBusinessManagement = (props: { business:any; }) => {
     const [fourthStepDesc, setFourthStepDesc] = useState('');
 
     const getStep = () => {
-        if (business.businessProgressList && business.businessProgressList.length > 0) {
+        if (business.businessProgressList !== null && business.businessProgressList && business.businessProgressList.length > 0) {
             const size = business.businessProgressList.length;
             const progressType = business.businessProgressList[size - 1].progressType;
 
@@ -161,7 +161,7 @@ const EachBusinessManagement = (props: { business:any; }) => {
     useEffect(() => {
         getStep();
     }, []);
-    
+
     return (
         <>
             <Content style={{width:"1000px"}}>
@@ -206,7 +206,6 @@ const EachBusinessManagement = (props: { business:any; }) => {
                             <Steps
                                 current={stepCurrent}
                                 direction="vertical"
-                                // onChange={onChange}
                                 items={stepItems}
                             />
                         }

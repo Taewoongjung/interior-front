@@ -4,7 +4,7 @@ import useSWR from "swr";
 import fetcher from "../../../utils/fetcher";
 import {Button, Menu, MenuProps, Tour, TourProps, Popover} from "antd";
 import {
-    AppstoreOutlined,
+    AppstoreOutlined, FormOutlined,
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     PlusSquareOutlined,
@@ -115,7 +115,7 @@ const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void; triggerColl
     const menuItems: MenuProps['items'] = [
         getItem('사업 등록', 'main1', <PlusSquareOutlined ref={step2}/>),
         getItem('사업 관리', 'main2', <SlidersOutlined ref={step3}/>),
-        getItem('견적서 작성', 'main3', <SlidersOutlined ref={step3}/>, childMenuItems),
+        getItem('견적서 작성', 'main3', <FormOutlined ref={step3}/>, childMenuItems),
     ];
 
     // 메뉴 클릭 이벤트 핸들러

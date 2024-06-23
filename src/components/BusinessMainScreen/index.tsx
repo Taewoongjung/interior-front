@@ -258,7 +258,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                         {mainNavStateInstance.getNavState() === '사업 관리' &&<Col></Col>}
                         {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리')  &&
                             <Row justify="space-between">
-                                    <Title level={2}>{businessesMaterial && businessesMaterial.businessName}</Title>
+                                <Title level={2}>{businessesMaterial && businessesMaterial.businessName}</Title>
 
                                 &nbsp;&nbsp;
 
@@ -304,7 +304,9 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                     </Row>
                 </Header>
                 {mainNavStateInstance.getNavState() === '사업 등록' && <RegisterBusiness/>}
+
                 {mainNavStateInstance.getNavState() === '사업 관리' && <BusinessManagement/>}
+
                 {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리') &&
                     <Content style={{ background: 'white', padding: 28 }}>
                         <Row gutter={8}>
