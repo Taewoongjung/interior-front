@@ -497,7 +497,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
         const subDataIds = subData.map(item => item.id);
 
         await axios
-            .patch(`${API_URL}/api/businesses/${businessId}/usages/categories`,
+            .patch(`${API_URL}/api/businesses/${businessId}/categories/constructions`,
                 {subDataIds, usageCategoryName},
                 {
                     withCredentials: true,
