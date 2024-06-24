@@ -491,13 +491,13 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
         );
     };
 
-    // 클릭 이벤트 핸들러
-    const handleEditClick = async (subData: any[]) => {
+    // 공사 분류 수정 핸들러
+    const handleUsageCategoryEditClick = async (subData: any[]) => {
 
         const subDataIds = subData.map(item => item.id);
 
         await axios
-            .patch(`${API_URL}/api/businesses/${businessId}`,
+            .patch(`${API_URL}/api/businesses/${businessId}/usages/categories`,
                 {subDataIds, usageCategoryName},
                 {
                     withCredentials: true,
@@ -516,9 +516,9 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
             })
     };
 
-    const confirm = (businessName:string, subData: any[]) =>
+    const usageCategoryEditConfirm = (businessName:string, subData: any[]) =>
         new Promise((resolve) => {
-            setTimeout(() => resolve(handleEditClick(subData)), 3000);
+            setTimeout(() => resolve(handleUsageCategoryEditClick(subData)), 3000);
         });
 
     const setDefaultValueOfReviseUsageCategory = (businessName:any) => {
@@ -540,7 +540,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
                             defaultValue={usageCategory}
                             onChange={(e) => handleUsageCategoryNameOnChange(e.target.value)}/>
                         }
-                        onConfirm={() => confirm(record.businessName, record.subData)} // subData를 confirm 함수에 전달
+                        onConfirm={() => usageCategoryEditConfirm(record.businessName, record.subData)} // subData를 confirm 함수에 전달
                         onOpenChange={(open: boolean) => {
                             if (open) {
                                 setUsageCategory(record.businessName.props.children.props.children.props.children);
