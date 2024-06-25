@@ -30,6 +30,7 @@ const Auth = observer(() => {
         setEmailError('');
         setPasswordError('');
         setIsVerified(false);
+        setVerifyCompareNumber('');
         setVerifyTargetPhoneNumber('');
         setIsInProgressVerifyingPhoneNumber(false);
         clearErrors();
