@@ -256,14 +256,12 @@ const Auth = observer(() => {
         if (verifyTargetPhoneNumber !== "" && verifyTargetPhoneNumber !== undefined && verifyTargetPhoneNumber !== null) {
 
             const targetPhoneNumber = verifyTargetPhoneNumber;
-            console.log("발송 전");
             axios.post(`${API_URL}/api/phones/validations`,
                 {
                     targetPhoneNumber
                 }, {withCredentials: true, })
                 .then((response) => {
                     if (response.data === true) {
-                        console.log("발송성공");
                         stopLoading(2);
                         setIsModalOpen(true);
                         setIsInProgressVerifyingPhoneNumber(true);

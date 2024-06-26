@@ -5,6 +5,11 @@ const BusinessStatistics = (props:{businesses:any;}) => {
 
     const {businesses} = props;
 
+    const getBusinessesNotContractedYet = () => {
+        const notContractedBusinesses = businesses.filter((business: { businessProgressList: any[]; }) => business.businessProgressList.length < 4);
+        return notContractedBusinesses.length;
+    }
+
     return (
         <>
             <div>
@@ -13,7 +18,7 @@ const BusinessStatistics = (props:{businesses:any;}) => {
                         <Card bordered={true}>
                             <Statistic
                                 title="계약 전 사업"
-                                value={businesses.length}
+                                value={getBusinessesNotContractedYet()}
                                 valueStyle={{ color: '#de8d22' }}
                             />
                         </Card>

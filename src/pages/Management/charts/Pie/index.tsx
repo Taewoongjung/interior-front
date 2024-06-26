@@ -7,11 +7,11 @@ const PieChart =(props:{businessesMaterial:any; usageType:string}) => {
 
     const handle = {
         padClick: (data: any) => {
-            console.log(data);
+
         },
 
         legendClick: (data: any) => {
-            console.log(data);
+
         },
     };
 

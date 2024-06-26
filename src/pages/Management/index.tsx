@@ -41,7 +41,6 @@ const Management = observer(() => {
     const firstLogin = params.get('firstLogin');
 
     const handleLogout = () => {
-        console.log("로그아웃");
         localStorage.removeItem("interiorjung-token");
         const redirectUrl = '/auth';
         history.push(redirectUrl);

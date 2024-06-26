@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Empty, message, Row, Tabs} from "antd";
+import {Badge, Button, Empty, message, Row, Tabs} from "antd";
 import EachBusinessManagement from "./EachBusinessManagement";
 import {useParams} from "react-router-dom";
 import BusinessStatistics from "./BusinessStatistics";
@@ -73,7 +73,6 @@ const BusinessManagement = () => {
                                             return {
                                                 label: `${business.name}`,
                                                 key: id,
-                                                disabled: i === 28,
                                                 children: <EachBusinessManagement business={business}/>,
                                             };
                                         }

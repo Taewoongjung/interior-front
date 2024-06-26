@@ -16,7 +16,7 @@ import {
     Button,
     TreeSelect, Row, Col
 } from "antd";
-import {EditOutlined, MessageOutlined, MoreOutlined} from "@ant-design/icons";
+import {EditOutlined, MessageOutlined, MoreOutlined, CheckOutlined} from "@ant-design/icons";
 import axios from "axios";
 import {amountUnitOptions, categoryOptionsForSelection} from "../BusinessMaterialAddInput/select";
 
@@ -139,15 +139,16 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
     );
 };
 
-const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress:any; businessId:any; onEvent: () => void; onLogEvent: () => void; fold:any}) => {
+const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress:any; businessId:any; companyId:any; onEvent: () => void; onLogEvent: () => void; fold:any}) => {
     const [usageCategory, setUsageCategory] = useState('');
     const [usageCategoryName, setUsageCategoryName] = useState('');
 
     const [messageApi, contextHolder] = message.useMessage();
 
-    const {businessesMaterial, businessProgress, businessId, onEvent, onLogEvent, fold} = props;
+    const {businessesMaterial, businessProgress, businessId, companyId, onEvent, onLogEvent, fold} = props;
     const [isQuotationBtnDisable, setQuotationBtnDisable] = useState(false);
     const [isQuotationBtnAppear, setQuotationBtnAppear] = useState(false);
+    const [isFirstCompleteQuotation, setIsFirstCompleteQuotation] = useState(false);
 
     const [form] = Form.useForm();
     const values = Form.useWatch([], form);
@@ -161,6 +162,11 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
             const size = businessProgress.length;
             const progressType = businessProgress[size - 1]?.progressType;
 
+            let progressTypes = businessProgress.filter((item: { progressType: any; }) => item.progressType === 'MAKING_QUOTATION');
+
+            if (progressTypes.length >= 1) {
+                setIsFirstCompleteQuotation(true);
+            }
             // 만약 progress 상태값이 "MAKING_QUOTATION" 이거나 "CREATED" 이 아닌 그 외 이면 "견적서 초안 작성 완료" 버튼을 노출 시키지 않는다.
             if (!(progressType === "MAKING_QUOTATION" || progressType === "CREATED")) {
 
@@ -177,7 +183,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
                 setQuotationBtnAppear(false);
             }
         }
-    }, [businessId]);
+    }, [businessId, isFirstCompleteQuotation]);
 
     // 데이터 로딩 중이거나 에러가 발생한 경우를 처리
     if (!businessesMaterial) {
@@ -594,7 +600,9 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
                 if (response.data === true) {
                     success('견적서 작성 완료 되었습니다. ' +
                         '완료 된 견적서를 고객님 한테 보내보세요.');
+                    setIsFirstCompleteQuotation(true);
                     onEvent();
+                    window.location.href = `/main/${companyId}?businessId=${businessId}`
                 }})
             .catch((error) => {
                 errorModal(error.message);
@@ -604,33 +612,40 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
     return (
         <>
             {contextHolder}
-            {businessesMaterial !== undefined &&
-                <Layout style={{ width:"100%", backgroundColor: "white" }}>
-                    <Table
-                        bordered
-                        columns={columns}
-                        expandable={{ expandedRowRender, defaultExpandAllRows: true }}
-                        dataSource={data}
-                        pagination={false}
-                        tableLayout={"fixed"}
-                    />
-                    <br/><br/>
-                    <Row justify="space-between">
-                        <Col></Col>
+            {<Layout style={{width: "100%", backgroundColor: "white"}}>
+                <Table
+                    bordered
+                    columns={columns}
+                    expandable={{expandedRowRender, defaultExpandAllRows: true}}
+                    dataSource={data}
+                    pagination={false}
+                    tableLayout={"fixed"}
+                />
+                <br/><br/>
+                <Row justify="space-between">
+                    <Col></Col>
 
-                        <Col>
-                            {!isQuotationBtnAppear &&
-                                (
-                                    isQuotationBtnDisable ?
-                                        <Button type="primary" shape="round" size="large" disabled><strong>견적서 초안 작성 완료</strong></Button> :
-                                        <Button type="primary" shape="round" size="large" onClick={updateBusinessProgressAsCompleteQuotationHandler}><strong>견적서 초안 작성 완료</strong></Button>
-                                )
-                            }
-                        </Col>
+                    <Col>
+                        {!isQuotationBtnAppear &&
+                            (
+                                isQuotationBtnDisable ?
+                                    <Button type="primary" shape="round" size="large" disabled><strong>견적서 초안 작성
+                                        완료</strong></Button> :
+                                    <Button type="primary" shape="round" size="large"
+                                            onClick={updateBusinessProgressAsCompleteQuotationHandler}><strong>견적서 초안 작성
+                                        완료</strong></Button>
+                            )
+                        }
+                        {(isFirstCompleteQuotation && isQuotationBtnAppear) &&
+                            <Typography.Title level={3}>
+                                <CheckOutlined /> 초안 작성 완료 됨
+                            </Typography.Title>
+                        }
+                    </Col>
 
-                        <Col></Col>
-                    </Row>
-                </Layout>
+                    <Col></Col>
+                </Row>
+            </Layout>
             }
         </>
     );

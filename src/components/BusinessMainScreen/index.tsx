@@ -7,7 +7,7 @@ import {
     Menu, message, Modal,
     Row,
     Typography,
-    Form, Result, Collapse, Flex,
+    Form, Result, Collapse, Flex, Badge,
 } from "antd";
 import {
     UserOutlined,
@@ -259,7 +259,6 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                         {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리')  &&
                             <Row justify="space-between">
                                 <Title level={2}>{businesses && businesses.businessName}</Title>
-
                                 &nbsp;&nbsp;
 
                                 {businesses && <EditOutlined onClick={showModal}/>}
@@ -379,6 +378,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                                 <BusinessMainScreenTable businessesMaterial={businesses.businessMaterials}
                                                          businessProgress={businesses.businessProgressesList}
                                                          businessId={businessId}
+                                                         companyId={companyId}
                                                          onEvent={handleMutate}
                                                          onLogEvent={handleLogMutate}
                                                          fold={fold}

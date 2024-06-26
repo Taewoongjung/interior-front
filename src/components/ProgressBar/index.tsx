@@ -61,7 +61,6 @@ const ProgressBar = (props:{ taskId:string; setProgressBarModalOpen:any; }) => {
         return () => {
             setProgressBarModalOpen(false);
             eventSource.close(); // 컴포넌트 언마운트 시 EventSource를 닫습니다.
-            console.log("EventSource closed.");
         };
     }, [taskId, setProgressBarModalOpen]);
 

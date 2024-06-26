@@ -6,7 +6,6 @@ const fetcher = async (url: string) => await axios.get(url, {
         withCredentials: true
     },
 }).then((response) => {
-    console.log("검증 됨");
     const token = localStorage.getItem("interiorjung-token");
     if (token == null) {
         window.location.reload();

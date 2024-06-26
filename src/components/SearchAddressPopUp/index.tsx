@@ -19,7 +19,6 @@ const SearchAddressPopUp = (props:{ setAddress:any; setOpenSearchAddr:any;}) => 
             }
             fullAddress += (extraAddress !== '' ? ` (${extraAddress})` : '');
         }
-        console.log(extraAddress)
         setAddress(data);
         setOpenSearchAddr(false);
     }
