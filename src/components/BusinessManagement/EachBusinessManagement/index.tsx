@@ -105,6 +105,7 @@ const EachBusinessManagement = (props: { business:any; }) => {
     const [secondStepDesc, setSecondStepDesc] = useState('');
     const [thirdStepDesc, setThirdStepDesc] = useState('');
     const [fourthStepDesc, setFourthStepDesc] = useState('');
+    const [fifthStepDesc, setFifthStepDesc] = useState('');
 
     const getStep = () => {
         if (business.businessProgressList !== null && business.businessProgressList && business.businessProgressList.length > 0) {
@@ -122,19 +123,28 @@ const EachBusinessManagement = (props: { business:any; }) => {
                 setSecondStepDesc(business.businessProgressList[1].createdAt)
             }
 
-            if (progressType === 'REQUESTED') {
+            if (progressType === 'COMPLETE_QUOTATION') {
                 setStepCurrent(2);
-                setFirstStepDesc(business.businessProgressList[0].createdAt)
-                setSecondStepDesc(business.businessProgressList[1].createdAt)
-                setThirdStepDesc(business.businessProgressList[2].createdAt)
+                setFirstStepDesc(business.businessProgressList[0].createdAt);
+                setSecondStepDesc(business.businessProgressList[1].createdAt);
+                setThirdStepDesc(business.businessProgressList[2].createdAt);
+            }
+
+            if (progressType === 'REQUESTED') {
+                setStepCurrent(3);
+                setFirstStepDesc(business.businessProgressList[0].createdAt);
+                setSecondStepDesc(business.businessProgressList[1].createdAt);
+                setThirdStepDesc(business.businessProgressList[2].createdAt);
+                setFourthStepDesc(business.businessProgressList[3].createdAt)
             }
 
             if (progressType === 'CONTRACTED') {
-                setStepCurrent(3);
+                setStepCurrent(4);
                 setFirstStepDesc(business.businessProgressList[0].createdAt)
                 setSecondStepDesc(business.businessProgressList[1].createdAt)
                 setThirdStepDesc(business.businessProgressList[2].createdAt)
                 setFourthStepDesc(business.businessProgressList[3].createdAt)
+                setFifthStepDesc(business.businessProgressList[4].createdAt)
             }
         }
     }
@@ -149,12 +159,16 @@ const EachBusinessManagement = (props: { business:any; }) => {
             description: secondStepDesc,
         },
         {
-            title: '견적서 요청',
+            title: '견적서 초안 완료',
             description: thirdStepDesc,
         },
         {
-            title: '계약 성사',
+            title: '견적서 요청',
             description: fourthStepDesc,
+        },
+        {
+            title: '계약 성사',
+            description: fifthStepDesc,
         },
     ]
 

@@ -576,6 +576,31 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
         };
     });
 
+    const updateBusinessProgressAsCompleteQuotationHandler = async () => {
+
+        const progressType = "COMPLETE_QUOTATION";
+
+        await axios
+            .patch(`${API_URL}/api/businesses/${businessId}/progresses`,
+                {progressType},
+                {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: localStorage.getItem("interiorjung-token"),
+                        "Content-Type": "application/json"
+                    }
+                }
+            ).then((response) => {
+                if (response.data === true) {
+                    success('견적서 작성 완료 되었습니다. ' +
+                        '완료 된 견적서를 고객님 한테 보내보세요.');
+                    onEvent();
+                }})
+            .catch((error) => {
+                errorModal(error.message);
+            })
+    }
+
     return (
         <>
             {contextHolder}
@@ -598,7 +623,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
                                 (
                                     isQuotationBtnDisable ?
                                         <Button type="primary" shape="round" size="large" disabled><strong>견적서 초안 작성 완료</strong></Button> :
-                                        <Button type="primary" shape="round" size="large" ><strong>견적서 초안 작성 완료</strong></Button>
+                                        <Button type="primary" shape="round" size="large" onClick={updateBusinessProgressAsCompleteQuotationHandler}><strong>견적서 초안 작성 완료</strong></Button>
                                 )
                             }
                         </Col>
