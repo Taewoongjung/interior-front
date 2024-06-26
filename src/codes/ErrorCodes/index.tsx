@@ -1,1 +1,3 @@
 export const SIGNUP_ERROR_CODES = [102, 1006, 1100];
+
+export const BUSINESS_ERROR_CODES = [1300, 1301, 1302, 1303, 1304, 1305];

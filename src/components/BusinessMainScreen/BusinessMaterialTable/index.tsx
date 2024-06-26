@@ -19,6 +19,7 @@ import {
 import {EditOutlined, MessageOutlined, MoreOutlined, CheckOutlined} from "@ant-design/icons";
 import axios from "axios";
 import {amountUnitOptions, categoryOptionsForSelection} from "../BusinessMaterialAddInput/select";
+import {BUSINESS_ERROR_CODES} from "../../../codes/ErrorCodes";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -605,7 +606,13 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
                     window.location.href = `/main/${companyId}?businessId=${businessId}`
                 }})
             .catch((error) => {
-                errorModal(error.message);
+                const errorCode = error.response.data.errorCode;
+
+                if (BUSINESS_ERROR_CODES.includes(errorCode)) {
+                    errorModal(error.response.data.message);
+                } else {
+                    errorModal(error.message);
+                }
             })
     }
 
