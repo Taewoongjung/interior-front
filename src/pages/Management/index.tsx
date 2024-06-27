@@ -71,6 +71,10 @@ const Management = observer(() => {
 
     const [tourOpen, setTourOpen] = useState<boolean>(false);
 
+    const handleTourDisable = () => {
+        setTourOpen(false);
+    }
+
     const steps: TourProps['steps'] = [
         {
             title: '사업체 추가',
@@ -167,7 +171,7 @@ const Management = observer(() => {
                             </Tooltip>
                         </Divider>
                         <Content style={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <CompanyRegister onEvent={handleApiMeMutate} setTourOpen={setTourOpen} tourRef={ref}/>
+                            <CompanyRegister onEvent={handleApiMeMutate} onTourEvent={handleTourDisable} tourRef={ref}/>
                         </Content>
                         {(userData?.companyList.length === 0 || userData?.companyList.length === undefined) &&
                             <Empty/>
