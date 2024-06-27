@@ -74,7 +74,8 @@ const Management = observer(() => {
     const steps: TourProps['steps'] = [
         {
             title: '사업체 추가',
-            description: '클릭 해서 사업체를 추가해보세요.',
+            description: '클릭해서 사업체를 추가해보세요.',
+            closeIcon: false,
             target: () => ref.current!,
         }
     ];
@@ -97,8 +98,8 @@ const Management = observer(() => {
                     >
                         <Result
                             icon={customIcon}
-                            title="축하합니다!!"
-                            subTitle="사업체 등록 부터 시작해보세요 ~"
+                            title="환영합니다!!"
+                            subTitle="사업체 등록부터 시작해보세요."
                             extra={[
                                 <Button
                                     type="primary"
@@ -166,7 +167,7 @@ const Management = observer(() => {
                             </Tooltip>
                         </Divider>
                         <Content style={{display: 'flex', justifyContent: 'flex-end'}}>
-                            <CompanyRegister onEvent={handleApiMeMutate} tourRef={ref}/>
+                            <CompanyRegister onEvent={handleApiMeMutate} setTourOpen={setTourOpen} tourRef={ref}/>
                         </Content>
                         {(userData?.companyList.length === 0 || userData?.companyList.length === undefined) &&
                             <Empty/>

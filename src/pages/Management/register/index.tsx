@@ -7,8 +7,8 @@ import {useObserver} from "mobx-react";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
-const CompanyRegister = (props:{onEvent: () => void; tourRef:any}) => {
-    const {onEvent, tourRef} = props;
+const CompanyRegister = (props:{onEvent: () => void; setTourOpen: (b: boolean) => void; tourRef:any}) => {
+    const {onEvent, setTourOpen, tourRef} = props;
 
     const [messageApi, contextHolder] = message.useMessage();
 
@@ -30,6 +30,7 @@ const CompanyRegister = (props:{onEvent: () => void; tourRef:any}) => {
     const [open, setOpen] = useState(false);
 
     const showDrawer = () => {
+        setTourOpen(false);
         setOpen(true);
     };
 
