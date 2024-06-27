@@ -51,6 +51,8 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                 onEvent();
                 onLogEvent();
                 form.resetFields();
+                setValue('0');
+                setSelectedValue(null);
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -142,6 +144,10 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                             <Form.Item
                                 name="materialAmount"
                                 label="재료 개수"
+                                rules={[
+                                    { required: true, message: '⚠️ 재료 개수는 필수 응답 항목입니다.' },
+                                    { pattern: /^[0-9]+$/, message: '⚠️ 숫자만 허용합니다.'}
+                                ]}
                             >
                                 <Space>
                                     <InputNumber min={1} max={10} defaultValue={3} value={value} onChange={setValue}/>
@@ -152,7 +158,9 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                             <Form.Item
                                 name="materialAmountUnit"
                                 label="단위"
-                                rules={[{ required: true, message: '⚠️ 수량에 대한 단위는 필수값입니다.' }]}
+                                rules={[
+                                    { required: true, message: '⚠️ 수량에 대한 단위는 필수값입니다.' },
+                                ]}
                                 style={{ width: "170px" }}
                             >
                                 <Space>
@@ -176,6 +184,9 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                                 name="materialCostPerUnit"
                                 label="재료 단가"
                                 style={{ width: "200px" }}
+                                rules={[
+                                    { pattern: /^[0-9]+$/, message: '⚠️ 숫자만 허용합니다.'}
+                                ]}
                             >
                                 <Input suffix="₩"/>
                             </Form.Item>
@@ -185,6 +196,9 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                                 name="laborCostPerUnit"
                                 label="노무비 단가"
                                 style={{ width: "200px" }}
+                                rules={[
+                                    { pattern: /^[0-9]+$/, message: '⚠️ 숫자만 허용합니다.'}
+                                ]}
                             >
                                 <Input suffix="₩"/>
                             </Form.Item>
