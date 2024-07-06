@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import PieChart from "../../../pages/Management/charts/Pie";
 import {Content} from "antd/es/layout/layout";
-import {Row, DescriptionsProps, Descriptions, Card, Spin, Col, Steps} from "antd";
+import {Row, DescriptionsProps, Descriptions, Card, Spin, Col, Steps, Typography} from "antd";
 import {PieChartOutlined} from "@ant-design/icons";
 import {StepProps} from "antd/es/steps";
+import BusinessUsageCategorySelector from "../BusinessUsageCategorySelector";
 
 const EachBusinessManagement = (props: { business:any; }) => {
 
@@ -216,6 +217,7 @@ const EachBusinessManagement = (props: { business:any; }) => {
                         </Card>
                     </Col>
                     <Col span={9} push={3}>
+                        <Typography.Title level={5}>사업 진행 사항</Typography.Title>
                         {business && business !== undefined && business.businessMaterialList.length > 0 &&
                             <Steps
                                 current={stepCurrent}
@@ -223,6 +225,10 @@ const EachBusinessManagement = (props: { business:any; }) => {
                                 items={stepItems}
                             />
                         }
+                        <br/>
+                        <br/>
+                        <Typography.Title level={5}>사업 재료 공사분류 리스트</Typography.Title>
+                        <BusinessUsageCategorySelector/>
                     </Col>
                 </Row>
             </Content>
