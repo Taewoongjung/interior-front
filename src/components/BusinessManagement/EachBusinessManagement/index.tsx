@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import PieChart from "../../../pages/Management/charts/Pie";
 import {Content} from "antd/es/layout/layout";
-import {Row, DescriptionsProps, Descriptions, Card, Spin, Col, Steps, Typography} from "antd";
+import {Row, DescriptionsProps, Descriptions, Card, Spin, Col, Steps, Typography, Button} from "antd";
 import {PieChartOutlined} from "@ant-design/icons";
 import {StepProps} from "antd/es/steps";
 import BusinessUsageCategorySelector from "../BusinessUsageCategorySelector";
+import QuotationDraftRequestHistory from "../QuotationDraftRequestHistory";
 
 const EachBusinessManagement = (props: { business:any; }) => {
 
@@ -131,7 +132,7 @@ const EachBusinessManagement = (props: { business:any; }) => {
                 setThirdStepDesc(business.businessProgressList[2].createdAt);
             }
 
-            if (progressType === 'REQUESTED') {
+            if (progressType === 'QUOTATION_REQUESTED') {
                 setStepCurrent(3);
                 setFirstStepDesc(business.businessProgressList[0].createdAt);
                 setSecondStepDesc(business.businessProgressList[1].createdAt);
@@ -161,11 +162,25 @@ const EachBusinessManagement = (props: { business:any; }) => {
         },
         {
             title: '견적서 초안 완료',
-            description: thirdStepDesc,
+            description: (
+                <div>
+                    <div>{thirdStepDesc}</div>
+                    {stepCurrent == 2 &&
+                        <QuotationDraftRequestHistory businessId={business.id}/>
+                    }
+                </div>
+            ),
         },
         {
-            title: '견적서 요청',
-            description: fourthStepDesc,
+            title: '견적서 초안 발송 완료',
+            description: (
+                <div>
+                    <div>{thirdStepDesc}</div>
+                    {stepCurrent == 3 &&
+                        <QuotationDraftRequestHistory businessId={business.id}/>
+                    }
+                </div>
+            ),
         },
         {
             title: '계약 성사',

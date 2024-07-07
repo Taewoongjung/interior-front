@@ -16,7 +16,7 @@ import {
     Button,
     TreeSelect, Row, Col
 } from "antd";
-import {EditOutlined, MessageOutlined, MoreOutlined, CheckOutlined} from "@ant-design/icons";
+import {EditOutlined, MessageOutlined, MoreOutlined, CheckOutlined, SlidersOutlined} from "@ant-design/icons";
 import axios from "axios";
 import {amountUnitOptions, categoryOptionsForSelection} from "../BusinessMaterialAddInput/select";
 import {BUSINESS_ERROR_CODES} from "../../../codes/ErrorCodes";
@@ -616,6 +616,7 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
             })
     }
 
+
     return (
         <>
             {contextHolder}
@@ -644,9 +645,12 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
                             )
                         }
                         {(isFirstCompleteQuotation && isQuotationBtnAppear) &&
-                            <Typography.Title level={3}>
-                                <CheckOutlined /> 초안 작성 완료 됨
-                            </Typography.Title>
+                            <>
+                                <Typography.Title level={3}>
+                                    <CheckOutlined /> 초안 작성 완료 됨
+                                </Typography.Title>
+                                "<SlidersOutlined/><strong>사업 관리</strong>"에서 견적서를 고객님들한테 발송 가능합니다.
+                            </>
                         }
                     </Col>
 
