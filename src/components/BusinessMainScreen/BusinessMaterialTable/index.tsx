@@ -14,7 +14,7 @@ import {
     Form,
     Typography,
     Button,
-    TreeSelect, Row, Col
+    TreeSelect, Row, Col, Tooltip
 } from "antd";
 import {EditOutlined, MessageOutlined, MoreOutlined, CheckOutlined, SlidersOutlined} from "@ant-design/icons";
 import axios from "axios";
@@ -111,11 +111,17 @@ const EditableCell: React.FC<React.PropsWithChildren<EditableCellProps>> = ({
 
 
     if (title === '단가' && dataIndex === 'materialCostPerUnit') {
-        inputNode = <InputNumber min={0} defaultValue={removeCommaInCost(record.materialCostPerUnit)}/>;
+        inputNode =
+        <Tooltip trigger={['focus']} title={"재료비 " + title} placement="topLeft" overlayClassName="numeric-input">
+            <InputNumber min={0} defaultValue={removeCommaInCost(record.materialCostPerUnit)}/>
+        </Tooltip>;
     }
 
     if (title === '단가' && dataIndex === 'laborCostPerUnit') {
-        inputNode = <InputNumber min={0} defaultValue={removeCommaInCost(record.laborCostPerUnit)}/>;
+        inputNode =
+        <Tooltip trigger={['focus']} title={"노무비 " + title} placement="topLeft" overlayClassName="numeric-input">
+            <InputNumber min={0} defaultValue={removeCommaInCost(record.laborCostPerUnit)}/>
+        </Tooltip>;
     }
 
     return (
@@ -213,6 +219,11 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
         return number?.toString()?.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     };
 
+    const removeCommasFromNumber = (number: any): string | undefined => {
+        return number?.toString()?.replace(/,/g, '');
+    };
+
+
     const confirmDelete: (materialId: (string | number)) => void = async (materialId:string | number) => {
 
         await axios
@@ -242,8 +253,8 @@ const BusinessMainScreenTable = (props:{businessesMaterial:any; businessProgress
                     materialAmount: values.amount,
                     materialAmountUnit: values.unit,
                     materialMemo: values.memo,
-                    materialCostPerUnit: values.materialCostPerUnit,
-                    laborCostPerUnit: values.laborCostPerUnit
+                    materialCostPerUnit: removeCommasFromNumber(values.materialCostPerUnit),
+                    laborCostPerUnit: removeCommasFromNumber(values.laborCostPerUnit)
                 },
                 {
                     withCredentials: true,
