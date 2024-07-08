@@ -183,7 +183,7 @@ const Management = observer(() => {
                 </Layout>
             </Layout>
             <Layout>
-                <Footer style={{height: 20}}>
+                <Footer style={{height: 20, bottom:0, position: 'fixed'}}>
                     <div style={{marginTop: -10}}>
                         produced by tws
                         Author <a href='https://ydontustudy.tistory.com/'>鄭</a>
