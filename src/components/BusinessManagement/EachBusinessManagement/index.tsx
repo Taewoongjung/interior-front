@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import PieChart from "../../../pages/Management/charts/Pie";
 import {Content} from "antd/es/layout/layout";
-import {Row, DescriptionsProps, Descriptions, Card, Spin, Col, Steps, Typography, Button} from "antd";
+import {Row, DescriptionsProps, Descriptions, Card, Spin, Col, Steps, Typography} from "antd";
 import {PieChartOutlined} from "@ant-design/icons";
 import {StepProps} from "antd/es/steps";
 import BusinessUsageCategorySelector from "../BusinessUsageCategorySelector";
@@ -175,7 +175,7 @@ const EachBusinessManagement = (props: { business:any; }) => {
             title: '견적서 초안 발송 완료',
             description: (
                 <div>
-                    <div>{thirdStepDesc}</div>
+                    <div>{fourthStepDesc}</div>
                     {stepCurrent == 3 &&
                         <QuotationDraftRequestHistory businessId={business.id}/>
                     }
@@ -240,10 +240,8 @@ const EachBusinessManagement = (props: { business:any; }) => {
                                 items={stepItems}
                             />
                         }
-                        <br/>
-                        <br/>
-                        <Typography.Title level={5}>사업 재료 공사분류 리스트</Typography.Title>
-                        <BusinessUsageCategorySelector/>
+                        {/*<Typography.Title level={5}>사업 재료 공사분류 리스트</Typography.Title>*/}
+                        {/*<BusinessUsageCategorySelector businessId={business.id}/>*/}
                     </Col>
                 </Row>
             </Content>

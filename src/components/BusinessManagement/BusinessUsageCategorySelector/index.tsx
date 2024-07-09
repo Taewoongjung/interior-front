@@ -1,28 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {Transfer, Switch, TransferProps} from "antd";
+import {Transfer, TransferProps} from "antd";
+import axios from "axios";
 
-interface RecordType {
-    key: string;
-    title: string;
-    description: string;
-    disabled: boolean;
-}
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
-const mockData: RecordType[] = Array.from({ length: 20 }).map((_, i) => ({
-    key: i.toString(),
-    title: `content${i + 1}`,
-    description: `description of content${i + 1}`,
-    disabled: i % 3 < 1,
-}));
+const BusinessUsageCategorySelector = (props:{businessId:any}) => {
 
-const oriTargetKeys = mockData.filter((item) => Number(item.key) % 3 > 1).map((item) => item.key);
+    const {businessId} = props;
 
-
-const BusinessUsageCategorySelector = () => {
-
-    const [targetKeys, setTargetKeys] = useState<React.Key[]>(oriTargetKeys);
     const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
-    const [disabled, setDisabled] = useState(false);
 
     const handleChange: TransferProps['onChange'] = (newTargetKeys, direction, moveKeys) => {
         setTargetKeys(newTargetKeys);
@@ -47,12 +33,60 @@ const BusinessUsageCategorySelector = () => {
         console.log('target:', e.target);
     };
 
+    const [data, setData] = useState<any>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = localStorage.getItem('interiorjung-token');
+                if (token) {
+                    const response = await axios.get(
+                        `${API_URL}/api/businesses/${businessId}/usage-categories`,
+                        {
+                            withCredentials: true, // CORS 처리 옵션
+                            headers: {
+                                Authorization: token
+                            }
+                        }
+                    );
+                    setData(response.data); // Assuming response.data contains the actual data
+                } else {
+                    console.error('No token found');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [businessId]);
+
+    interface RecordType {
+        key: string;
+        title: string;
+        description: string;
+        disabled: boolean;
+    }
+
+
+
+    const usageCategoryData: RecordType[] = data.map((_: any, i: number) => ({
+        key: i.toString(),
+        title: _.usageCategory,
+        description: `description of content${i + 1}`,
+        disabled: false,
+    }));
+
+    const oriTargetKeys = usageCategoryData.filter(
+        (item) => Number(item.key) % 3 > 1).map((item) => item.key);
+
+    const [targetKeys, setTargetKeys] = useState<React.Key[]>(oriTargetKeys);
 
     return (
         <>
             <Transfer
-                dataSource={mockData}
-                titles={['Source', 'Target']}
+                dataSource={usageCategoryData}
+                titles={['', '사용 할 리스트']}
                 targetKeys={targetKeys}
                 selectedKeys={selectedKeys}
                 onChange={handleChange}

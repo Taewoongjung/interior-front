@@ -89,7 +89,7 @@ const BusinessManagement = () => {
                         display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
-                        height: "50vh" // Adjust height as necessary
+                        height: "50vh"
                     }}>
                     <div>
                         <Empty
