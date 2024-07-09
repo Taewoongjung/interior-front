@@ -443,6 +443,7 @@ const Auth = observer(() => {
                 .then((response) => {
                     if (response.data === true) {
                         success("비밀번호 변경 완료")
+                        goToLogIn();
                         setIsFindIdModalOpen(false);
                         setIsInProgressVerifyingPhoneNumber(false);
                         setIsVerifiedTargetPhoneNumberForFindId(true);
@@ -564,7 +565,7 @@ const Auth = observer(() => {
             <section className={viewState}>
                 <div className="left">
                     <img src="/login/interior-jung-title-login.png" alt="로그인 이미지" width="800" height="450"/>
-                    <div className="sign-up">
+                        <div className="sign-up">
                             <h1>회원가입</h1>
                             <form onSubmit={handleSubmit(onSubmitSignUp)}>
                                 <input
@@ -654,11 +655,11 @@ const Auth = observer(() => {
                                     })} />
                                 <input type="submit" value="회원가입하기"/>
                             </form>
-                        <p>
-                            이미 계정이 있으신가요?
-                            <a href="#!" id="sign-in" onClick={goToLogIn}>로그인 하러 가기.</a>
-                        </p>
-                    </div>
+                            <p>
+                                이미 계정이 있으신가요?
+                                <a href="#!" id="sign-in" onClick={goToLogIn}>로그인 하러 가기.</a>
+                            </p>
+                        </div>
                 </div>
                 <div className="right">
                     <img src="/signup/interior-jung-title-signup.jpg" alt="회원가입 이미지" width="700" height="450"/>
@@ -825,6 +826,7 @@ const Auth = observer(() => {
                             open={findFinalUserPwdModalOpen}
                             onOk={goToLogIn}
                             okText={"로그인 하러 가기"}
+                            destroyOnClose={true}
                             onCancel={() => {
                                 clearPwdFinderErrors();
                                 clearPwdResetterErrors();
@@ -835,32 +837,32 @@ const Auth = observer(() => {
                             }}
                             cancelText={"취소"}
                         >
-                            <form onSubmit={handlePwdResetterSubmit(onSubmitResetPwd)}>
-                                <input
-                                    type="password" placeholder="비밀번호"
-                                    {...registerPwdResetter("password", {
-                                        required: '비밀번호는 필수 입력입니다.',
-                                        pattern: {
-                                            value: /^(?=.*?[A-Za-z])(?=.*?[0-9]).{6,}$/,
-                                            message: '영문, 숫자를 포함한 6자 이상의 비밀번호를 입력해주세요.',
-                                        },
-                                    })} />
-                                {pwdResetterErrors.password && <div>{pwdResetterErrors.password?.message}</div>}
+                            <div className="reset-pwd">
+                                <form onSubmit={handlePwdResetterSubmit(onSubmitResetPwd)}>
+                                    <input
+                                        type="password" placeholder="변경 할 비밀번호"
+                                        {...registerPwdResetter("password", {
+                                            required: '비밀번호는 필수 입력입니다.',
+                                            pattern: {
+                                                value: /^(?=.*?[A-Za-z])(?=.*?[0-9]).{6,}$/,
+                                                message: '영문, 숫자를 포함한 6자 이상의 비밀번호를 입력해주세요.',
+                                            },
+                                        })} />
+                                    {pwdResetterErrors.password && <div>{pwdResetterErrors.password?.message}</div>}
 
-                                <input
-                                    type="password" placeholder="비밀번호 재확인"
-                                    {...registerPwdResetter("reCheckPassword", {
-                                        required: '비밀번호는 필수 입력입니다.',
-                                        pattern: {
-                                            value: /^(?=.*?[A-Za-z])(?=.*?[0-9]).{6,}$/,
-                                            message: '영문, 숫자를 포함한 6자 이상의 비밀번호를 입력해주세요.',
-                                        },
-                                    })} />
-                                <input type="submit" value="회원가입하기"/>
-                            </form>
+                                    <input
+                                        type="password" placeholder="비밀번호 재확인"
+                                        {...registerPwdResetter("reCheckPassword", {
+                                            required: '비밀번호는 필수 입력입니다.',
+                                            pattern: {
+                                                value: /^(?=.*?[A-Za-z])(?=.*?[0-9]).{6,}$/,
+                                                message: '영문, 숫자를 포함한 6자 이상의 비밀번호를 입력해주세요.',
+                                            },
+                                        })} />
+                                    <input type="submit" value="비밀번호 변경하기"/>
+                                </form>
+                            </div>
                         </Modal>
-
-
                         <p style={{marginTop:50}}>
                             <a href="#" onClick={goToLogIn}>로그인 화면으로 돌아가기</a>
                         </p>

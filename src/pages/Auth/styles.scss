@@ -151,7 +151,6 @@ section {
     }
   }
 }
-
 .sign-up,
 .sign-in {
   @include center;
@@ -209,6 +208,64 @@ section {
     }
   }
 }
+
+.reset-pwd {
+  @include center;
+  width: 300px;
+  height: 200px;
+  h1 {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 270px;
+    gap: 20px;
+    input {
+      border: 0;
+      outline: 0;
+      background: $bg-clr;
+      padding: 10px 5px;
+      border-radius: 5px;
+      padding-left: 10px;
+      &::placeholder {
+        color: $grey;
+        text-transform: capitalize;
+        font-weight: bold;
+      }
+    }
+    [type="submit"] {
+      @include center;
+      max-width: fit-content;
+      padding: 0.5em 1em;
+      color: $white;
+      background: $blue;
+      border-radius: 5px;
+      cursor: pointer;
+      text-transform: capitalize;
+      font-size: 1.0em;
+    }
+    div {
+      font-size: 11px;
+      color: red;
+    }
+  }
+  p {
+    text-transform: uppercase;
+    margin-top: 20px;
+    a {
+      text-decoration: none;
+      font-weight: bold;
+      color: $blue;
+      &:is(:hover, :visited) {
+        color: $blue;
+      }
+    }
+  }
+}
+
 .left {
   input[type="submit"] {
     background: $orange;
