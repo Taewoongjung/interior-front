@@ -1,6 +1,6 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import axios from "axios";
-import {Button, Col, Drawer, Form, Input, Row, Select, Space, InputNumber, Alert, Divider, InputRef} from 'antd';
+import {Button, Col, Drawer, Form, Input, Row, Select, Space, InputNumber, Alert, Divider, InputRef, SelectProps} from 'antd';
 import {PlusOutlined} from "@ant-design/icons";
 import {amountUnitOptions, categoryOptions} from "./select";
 
@@ -28,7 +28,7 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
 
     const onFinish = async (values: any) => {
         const materialAmount = values.materialAmount;
-        const materialUsageCategory = values.materialUsageCategory;
+        const materialUsageCategory = values.materialUsageCategory[0];
         const materialCategory = values.materialCategory;
         const materialMemo = values.materialMemo;
         const materialAmountUnit = values.materialAmountUnit;
@@ -82,6 +82,48 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
         form.setFieldsValue({ materialAmountUnit: value }); // Form 필드에 선택된 값 업데이트
     };
 
+
+    const [data, setData] = useState<SelectProps['options']>([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const token = localStorage.getItem('interiorjung-token');
+                if (token) {
+                    const response = await axios.get(
+                        `${API_URL}/api/businesses/${businessIdParam}/usage-categories`,
+                        {
+                            withCredentials: true, // CORS 처리 옵션
+                            headers: {
+                                Authorization: token
+                            }
+                        }
+                    );
+
+                    const options: SelectProps['options'] = [];
+
+                    for (let i = 0; i < response.data.length; i++) {
+                        options.push({
+                            value: response.data[i].usageCategory,
+                            label: response.data[i].usageCategory
+                        })
+                    }
+
+                    setData(options);
+                } else {
+                    console.error('No token found');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
+    }, [businessIdParam]);
+
+    const [usageCategory, setUsageCategory] = useState('');
+
+
     return (
         <>
             <Button onClick={showDrawer} icon={<PlusOutlined />}>
@@ -115,10 +157,14 @@ const BusinessMaterialAddInput = ((props: { businessIdParam?: any; onEvent: () =
                                 label="재료 사용 분류"
                                 rules={[{ required: true, message: '⚠️ 재료 사용 분류는 필수 응답 항목입니다.' }]}
                             >
-                                <Input
-                                    style={{ width: '100%' }}
+                                <Select
                                     id="material_usage"
-                                    placeholder="ex) 화장실 공사, 주방 공사 ..." type="text"
+                                    mode="tags"
+                                    style={{ width: '100%' }}
+                                    placeholder="ex) 화장실 공사, 주방 공사 ..."
+                                    onChange={setUsageCategory}
+                                    maxCount={1}
+                                    options={data}
                                 />
                             </Form.Item>
                         </Col>
