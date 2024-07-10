@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Badge, Button, Empty, message, Row, Tabs} from "antd";
+import {Button, Empty, message, Row, Tabs} from "antd";
 import EachBusinessManagement from "./EachBusinessManagement";
 import {useParams} from "react-router-dom";
 import BusinessStatistics from "./BusinessStatistics";

@@ -8,10 +8,10 @@ import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     PlusSquareOutlined,
-    SlidersOutlined
+    SlidersOutlined,
+    CalendarOutlined
 } from "@ant-design/icons";
 import {useObserver} from "mobx-react";
-import MainNavState from "../../../statemanager/mainNavState";
 import mainNavStateInstance from "../../../statemanager/mainNavState";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
@@ -115,6 +115,7 @@ const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void; triggerColl
     const menuItems: MenuProps['items'] = [
         getItem('사업 등록', 'main1', <PlusSquareOutlined ref={step2}/>),
         getItem('사업 관리', 'main2', <SlidersOutlined ref={step3}/>),
+        getItem('발주 관리', 'main5', <CalendarOutlined ref={step3}/>),
         getItem('견적서 작성', 'main3', <FormOutlined ref={step3}/>, childMenuItems),
     ];
 
@@ -126,6 +127,10 @@ const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void; triggerColl
 
         if (key === 'main2') {
             return await mainNavStateInstance.setNavState('사업 관리');
+        }
+
+        if (key === 'main5') {
+            return await mainNavStateInstance.setNavState('발주 관리');
         }
 
         await handleButtonMain3Click(key.toString());

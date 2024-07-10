@@ -30,6 +30,7 @@ import {v4 as uuidv4} from 'uuid';
 import ProgressBar from "../ProgressBar";
 import BusinessManagement from "../BusinessManagement";
 import mainNavStateInstance from "../../statemanager/mainNavState";
+import BusinessOrderCalendar from "../BusinessOrderCalendar";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -256,7 +257,10 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
                     <Row justify="space-between">
                         {mainNavStateInstance.getNavState() === '사업 등록' &&<Col></Col>}
                         {mainNavStateInstance.getNavState() === '사업 관리' &&<Col></Col>}
-                        {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리')  &&
+                        {mainNavStateInstance.getNavState() === '발주 관리' &&<Col></Col>}
+                        {(mainNavStateInstance.getNavState() !== '사업 등록' &&
+                                mainNavStateInstance.getNavState() !== '사업 관리' &&
+                                mainNavStateInstance.getNavState() !== '발주 관리')  &&
                             <Row justify="space-between">
                                 <Title level={2}>{businesses && businesses.businessName}</Title>
                                 &nbsp;&nbsp;
@@ -306,7 +310,13 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
 
                 {mainNavStateInstance.getNavState() === '사업 관리' && <BusinessManagement/>}
 
-                {(mainNavStateInstance.getNavState() !== '사업 등록' && mainNavStateInstance.getNavState() !== '사업 관리') &&
+                {mainNavStateInstance.getNavState() === '발주 관리' && <BusinessOrderCalendar/>}
+
+                {(mainNavStateInstance.getNavState() !== '사업 등록'
+                        && mainNavStateInstance.getNavState() !== '사업 관리'
+                        && mainNavStateInstance.getNavState() !== '발주 관리'
+                    ) &&
+
                     <Content style={{ background: 'white', padding: 28 }}>
                         <Row gutter={8}>
                             <Col flex={100}>
