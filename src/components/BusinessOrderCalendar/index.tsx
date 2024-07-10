@@ -2,24 +2,9 @@ import React, {Component} from 'react';
 
 import '@toast-ui/calendar/dist/toastui-calendar.min.css';
 import Calendar from "@toast-ui/react-calendar";
+import CalendarEvent from "./definition/Icalendar-event";
+import SelectDateTimeInfo from "./definition/Iselect-date-time-info";
 
-interface CalendarEvent {
-    id: string;
-    calendarId: string;
-    title: string;
-    category: 'time' | 'allday';
-    start: string;
-    end: string;
-}
-
-const template = {
-    milestone(event: { backgroundColor: any; title: any; }) {
-        return `<span style="color: #fff; background-color: ${event.backgroundColor};">${event.title}</span>`;
-    },
-    allday(event: { title: any; }) {
-        return `[All day] ${event.title}`;
-    },
-};
 
 class BusinessOrderCalendar extends Component {
     private calendarRef: React.RefObject<Calendar> | undefined;
@@ -31,6 +16,49 @@ class BusinessOrderCalendar extends Component {
 
     onAfterRenderEvent = (event: { title: any }) => {
         console.log(event.title);
+    };
+
+    onBeforeCreateSchedule = (
+        event: {
+            id: string;
+            calendarId: string;
+            title: string;
+            category: 'time' | 'allday';
+            start: Date;
+            end: Date;
+            isAllday: boolean;
+            nativeEvent: MouseEvent;
+        }
+    ) => {
+        console.log(`Creating schedule: ${event.title}, start: ${event.start}, end: ${event.end}`);
+    };
+
+    onBeforeUpdateSchedule = (
+        event: {
+            schedule: CalendarEvent;
+            changes: Partial<CalendarEvent>;
+            start: Date;
+            end: Date;
+        }
+    ) => {
+        console.log(`Updating schedule: ${event.schedule.title}, start: ${event.start}, end: ${event.end}`);
+    };
+
+    onSelectDateTime = (info: SelectDateTimeInfo) => {
+        console.log(`Selected start: ${info.start}, end: ${info.end}, all day: ${info.isAllday}`);
+        if (info.nativeEvent) {
+            console.log(`Native event: ${info.nativeEvent.type}`);
+        }
+        console.log(`Selected elements: ${info.gridSelectionElements.length}`);
+    };
+
+    onBeforeDeleteEvent = (
+        event: {
+
+        }
+    ) => {
+        console.log(`Deleting schedule:`);
+        // console.log(`Updating schedule: ${event.schedule.title}, start: ${event.start}, end: ${event.end}`);
     };
 
 
@@ -52,15 +80,20 @@ class BusinessOrderCalendar extends Component {
                 category: 'time',
                 start: '2024-07-11T15:00:00',
                 end: '2024-07-11T15:30:00',
+                color: '#fff',
+                isAllday: true,
+                backgroundColor: '#3c056d',
+                dragBackgroundColor: '#3c056d',
             },
         ];
 
         return (
-            <div style={{paddingLeft:30, backgroundColor:"white"}}>
+            <div style={{paddingLeft: 30, backgroundColor: "white"}}>
                 <Calendar
+                    ref={this.calendarRef}
                     width="200px"
                     height="800px"
-                    view="week"
+                    view="month"
                     month={{
                         dayNames: ['월', '화', '수', '목', '금', '토', '일'],
                         visibleWeeksCount: 3,
@@ -68,13 +101,20 @@ class BusinessOrderCalendar extends Component {
                     week={{
                         dayNames: ['월', '화', '수', '목', '금', '토', '일'],
                         startDayOfWeek: 1,
-                        narrowWeekend: false
+                        narrowWeekend: false,
+                        hourStart: 6,
+                        hourEnd: 20
                     }}
+                    useFormPopup={true}
+                    useDetailPopup={true}
                     calendars={calendars}
                     events={initialEvents}
-                    usageStatistics={false}
+                    usageStatistics={true}
                     onAfterRenderEvent={this.onAfterRenderEvent}
-                    template={template}
+                    onSelectDateTime={this.onSelectDateTime}
+                    onBeforeCreateEvent={(event) => this.onBeforeCreateSchedule(event)}
+                    onBeforeUpdateEvent={(event) => this.onBeforeUpdateSchedule(event)}
+                    onBeforeDeleteEvent={(event) => this.onBeforeDeleteEvent(event)}
                 />
             </div>
         );
