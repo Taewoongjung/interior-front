@@ -30,7 +30,6 @@ import {v4 as uuidv4} from 'uuid';
 import ProgressBar from "../ProgressBar";
 import BusinessManagement from "../BusinessManagement";
 import mainNavStateInstance from "../../statemanager/mainNavState";
-import BusinessOrderCalendar from "../BusinessOrderCalendar";
 import FullCalendarPage from "../BusinessOrderCalendar";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
