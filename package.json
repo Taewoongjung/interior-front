@@ -10,6 +10,10 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.6",
+    "@fullcalendar/core": "^6.1.14",
+    "@fullcalendar/daygrid": "^6.1.14",
+    "@fullcalendar/interaction": "^6.1.14",
+    "@fullcalendar/react": "^6.1.14",
     "@loadable/component": "^5.16.3",
     "@nivo/pie": "^0.85.1",
     "@toast-ui/calendar": "^2.1.3",

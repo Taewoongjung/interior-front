@@ -31,6 +31,7 @@ import ProgressBar from "../ProgressBar";
 import BusinessManagement from "../BusinessManagement";
 import mainNavStateInstance from "../../statemanager/mainNavState";
 import BusinessOrderCalendar from "../BusinessOrderCalendar";
+import FullCalendarPage from "../BusinessOrderCalendar";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -310,7 +311,7 @@ const BusinessMainScreen = (props:{user:any; onEvent: () => void; onTourEvent: (
 
                 {mainNavStateInstance.getNavState() === '사업 관리' && <BusinessManagement/>}
 
-                {mainNavStateInstance.getNavState() === '발주 관리' && <BusinessOrderCalendar/>}
+                {mainNavStateInstance.getNavState() === '발주 관리' && <div style={{backgroundColor:'white'}}><FullCalendarPage/></div>}
 
                 {(mainNavStateInstance.getNavState() !== '사업 등록'
                         && mainNavStateInstance.getNavState() !== '사업 관리'
