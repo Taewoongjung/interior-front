@@ -13,6 +13,7 @@ import {
 } from "@ant-design/icons";
 import {useObserver} from "mobx-react";
 import mainNavStateInstance from "../../../statemanager/mainNavState";
+import {useBusinessStores} from "../../../hooks/useBusinessStore";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -40,6 +41,8 @@ const initialBusinessItems: MenuItem[] = [];
 const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void; triggerCollapse: (e:any) => void;}) => {
 
     const {tourOpen, onTourEvent, triggerCollapse} = props;
+
+    const { businessListState } = useBusinessStores();
 
     const { companyId } = useParams();
 
@@ -93,6 +96,11 @@ const NavMain = (props:{tourOpen:any; onTourEvent: (e: any) => void; triggerColl
             if (newBusinessItems.length > 0) {
                 setBusinessItems(prevBusinessItems => [...prevBusinessItems, ...newBusinessItems]);
             }
+
+            console.log("!!!!!!! = ", businesses);
+            businessListState.setBusinessList(businesses);
+            console.log("@@@@@@@@ = ", businessListState.businessList);
+            console.log("@@@@@@@@ = ", businessListState.businessList.length);
         }
     }, [businesses]);
 

@@ -1,5 +1,5 @@
 import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
+import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import { useState } from 'react';
 import React from 'react';
@@ -8,6 +8,9 @@ import AddScheduleModal from "./AddScheduleModal";
 const FullCalendarPage = () => {
 
     const [addModalOpen, setAddModalOpen] = useState(false);
+    const [instanceId, setInstanceId] = useState('');
+    const [targetStartDate, setTargetStartDate] = useState<any>();
+    const [targetEndDate, setTargetEndDate] = useState<any>();
 
     const eventClick = (event: any) => {
         setAddModalOpen(true);
@@ -33,7 +36,6 @@ const FullCalendarPage = () => {
         }
     ]);
 
-    const [instanceId, setInstanceId] = useState('');
 
     const eventDragStart = (event: any) => {
         const bfrStart = event.event._instance.range.start;
@@ -55,9 +57,16 @@ const FullCalendarPage = () => {
     }
 
     const mouseEvent = (event: any) => {
-        console.log("aa = ", event);
         setAddModalOpen(true);
+
+        const start = event.start;
+        const end = new Date(event.end);
+        end.setSeconds(end.getSeconds() - 1);
+
+        setTargetStartDate(start);
+        setTargetEndDate(end);
     }
+
 
     return (
         <>
@@ -83,7 +92,13 @@ const FullCalendarPage = () => {
                     height={770}
                 />
 
-                <AddScheduleModal onOpen={addModalOpen} onOpenHandler={setAddModalOpen}/>
+                <AddScheduleModal
+                    onOpen={addModalOpen}
+                    onOpenHandler={setAddModalOpen}
+                    targetStartDate={targetStartDate}
+                    targetEndDate={targetEndDate}
+                />
+
             </div>
         </>
     );
