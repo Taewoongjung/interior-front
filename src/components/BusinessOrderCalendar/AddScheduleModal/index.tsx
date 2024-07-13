@@ -1,6 +1,8 @@
 import Modal from "antd/es/modal/Modal";
 import React, { useState } from "react";
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import {
     DatePicker,
     GetProps,
@@ -9,13 +11,11 @@ import {
     SelectProps,
     Input,
     Radio,
-    Popover, Flex,
+    Popover, Flex, Switch
 } from "antd";
 import {TagOutlined, QuestionCircleOutlined, PushpinOutlined} from "@ant-design/icons";
 
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
-
-const { RangePicker } = DatePicker;
 
 type LabelRender = SelectProps['labelRender'];
 
@@ -35,35 +35,40 @@ const selectionAlarmTime = [
     { label: '1주 전', value: 'aWeekAgo'},
 ]
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) => void}) => {
 
     const {onOpen, onOpenHandler} = props;
 
     const range = (start: number, end: number) => {
-        const result = [];
-        for (let i = start; i < end; i++) {
-            result.push(i);
-        }
-        return result;
+        return Array.from(Array(end - start), (_, i) => start + i);
     };
 
     const disabledDate: RangePickerProps['disabledDate'] = (current) => {
-        return current && current < dayjs().endOf('day');
+        const koreaTime = dayjs().tz('Asia/Seoul');
+        return current && current < koreaTime.startOf('day');
     };
 
-    const disabledRangeTime: RangePickerProps['disabledTime'] = (_, type) => {
-        if (type === 'start') {
-            return {
-                disabledHours: () => range(0, 60).splice(4, 20),
-                disabledMinutes: () => range(30, 60),
-                disabledSeconds: () => [55, 56],
-            };
+    const disabledRangeTime: RangePickerProps['disabledTime'] = (current, type) => {
+
+        const now = dayjs().tz('Asia/Seoul');
+        const currentHour = now.hour();
+        const currentMinute = now.minute();
+
+        if (current && current.isSame(now, 'day')) {
+            if (type === 'start' || type === 'end' || type === undefined) {
+                return {
+                    disabledHours: () => range(0, 24).filter(hour => hour < currentHour),
+                    disabledMinutes: () => range(0, 60).filter(minute => minute < currentMinute),
+                };
+            }
         }
+
         return {
-            disabledHours: () => range(0, 60).splice(20, 4),
-            disabledMinutes: () => range(0, 31),
-            disabledSeconds: () => [55, 56],
+            disabledHours: () => [],
+            disabledMinutes: () => [],
         };
     };
 
@@ -75,12 +80,77 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         }
     };
 
-    const [scheduleType, setScheduleType] = useState('');
+    const [scheduleType, setScheduleType] = useState('일정');
+    const [isAlarmOn, setIsAlarmOn] = useState(false);
+    const [title, setTitle] = useState('');
+    const [titleWhereStemsFrom, setTitleWhereStemsFrom] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [orderDate, setOrderDate] = useState('');
+    const [isAllDay, setIsAllDay] = useState<boolean>(false);
+    const [alarmTime, setAlarmTime] = useState('');
 
-    const handleChange = (value: string) => {
+    const allReset = () => {
+        setScheduleType('');
+        setIsAlarmOn(false);
+        setTitle('');
+        setTitleWhereStemsFrom('');
+        setStartDate('')
+        setEndDate('');
+        setOrderDate('');
+        setIsAllDay(false);
+        setAlarmTime('');
+    }
+
+    const handleChangeScheduleType = (value: string) => {
         console.log(`Selected: ${value}`);
         setScheduleType(value);
     };
+
+    const onChangeOrderSchedule = (e: any) => {
+        console.log("?? = ", JSON.stringify(e));
+
+        // if (date) {
+        //     console.log('Date: ', date);
+        // } else {
+        //     console.log('Clear');
+        // }
+    };
+
+    const handleSetAlarm = (event: any) => {
+
+        if (event.target.value === 'ON') {
+            setIsAlarmOn(true);
+        } else {
+            setIsAlarmOn(false);
+            setAlarmTime('');
+        }
+    }
+
+    const onClearScheduleType = () => {
+        setScheduleType('');
+    }
+
+    const handleStartAndEndDateInfoForWorkSchedule = (e:any) => {
+
+        let startDate = JSON.stringify(e[0]);
+        let endDate = JSON.stringify(e[1]);
+
+        console.log("start = ", startDate);
+        console.log("end = ", endDate);
+
+        setStartDate(startDate);
+        setEndDate(endDate);
+    }
+
+    const handleIsAllDay = (e:any) => {
+        setIsAllDay(e);
+    }
+
+    const handChangeAlarmTime = (e:any) => {
+        setAlarmTime(e);
+    }
+
 
     return (
         <>
@@ -88,41 +158,105 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                 title="스케줄 추가"
                 centered
                 open={onOpen}
+                closable={false}
                 onOk={() => onOpenHandler(false)}
-                onCancel={() => onOpenHandler(false)}
+                onCancel={() => {
+                    allReset();
+                    onOpenHandler(false)
+                }}
+                okText={"저장"}
+                cancelText={"취소"}
             >
                 <Space direction="vertical">
 
                     <br/>
-                    <div style={{color:"grey"}}>스케줄 타입 선택</div>
+
+                    <div style={{color:"grey"}}>1. 스케줄 타입 선택</div>
                     <Select
-                        // status="error"
-                        placeholder="스케줄 타입"
-                        style={{ width: 200 }}
+                        allowClear
+                        onClear={onClearScheduleType}
+                        value={scheduleType}
+                        style={{ width: 80 }}
                         labelRender={labelRender}
-                        onChange={handleChange}
+                        onChange={handleChangeScheduleType}
                         options={selectionScheduleTypeOptions}
                     />
 
-                    <div style={{color:"grey", marginTop: 15}}>스케줄 타이틀</div>
-                    <Input placeholder="제목" prefix={<TagOutlined />} />
-
-                    {scheduleType === 'orderSchedule' && <div style={{color:"grey", marginTop: 10}}>발주처 정보</div>}
-                    {scheduleType === 'orderSchedule' && <Input placeholder="발주처" prefix={<PushpinOutlined />} />}
-
-                    <div style={{color:"grey", marginTop: 10}}>스케줄 날짜 선택</div>
-                    <RangePicker
-                        disabledDate={disabledDate}
-                        disabledTime={disabledRangeTime}
-                        showTime={{
-                            hideDisabledOptions: true,
-                            defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('11:59:59', 'HH:mm:ss')],
-                        }}
-                        format="YYYY-MM-DD HH:mm:ss"
+                    <div style={{color:"grey", marginTop: 15}}>2. 스케줄 타이틀</div>
+                    <Input
+                        placeholder="제목"
+                        prefix={<TagOutlined />}
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
                     />
 
-                    <div style={{color:"grey", marginTop: 10}}>스케줄 날짜 선택
-                        알람 여부 &nbsp;
+                    {scheduleType === 'orderSchedule' && <div style={{color:"grey", marginTop: 10}}>발주처 정보</div>}
+                    {scheduleType === 'orderSchedule' &&
+                        <Input
+                            placeholder="발주처"
+                            prefix={<PushpinOutlined />}
+                            value={titleWhereStemsFrom}
+                            onChange={(e) => {setTitleWhereStemsFrom(e.target.value)}}
+                        />
+                    }
+
+                    <div style={{color:"grey", marginTop: 10}}>3. 스케줄 날짜 선택</div>
+                    {(scheduleType !== 'orderSchedule' && !isAllDay) &&
+                        <DatePicker.RangePicker
+                            disabledDate={disabledDate}
+                            disabledTime={disabledRangeTime}
+                            showTime={{
+                                hideDisabledOptions: true,
+                                defaultValue: [dayjs('00:00:00', 'HH:mm:ss'), dayjs('23:59:59', 'HH:mm:ss')],
+                            }}
+                            onCalendarChange={
+                            (e) => {
+                                handleStartAndEndDateInfoForWorkSchedule(e);
+                            }}
+                            format="YYYY-MM-DD HH:mm:ss"
+                        />
+                    }
+                    {(scheduleType !== 'orderSchedule' && isAllDay) &&
+                        <DatePicker.RangePicker
+                            disabledDate={disabledDate}
+                            onCalendarChange={
+                                (e) => {
+                                    handleStartAndEndDateInfoForWorkSchedule(e);
+                                }}
+                            format="YYYY-MM-DD"
+                        />
+                    }
+                    {scheduleType !== 'orderSchedule' &&
+                        <Space direction="horizontal">
+                            <Flex gap="small">
+                                <div style={{color:"grey"}}>하루 종일</div>
+
+                                <Switch
+                                    onChange={(e) => handleIsAllDay(e)}
+                                    checkedChildren="ON"
+                                    unCheckedChildren="OFF"
+                                    defaultValue={false}
+                                />
+                            </Flex>
+                        </Space>
+                    }
+
+                    {scheduleType === 'orderSchedule' &&
+                        <DatePicker
+                            disabledDate={disabledDate}
+                            disabledTime={disabledRangeTime}
+                            placeholder="발주 날짜/시간"
+                            presets={[
+                                { label: '내일', value: dayjs().add(1, 'd') },
+                                { label: '다음주', value: dayjs().add(7, 'd') },
+                                { label: '다음달', value: dayjs().add(1, 'month') },
+                            ]}
+                            onCalendarChange={(e) => {onChangeOrderSchedule(e)}}
+                            showTime={{}}
+                        />
+                    }
+
+                    <div style={{color:"grey", marginTop: 20}}>4. 알람 여부 &nbsp;
                         <Popover content={"알람을 설정하시면 대표님께 알림톡이 전송됩니다."}>
                             <QuestionCircleOutlined />
                         </Popover>
@@ -131,16 +265,21 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                     <Space direction="horizontal">
                         <Flex gap="large">
                             <Radio.Group defaultValue="OFF" buttonStyle="solid">
-                                <Radio.Button value="ON">ON</Radio.Button>
-                                <Radio.Button value="OFF">OFF</Radio.Button>
+                                <Radio.Button onChange={handleSetAlarm} value="ON">켬</Radio.Button>
+                                <Radio.Button onChange={handleSetAlarm} value="OFF">끄기</Radio.Button>
                             </Radio.Group>
 
-                            <Select
-                                placeholder="알림 시간"
-                                style={{ width: 110 }}
-                                labelRender={labelRender}
-                                options={selectionAlarmTime}
-                            />
+                            {isAlarmOn && <div style={{color:"grey"}}>알람 시간 : </div>}
+                            {isAlarmOn &&
+                                <Select
+                                    placeholder="알림 시간"
+                                    style={{ width: 110, marginLeft:-20 }}
+                                    labelRender={labelRender}
+                                    options={selectionAlarmTime}
+                                    value={alarmTime}
+                                    onChange={handChangeAlarmTime}
+                                />
+                            }
                         </Flex>
                     </Space>
                 </Space>
