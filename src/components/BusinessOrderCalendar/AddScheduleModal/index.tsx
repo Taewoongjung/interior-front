@@ -16,25 +16,32 @@ import {
 import {TagOutlined, QuestionCircleOutlined, PushpinOutlined} from "@ant-design/icons";
 import {useBusinessStores} from "../../../hooks/useBusinessStore";
 import {useObserver} from "mobx-react";
+import axios from "axios";
+
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
 type RangePickerProps = GetProps<typeof DatePicker.RangePicker>;
 
 type LabelRender = SelectProps['labelRender'];
 
 const selectionScheduleTypeOptions = [
-    { label: '일정', value: 'workSchedule' },
-    { label: '발주', value: 'orderSchedule' },
+    { label: '일정', value: 'WORK' },
+    { label: '발주', value: 'ORDER' },
 ];
 
 const selectionAlarmTime = [
-    { label: '이벤트시간', value: 'atTheTime'},
-    { label: '10분 전', value: '10minutesAgo'},
-    { label: '30분 전', value: '30minutesAgo'},
-    { label: '1시간 전', value: 'aHourAgo'},
-    { label: '2시간 전', value: 'twoHoursAgo'},
-    { label: '1일 전', value: 'aDayAgo'},
-    { label: '2일 전', value: 'twoDayAgo'},
-    { label: '1주 전', value: 'aWeekAgo'},
+    { label: '이벤트시간', value: 'AT_THE_TIME'},
+    { label: '5분 전', value: 'FIVE_M_AGO'},
+    { label: '10분 전', value: 'TEN_M_AGO'},
+    { label: '15분 전', value: 'FIFTY_M_AGO'},
+    { label: '30분 전', value: 'THIRTY_M_AGO'},
+    { label: '1시간 전', value: 'A_HOUR_AGO'},
+    { label: '2시간 전', value: 'TWO_HOURS_AGO'},
+    { label: '5시간 전', value: 'FIVE_HOURS_AGO'},
+    { label: '1일 전', value: 'A_DAY_AGO'},
+    { label: '2일 전', value: 'TWO_DAYS_AGO'},
+    { label: '5일 전', value: 'FIVE_DAYS_AGO'},
+    { label: '1주 전', value: 'A_WEEK_AGO'},
 ]
 
 dayjs.extend(utc);
@@ -100,7 +107,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         }
     };
 
-    const [scheduleType, setScheduleType] = useState('일정');
+    const [scheduleType, setScheduleType] = useState('WORK');
     const [isAlarmOn, setIsAlarmOn] = useState(false);
     const [title, setTitle] = useState('');
     const [titleWhereStemsFrom, setTitleWhereStemsFrom] = useState('');
@@ -139,14 +146,10 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
 
     const onChangeOrderSchedule = (date: any) => {
 
-        let updateDate = dayjs(date).tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-
+        let updateDate = dayjs(date).tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm:ss');
         console.log("@!!@ = ", updateDate);
-        // if (date) {
-        //     console.log('Date: ', date);
-        // } else {
-        //     console.log('Clear');
-        // }
+
+        setOrderDate(updateDate);
     };
 
     const handleSetAlarm = (event: any) => {
@@ -166,8 +169,8 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
     const handleStartAndEndDateInfoForWorkSchedule = (dates:any) => {
 
         if (dates && dates.length === 2) {
-            const startDate = dayjs(dates[0]).tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
-            const endDate = dayjs(dates[1]).tz('Asia/Seoul').format('YYYY-MM-DD HH:mm:ss');
+            const startDate = dayjs(dates[0]).tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm:ss');
+            const endDate = dayjs(dates[1]).tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm:ss');
 
             console.log('Start Date:', startDate);
             console.log('End Date:', endDate);
@@ -230,10 +233,61 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
     }
 
 
+    const createScheduleHandler = () => {
+
+        let relatedBusinessList: any[] = [];
+
+        relatedBusinesses.map((e) => relatedBusinessList.push(JSON.parse(JSON.stringify(e)).value));
+
+        {/*등록 될 값들 확인*/}
+        // console.log("scheduleType = ", scheduleType);
+        // console.log("relatedBusinesses = ", relatedBusinessList);
+        // console.log("title = ", title);
+        // console.log("titleWhereStemsFrom = ", titleWhereStemsFrom);
+        // console.log("startDate = ", startDate);
+        // console.log("endDate = ", endDate);
+        // console.log("isAlarmOn = ", isAlarmOn);
+        // console.log("alarmTime = ", alarmTime);
+        // console.log("orderDate = ", scheduleType === "WORK" ? startDate : orderDate);
+
+        let startDateForWorkOrOrder = scheduleType === "WORK" ? startDate : orderDate
+        let alarmTimeWhenAlarmIsOn = isAlarmOn ? alarmTime : null;
+
+        axios.post(`${API_URL}/api/businesses/schedules`,
+            {
+                scheduleType,
+                relatedBusinessList,
+                title,
+                titleWhereStemsFrom,
+                startDate: startDateForWorkOrOrder,
+                endDate,
+                isAlarmOn,
+                alarmTime: alarmTimeWhenAlarmIsOn,
+                isAllDay
+            },
+                {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: localStorage.getItem("interiorjung-token")
+                    }
+                }
+            )
+            .then((response) => {
+                if (response.data === true) {
+                    success("새로운 스케줄이 추가되었습니다.")
+                    allReset();
+                    onOpenHandler(false);
+                }
+            })
+            .catch((e) => {
+                error("스케줄 추가에 실패했습니다.")
+                error(e);
+            });
+    }
+
 /*
 * - 여러 날짜를 드레그 추가할 시 발주 일정 추가 못함
 *   - 즉 알람 설정을 못함
-*
 * */
     return useObserver(() => (
         <>
@@ -243,7 +297,10 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                 centered
                 open={onOpen}
                 closable={false}
-                onOk={() => onOpenHandler(false)}
+                onOk={() => {
+                    createScheduleHandler();
+                    onOpenHandler(false);
+                }}
                 onCancel={() => {
                     allReset();
                     onOpenHandler(false)
@@ -277,6 +334,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                         />
                     </div>
 
+                    {/* 타이틀은 100자 까지만.*/}
                     <div>
                         <div style={{color:"grey", marginTop: 15}}>3. 스케줄 타이틀</div>
                         <Input
@@ -287,7 +345,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                             onChange={(e) => setTitle(e.target.value)}
                         />
 
-                        {scheduleType === 'orderSchedule' &&
+                        {scheduleType === 'ORDER' &&
                             <Input
                                 style={{ marginTop: 10, width: '400px' }}
                                 placeholder="발주처 정보"
@@ -298,7 +356,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                         }
                     </div>
                     <div style={{color:"grey", marginTop: 10}}>4. 스케줄 날짜 선택</div>
-                    {(scheduleType !== 'orderSchedule' && !isAllDay) &&
+                    {(scheduleType !== 'ORDER' && !isAllDay) &&
                         <DatePicker.RangePicker
                             disabledDate={disabledDate}
                             disabledTime={disabledRangeTime}
@@ -316,7 +374,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                             format="YYYY-MM-DD HH:mm:ss"
                         />
                     }
-                    {(scheduleType !== 'orderSchedule' && isAllDay) &&
+                    {(scheduleType !== 'ORDER' && isAllDay) &&
                         <DatePicker.RangePicker
                             disabledDate={disabledDate}
                             onCalendarChange={
@@ -326,7 +384,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                             format="YYYY-MM-DD"
                         />
                     }
-                    {scheduleType !== 'orderSchedule' &&
+                    {scheduleType !== 'ORDER' &&
                         <Space direction="horizontal">
                             <Flex gap="small">
                                 <div style={{color:"grey"}}>하루 종일</div>
@@ -341,7 +399,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                         </Space>
                     }
 
-                    {scheduleType === 'orderSchedule' &&
+                    {scheduleType === 'ORDER' &&
                         <DatePicker
                             disabledDate={disabledDate}
                             disabledTime={disabledRangeTime}
@@ -356,15 +414,14 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                         />
                     }
 
-                    {scheduleType === 'orderSchedule' &&
+                    {scheduleType === 'ORDER' &&
                         <div style={{color:"grey", marginTop: 20}}>5. 알람 여부 &nbsp;
                             <Popover content={<div style={{ fontSize: 12, color:"grey" }}>알람을 설정하시면 대표님께 알림톡이 전송됩니다.<br/>* D + 1 이상인 발주 스케줄만 알림톡 발송을 합니다.</div>}>
                                 <QuestionCircleOutlined />
                             </Popover>
                         </div>
                     }
-
-                    {scheduleType === 'orderSchedule' &&
+                    {scheduleType === 'ORDER' &&
                         <Space direction="horizontal">
                             <Flex gap="large">
                                 <Radio.Group defaultValue="OFF" buttonStyle="solid">
