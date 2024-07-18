@@ -1,5 +1,5 @@
 import Modal from "antd/es/modal/Modal";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -111,9 +111,9 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
     const [isAlarmOn, setIsAlarmOn] = useState(false);
     const [title, setTitle] = useState('');
     const [titleWhereStemsFrom, setTitleWhereStemsFrom] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
-    const [orderDate, setOrderDate] = useState('');
+    const [startDate, setStartDate] = useState(targetStartDate);
+    const [endDate, setEndDate] = useState(targetEndDate);
+    const [orderDate, setOrderDate] = useState(targetStartDate);
     const [isAllDay, setIsAllDay] = useState<boolean>(false);
     const [alarmTime, setAlarmTime] = useState('');
     const [relatedBusinesses, setRelatedBusinesses] = useState<string[]>([]);
@@ -130,6 +130,18 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         setAlarmTime('');
         setRelatedBusinesses([]);
     }
+
+    useEffect(() => {
+        setStartDate(targetStartDate);
+    }, [targetStartDate]);
+
+    useEffect(() => {
+        setEndDate(targetEndDate);
+    }, [targetEndDate]);
+
+    useEffect(() => {
+        setOrderDate(targetStartDate);
+    }, [targetStartDate]);
 
     // 스케줄 타입 설정 핸들러
     const handleChangeScheduleType = (value: string) => {
@@ -167,6 +179,10 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
     }
 
     const handleStartAndEndDateInfoForWorkSchedule = (dates:any) => {
+
+        if (dates && dates.length === 1) {
+            setStartDate(dayjs(dates[0]).tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm:ss'));
+        }
 
         if (dates && dates.length === 2) {
             const startDate = dayjs(dates[0]).tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm:ss');
@@ -207,20 +223,27 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         setRelatedBusinesses(filteredOptions);
     };
 
-    const isPastDay = () => {
+    const [isDisableAlarm, setIsDisableAlarm] = useState(true);
 
-        if (targetStartDate === null || targetStartDate === "") {
-            return true;
+    useEffect(() => {
+
+        if (orderDate !== null && orderDate !== "") {
+            const now = new Date();
+            now.setDate(now.getDate() + 1);
+            const nowD = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Current date (year, month, day)
+
+            const targetD = new Date(orderDate);
+            const targetDateOnly = new Date(targetD.getFullYear(), targetD.getMonth(), targetD.getDate());
+
+            if (nowD.getTime() > targetDateOnly.getTime()) {
+                setIsDisableAlarm(true);
+            } else {
+                setIsDisableAlarm(false);
+            }
         }
 
-        console.log("@@ = ", new Date(targetStartDate));
-        console.log("!! = ", targetEndDate);
+    }, [orderDate]);
 
-        let nowD = now.toDate();
-        let targetD = new Date(targetStartDate);
-
-        return nowD.getTime() >= targetD.getTime()
-    }
 
     const IsNotAvailableOrderSchedule = () => {
         return isMoreThanOneDayApart(new Date(targetStartDate), new Date(targetEndDate));
@@ -284,6 +307,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                 error(e);
             });
     }
+
 
 /*
 * - 여러 날짜를 드레그 추가할 시 발주 일정 추가 못함
@@ -425,7 +449,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                         <Space direction="horizontal">
                             <Flex gap="large">
                                 <Radio.Group defaultValue="OFF" buttonStyle="solid">
-                                    <Radio.Button onChange={handleSetAlarm} value="ON" disabled={isPastDay()}>켬</Radio.Button>
+                                    <Radio.Button onChange={handleSetAlarm} value="ON" disabled={isDisableAlarm}>켬</Radio.Button>
                                     <Radio.Button onChange={handleSetAlarm} value="OFF" defaultChecked={true}>끄기</Radio.Button>
                                 </Radio.Group>
 

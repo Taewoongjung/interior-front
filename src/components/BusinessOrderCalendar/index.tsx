@@ -1,9 +1,24 @@
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
 import React from 'react';
 import AddScheduleModal from "./AddScheduleModal";
+import axios from "axios";
+import {useBusinessStores} from "../../hooks/useBusinessStore";
+import {SelectProps} from "antd";
+
+const API_URL = process.env.REACT_APP_REQUEST_API_URL;
+
+interface IScheduleEvent {
+    id: string
+    title: string
+    start: string
+    end: string
+    color: string
+    textColor: string
+    resourceEditable: boolean
+}
 
 const FullCalendarPage = () => {
 
@@ -11,31 +26,71 @@ const FullCalendarPage = () => {
     const [instanceId, setInstanceId] = useState('');
     const [targetStartDate, setTargetStartDate] = useState<any>();
     const [targetEndDate, setTargetEndDate] = useState<any>();
+    const [businessIdList] = useState<any>([]);
+    const { businessListState } = useBusinessStores();
 
     const eventClick = (event: any) => {
         setAddModalOpen(true);
         console.log("event = ", event);
     }
 
-    const [events, setEvent] = useState([
-        {
-            id: '200',
-            title: 'The Title',
-            start: '2024-07-12 13:00:00',
-            end: '2024-07-12 13:59:00',
-            color: 'green',
-            textColor: 'black'
-        },{
-            id: '100',
-            title: 'The Title2',
-            start: '2024-07-16 13:00:00',
-            end: '2024-07-17 13:59:00',
-            color: 'red',
-            textColor: 'white',
-            resourceEditable: true
-        }
-    ]);
+    const [events, setEvents] = useState<IScheduleEvent[]>([]);
 
+    useEffect(() => {
+
+        const options: SelectProps['options'] = [];
+        businessListState.businessList.forEach(e =>{
+            let business = JSON.parse(JSON.stringify(e));
+
+            businessIdList.push(business.id);
+
+            options.push({
+                label: business.name,
+                value: business.id,
+            })
+        })
+    },[businessListState.businessList]);
+
+    const handleSetScheduleEvent = (target:IScheduleEvent[]) => {
+        setEvents(target);
+    }
+
+    useEffect(() => {
+
+        if (businessIdList !== null) {
+            axios.get(`${API_URL}/api/businesses/schedules?businessIds=${businessIdList.join(',')}`,
+                {
+                    withCredentials: true,
+                    headers: {
+                        Authorization: localStorage.getItem("interiorjung-token")
+                    }
+                })
+                .then((response) => {
+
+                    let allEvents:IScheduleEvent[] = [];
+
+                    response.data.forEach((e:any) => {
+                        let element: IScheduleEvent = {
+                            id: e.id,
+                            title: e.title,
+                            start: e.startDate,
+                            end: e.endDate,
+                            color: 'red',
+                            textColor: 'white',
+                            resourceEditable: true
+                        }
+
+                        allEvents.push(element);
+                    })
+
+                    handleSetScheduleEvent(allEvents);
+
+                })
+                .catch((error) => {
+
+                });
+        }
+    }, [businessIdList]);
 
     const eventDragStart = (event: any) => {
         const bfrStart = event.event._instance.range.start;
