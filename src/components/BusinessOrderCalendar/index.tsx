@@ -38,17 +38,20 @@ const FullCalendarPage = () => {
 
     useEffect(() => {
 
-        const options: SelectProps['options'] = [];
-        businessListState.businessList.forEach(e =>{
-            let business = JSON.parse(JSON.stringify(e));
+        if (businessListState.businessList.length > 0) {
+            const options: SelectProps['options'] = [];
+            businessListState.businessList.forEach(e =>{
+                let business = JSON.parse(JSON.stringify(e));
 
-            businessIdList.push(business.id);
+                businessIdList.push(business.id);
 
-            options.push({
-                label: business.name,
-                value: business.id,
+                options.push({
+                    label: business.name,
+                    value: business.id,
+                })
             })
-        })
+        }
+
     },[businessListState.businessList]);
 
     const handleSetScheduleEvent = (target:IScheduleEvent[]) => {
@@ -57,7 +60,7 @@ const FullCalendarPage = () => {
 
     useEffect(() => {
 
-        if (businessIdList !== null) {
+        if (businessIdList !== null && businessIdList !== "") {
             axios.get(`${API_URL}/api/businesses/schedules?businessIds=${businessIdList.join(',')}`,
                 {
                     withCredentials: true,
@@ -90,6 +93,7 @@ const FullCalendarPage = () => {
 
                 });
         }
+
     }, [businessIdList]);
 
     const eventDragStart = (event: any) => {
