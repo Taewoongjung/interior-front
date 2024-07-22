@@ -94,7 +94,6 @@ const FullCalendarPage = () => {
         return rgbToHex(compR, compG, compB);
     }
 
-
     useEffect(() => {
         let allEvents:IScheduleEvent[] = [];
 
