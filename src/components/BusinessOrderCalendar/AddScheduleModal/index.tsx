@@ -11,12 +11,13 @@ import {
     SelectProps,
     Input,
     Radio,
-    Popover, Flex, Switch, message
+    Popover, Flex, Switch, message, Menu, Dropdown, Tag
 } from "antd";
 import {TagOutlined, QuestionCircleOutlined, PushpinOutlined} from "@ant-design/icons";
 import {useBusinessStores} from "../../../hooks/useBusinessStore";
 import {useObserver} from "mobx-react";
 import axios from "axios";
+import { SketchPicker, ColorResult } from 'react-color';
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -47,9 +48,9 @@ const selectionAlarmTime = [
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) => void, targetStartDate:any, targetEndDate:any}) => {
+const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) => void, targetStartDate:any, targetEndDate:any, businessSchedulesMutate: () => void}) => {
 
-    const {onOpen, onOpenHandler, targetStartDate, targetEndDate} = props;
+    const {onOpen, onOpenHandler, targetStartDate, targetEndDate, businessSchedulesMutate} = props;
 
     const [messageApi, contextHolder] = message.useMessage();
     const { businessListState } = useBusinessStores();
@@ -129,6 +130,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         setIsAllDay(false);
         setAlarmTime('');
         setRelatedBusinesses([]);
+        setColor('');
     }
 
     useEffect(() => {
@@ -159,7 +161,6 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
     const onChangeOrderSchedule = (date: any) => {
 
         let updateDate = dayjs(date).tz('Asia/Seoul').format('YYYY-MM-DDTHH:mm:ss');
-        console.log("@!!@ = ", updateDate);
 
         setOrderDate(updateDate);
     };
@@ -255,23 +256,11 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         return timeDiff >= oneDayInMillis;
     }
 
-
     const createScheduleHandler = () => {
 
         let relatedBusinessList: any[] = [];
 
         relatedBusinesses.map((e) => relatedBusinessList.push(JSON.parse(JSON.stringify(e)).value));
-
-        {/*등록 될 값들 확인*/}
-        // console.log("scheduleType = ", scheduleType);
-        // console.log("relatedBusinesses = ", relatedBusinessList);
-        // console.log("title = ", title);
-        // console.log("titleWhereStemsFrom = ", titleWhereStemsFrom);
-        // console.log("startDate = ", startDate);
-        // console.log("endDate = ", endDate);
-        // console.log("isAlarmOn = ", isAlarmOn);
-        // console.log("alarmTime = ", alarmTime);
-        // console.log("orderDate = ", scheduleType === "WORK" ? startDate : orderDate);
 
         let startDateForWorkOrOrder = scheduleType === "WORK" ? startDate : orderDate
         let alarmTimeWhenAlarmIsOn = isAlarmOn ? alarmTime : null;
@@ -286,7 +275,8 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                 endDate,
                 isAlarmOn,
                 alarmTime: alarmTimeWhenAlarmIsOn,
-                isAllDay
+                isAllDay,
+                colorHexInfo
             },
                 {
                     withCredentials: true,
@@ -300,6 +290,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                     success("새로운 스케줄이 추가되었습니다.")
                     allReset();
                     onOpenHandler(false);
+                    businessSchedulesMutate();
                 }
             })
             .catch((e) => {
@@ -307,6 +298,16 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                 error(e);
             });
     }
+
+    const [colorHexInfo, setColor] = useState<string>('#000');
+
+    const handleChangeSketchPicker = (selectedColor: ColorResult, event: React.ChangeEvent<HTMLInputElement>) => {
+        event.stopPropagation();
+        event.preventDefault();
+        setColor(selectedColor.hex);  // 색상 변경 값의 hex 적용
+    };
+
+    const [isDropdownShow, setIsDropdownShow] = useState<boolean>(false);
 
 
 /*
@@ -335,6 +336,29 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                 <Space direction="vertical">
                     <br/>
 
+                    <div style={{color:"grey"}}>스케줄 색상 선택</div>
+                    <Dropdown
+                        overlay={<Menu>
+                            <Menu.Item>
+                                <SketchPicker
+                                    color={colorHexInfo}
+                                    onChange={handleChangeSketchPicker}
+                                />
+                            </Menu.Item>
+                        </Menu>}
+                        trigger={['click']}
+                        visible={isDropdownShow}
+                        onVisibleChange={(visible) => {
+                            setIsDropdownShow(visible);
+                        }
+                        }>
+                        <a onClick={(e) => e.preventDefault()}>
+                            <Tag color={colorHexInfo}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</Tag>
+                        </a>
+                    </Dropdown>
+
+                    <br/>
+
                     <div style={{color:"grey"}}>1. 스케줄 타입 선택</div>
                     <Select
                         allowClear
@@ -355,6 +379,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                             placeholder="연관 사업 리스트"
                             onChange={handleChange}
                             options={options}
+                            maxCount={1}
                         />
                     </div>
 

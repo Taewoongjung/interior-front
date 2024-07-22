@@ -4,9 +4,10 @@ import FullCalendar from '@fullcalendar/react';
 import {useEffect, useState} from 'react';
 import React from 'react';
 import AddScheduleModal from "./AddScheduleModal";
-import axios from "axios";
 import {useBusinessStores} from "../../hooks/useBusinessStore";
 import {SelectProps} from "antd";
+import useSWR from "swr";
+import fetcher from "../../utils/fetcher";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -58,43 +59,34 @@ const FullCalendarPage = () => {
         setEvents(target);
     }
 
+    const { data: businessSchedules, error: logError, mutate: businessSchedulesMutate } = useSWR(
+        businessIdList.length > 0 ? `${API_URL}/api/businesses/schedules?businessIds=${businessIdList.join(',')}` : null,
+        fetcher
+    );
+    
     useEffect(() => {
+        let allEvents:IScheduleEvent[] = [];
 
-        if (businessIdList !== null && businessIdList !== "") {
-            axios.get(`${API_URL}/api/businesses/schedules?businessIds=${businessIdList.join(',')}`,
-                {
-                    withCredentials: true,
-                    headers: {
-                        Authorization: localStorage.getItem("interiorjung-token")
-                    }
-                })
-                .then((response) => {
+        if (businessSchedules !== undefined) {
 
-                    let allEvents:IScheduleEvent[] = [];
+            businessSchedules.forEach((e:any) => {
+                let element: IScheduleEvent = {
+                    id: e.id,
+                    title: e.title,
+                    start: e.startDate,
+                    end: e.endDate,
+                    color: 'red',
+                    textColor: 'white',
+                    resourceEditable: true
+                }
 
-                    response.data.forEach((e:any) => {
-                        let element: IScheduleEvent = {
-                            id: e.id,
-                            title: e.title,
-                            start: e.startDate,
-                            end: e.endDate,
-                            color: 'red',
-                            textColor: 'white',
-                            resourceEditable: true
-                        }
+                allEvents.push(element);
+            })
 
-                        allEvents.push(element);
-                    })
-
-                    handleSetScheduleEvent(allEvents);
-
-                })
-                .catch((error) => {
-
-                });
         }
+        handleSetScheduleEvent(allEvents);
 
-    }, [businessIdList]);
+    }, [businessSchedules]);
 
     const eventDragStart = (event: any) => {
         const bfrStart = event.event._instance.range.start;
@@ -156,6 +148,7 @@ const FullCalendarPage = () => {
                     onOpenHandler={setAddModalOpen}
                     targetStartDate={targetStartDate}
                     targetEndDate={targetEndDate}
+                    businessSchedulesMutate={businessSchedulesMutate}
                 />
 
             </div>
