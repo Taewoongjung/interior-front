@@ -63,7 +63,38 @@ const FullCalendarPage = () => {
         businessIdList.length > 0 ? `${API_URL}/api/businesses/schedules?businessIds=${businessIdList.join(',')}` : null,
         fetcher
     );
-    
+
+    function hexToRgb(hex: string) {
+        // Remove the hash at the start if it's there
+        hex = hex.replace(/^#/, '');
+
+        // Parse the r, g, b values
+        let bigint = parseInt(hex, 16);
+        let r = (bigint >> 16) & 255;
+        let g = (bigint >> 8) & 255;
+        let b = bigint & 255;
+
+        return { r, g, b };
+    }
+
+    function rgbToHex(r: number, g: number, b: number) {
+        return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+    }
+
+    function findComplementaryColor(hex: any) {
+        // Convert hex to RGB
+        let { r, g, b } = hexToRgb(hex);
+
+        // Find the complementary color
+        let compR = 255 - r;
+        let compG = 255 - g;
+        let compB = 255 - b;
+
+        // Convert the complementary RGB color back to hex
+        return rgbToHex(compR, compG, compB);
+    }
+
+
     useEffect(() => {
         let allEvents:IScheduleEvent[] = [];
 
@@ -75,8 +106,8 @@ const FullCalendarPage = () => {
                     title: e.title,
                     start: e.startDate,
                     end: e.endDate,
-                    color: 'red',
-                    textColor: 'white',
+                    color: e.colorHexInfo,
+                    textColor: findComplementaryColor(e.colorHexInfo),
                     resourceEditable: true
                 }
 
