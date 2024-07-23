@@ -261,7 +261,8 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
 
         let relatedBusinessId = JSON.parse(JSON.stringify(relatedBusinesses[0])).value;
 
-        let startDateForWorkOrOrder = (scheduleType === "WORK" || (scheduleType === "ORDER" && !isAlarmOn)) ? startDate : orderDate
+        let startDateForWorkOrOrder = scheduleType === "WORK" ? startDate : orderDate
+
         let alarmTimeWhenAlarmIsOn = isAlarmOn ? alarmTime : null;
 
         axios.post(`${API_URL}/api/businesses/schedules`,
