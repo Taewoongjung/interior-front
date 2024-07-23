@@ -314,6 +314,21 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
 
     const [isDropdownShow, setIsDropdownShow] = useState<boolean>(false);
 
+    const verifyIfCreateButtonAble = () => {
+        if (scheduleType !== ''
+            && title !== ''
+            && startDate !== null
+            && endDate !== null
+            && (scheduleType === 'ORDER' && orderDate !== null) &&
+            ((scheduleType === 'ORDER' && isAlarmOn && alarmTime !== '') || (scheduleType === 'ORDER' && !isAlarmOn))
+            && relatedBusinesses.length !== 0
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
 
 /*
 * - 여러 날짜를 드레그 추가할 시 발주 일정 추가 못함
@@ -336,6 +351,9 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                     onOpenHandler(false)
                 }}
                 okText={"저장"}
+                okButtonProps={
+                    { disabled: verifyIfCreateButtonAble() }
+                }
                 cancelText={"취소"}
             >
                 <Space direction="vertical">
@@ -364,7 +382,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
 
                     <br/>
 
-                    <div style={{color:"grey"}}>1. 스케줄 타입 선택</div>
+                    <div style={{color:"grey"}}>1. 스케줄 타입 선택 <a style={{color:'red'}}>*</a></div>
                     <Select
                         allowClear
                         onClear={onClearScheduleType}
@@ -375,7 +393,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                         options={selectionScheduleTypeOptions}
                     />
 
-                    <div style={{color:"grey", marginTop: 15}}>2. 연관 사업 선택
+                    <div style={{color:"grey", marginTop: 15}}>2. 연관 사업 선택 <a style={{color:'red'}}>*</a>
                         <Select
                             mode="multiple"
                             allowClear
@@ -390,7 +408,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
 
                     {/* 타이틀은 100자 까지만.*/}
                     <div>
-                        <div style={{color:"grey", marginTop: 15}}>3. 스케줄 타이틀</div>
+                        <div style={{color:"grey", marginTop: 15}}>3. 스케줄 타이틀 <a style={{color:'red'}}>*</a></div>
                         <Input
                             placeholder="제목"
                             style={{ width: '400px' }}
@@ -409,7 +427,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                             />
                         }
                     </div>
-                    <div style={{color:"grey", marginTop: 10}}>4. 스케줄 날짜 선택</div>
+                    <div style={{color:"grey", marginTop: 10}}>4. 스케줄 날짜 선택 <a style={{color:'red'}}>*</a></div>
                     {(scheduleType !== 'ORDER' && !isAllDay) &&
                         <DatePicker.RangePicker
                             disabledDate={disabledDate}
@@ -483,7 +501,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                                     <Radio.Button onChange={handleSetAlarm} value="OFF" defaultChecked={true}>끄기</Radio.Button>
                                 </Radio.Group>
 
-                                {isAlarmOn && <div style={{color:"grey"}}>알람 시간 : </div>}
+                                {isAlarmOn && <div style={{color:"grey"}}><a style={{color:'red'}}>*</a> 알람 시간 : </div>}
                                 {isAlarmOn &&
                                     <Select
                                         placeholder="알림 시간"
