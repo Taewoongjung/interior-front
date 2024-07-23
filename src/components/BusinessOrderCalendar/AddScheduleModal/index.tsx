@@ -18,6 +18,7 @@ import {useBusinessStores} from "../../../hooks/useBusinessStore";
 import {useObserver} from "mobx-react";
 import axios from "axios";
 import { SketchPicker, ColorResult } from 'react-color';
+import {BUSINESS_SCHEDULE_ERROR_CODES} from "../../../codes/ErrorCodes";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -62,7 +63,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         });
     };
 
-    const error = (errorMsg:string) => {
+    const errorModal = (errorMsg:string) => {
         messageApi.open({
             type: 'error',
             content: errorMsg
@@ -150,7 +151,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         if (value === 'orderSchedule') {
             if (IsNotAvailableOrderSchedule()) {
 
-                error('발주 스케줄은 하루만 설정 가능합니다.')
+                errorModal('발주 스케줄은 하루만 설정 가능합니다.')
                 return;
             }
         }
@@ -258,9 +259,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
 
     const createScheduleHandler = () => {
 
-        let relatedBusinessList: any[] = [];
-
-        relatedBusinesses.map((e) => relatedBusinessList.push(JSON.parse(JSON.stringify(e)).value));
+        let relatedBusinessId = JSON.parse(JSON.stringify(relatedBusinesses[0])).value;
 
         let startDateForWorkOrOrder = scheduleType === "WORK" ? startDate : orderDate
         let alarmTimeWhenAlarmIsOn = isAlarmOn ? alarmTime : null;
@@ -268,7 +267,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
         axios.post(`${API_URL}/api/businesses/schedules`,
             {
                 scheduleType,
-                relatedBusinessList,
+                relatedBusinessId,
                 title,
                 titleWhereStemsFrom,
                 startDate: startDateForWorkOrOrder,
@@ -293,9 +292,14 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
                     businessSchedulesMutate();
                 }
             })
-            .catch((e) => {
-                error("스케줄 추가에 실패했습니다.")
-                error(e);
+            .catch((error) => {
+                const errorCode = error.response.data.errorCode;
+                if (BUSINESS_SCHEDULE_ERROR_CODES.includes(errorCode)) {
+                    errorModal(error.response.data.message);
+                } else {
+                    errorModal("스케줄 추가에 실패했습니다.");
+                    errorModal(error);
+                }
             });
     }
 
