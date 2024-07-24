@@ -320,7 +320,7 @@ const AddScheduleModal = (props:{onOpen:boolean, onOpenHandler: (event:boolean) 
             && startDate !== null
             && endDate !== null
             && (scheduleType === 'ORDER' && orderDate !== null) &&
-            ((scheduleType === 'ORDER' && isAlarmOn && alarmTime !== '') || (scheduleType === 'ORDER' && !isAlarmOn))
+            ((scheduleType === 'ORDER' && isAlarmOn && alarmTime !== '') || (scheduleType === 'ORDER' && !isAlarmOn)) || (scheduleType === 'WORK' && !isAlarmOn)
             && relatedBusinesses.length !== 0
         ) {
             return false;

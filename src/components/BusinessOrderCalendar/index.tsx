@@ -5,9 +5,10 @@ import {useEffect, useState} from 'react';
 import React from 'react';
 import AddScheduleModal from "./AddScheduleModal";
 import {useBusinessStores} from "../../hooks/useBusinessStore";
-import {SelectProps} from "antd";
+import {SelectProps, Popover, Descriptions, Button, DescriptionsProps} from "antd";
 import useSWR from "swr";
 import fetcher from "../../utils/fetcher";
+import {BellFilled, BellOutlined, DeleteOutlined, EditOutlined} from "@ant-design/icons";
 
 const API_URL = process.env.REACT_APP_REQUEST_API_URL;
 
@@ -18,6 +19,8 @@ interface IScheduleEvent {
     end: string
     color: string
     textColor: string
+    scheduleType: string
+    isAlarmOn: string
     resourceEditable: boolean
 }
 
@@ -107,6 +110,8 @@ const FullCalendarPage = () => {
                     end: e.endDate,
                     color: e.colorHexInfo,
                     textColor: findComplementaryColor(e.colorHexInfo),
+                    scheduleType : e.type,
+                    isAlarmOn: e.isAlarmOn,
                     resourceEditable: true
                 }
 
@@ -148,6 +153,18 @@ const FullCalendarPage = () => {
         setTargetEndDate(end);
     }
 
+    const [visiblePopover, setVisiblePopover] = useState<string | null>(null);
+    const [popoverContent, setPopoverContent] = useState<string>('');
+
+    const handleMouseEnter = (info: any) => {
+        setPopoverContent(info.event.title || '');
+        setVisiblePopover(info.event.id);
+    };
+
+    const padToTwoDigits = (num: number | undefined) => {
+        return num !== undefined ? String(num).padStart(2, '0') : '00';
+    };
+
 
     return (
         <>
@@ -164,13 +181,102 @@ const FullCalendarPage = () => {
                     eventDragStart={eventDragStart}
                     eventDrop={eventDrop}
                     eventStartEditable={true}
-                    eventClick={eventClick}
                     headerToolbar={{
                         left: 'prev',
                         center: 'title',
                         right: 'next',
                     }}
                     height={770}
+
+                    eventMouseEnter={handleMouseEnter}
+
+                    eventContent={(eventInfo) => {
+                        const startYear = eventInfo.event.start?.getFullYear();
+                        const startMonth = eventInfo.event.start?.getMonth();
+                        const startDay = padToTwoDigits(eventInfo.event.start?.getDay());
+                        const startHours = padToTwoDigits(eventInfo.event.start?.getHours());
+                        const startSeconds = padToTwoDigits(eventInfo.event.start?.getSeconds());
+
+                        const endMonth = eventInfo.event.end?.getMonth();
+                        const endDay = padToTwoDigits(eventInfo.event.end?.getDay());
+                        const endHours = padToTwoDigits(eventInfo.event.end?.getHours());
+                        const endSeconds = padToTwoDigits(eventInfo.event.end?.getSeconds());
+
+                        let endDate = eventInfo.event.end ? ` ~  ${endMonth}월 ${endDay}일 ${endHours}:${endSeconds}` : '';
+
+                        let scheduleType = eventInfo.event.extendedProps.scheduleType === 'WORK' ? "일정" : "발주";
+
+                        const alarmStatus = eventInfo.event.extendedProps.isAlarmOn === 'T'
+                            ? <>
+                                <span>켜짐</span>&nbsp;
+                                <BellFilled />
+                            </>
+                            : <>
+                                <span>꺼짐</span>&nbsp;
+                                <BellOutlined />
+                            </>;
+
+                        const items: DescriptionsProps['items'] = [
+                            {
+                                key: '1',
+                                label: '타입',
+                                children: scheduleType,
+                                span:3
+                            },
+                            {
+                                key: '2',
+                                label: '타이틀',
+                                children: eventInfo.event.title,
+                                span:3
+                            },
+                            {
+                                key: '3',
+                                label: '시간',
+                                children: startMonth + "월 " + startDay + "일 " + startHours + ":" + startSeconds + endDate,
+                                span:3
+                            },
+                            {
+                                key: '4',
+                                label: '알람 여부',
+                                children: alarmStatus,
+                                span:3
+                            }
+                        ];
+
+                        const contents =
+                            <div>{
+                                <Descriptions
+                                    bordered
+                                    size={'small'}
+                                    items={items}
+                                />
+                            }
+                            <hr/>
+                            <p style={{textAlign: 'right', margin:10}}>
+                                <Button danger type="dashed" icon={<DeleteOutlined />} size={"middle"} style={{ marginRight: 5 }}/>
+                                <Button type="primary" icon={<EditOutlined />} size={"middle"} />
+                            </p>
+                        </div>
+
+
+                        return (
+
+
+                            <Popover
+                                content={contents}
+                                title="Event Info"
+                                trigger="click"
+                            >
+                                <div>
+                                    <i>
+                                        [{startHours}:{startSeconds}
+                                        {eventInfo.event.end ? ` ~ ${endHours}:${endSeconds}` : ''}]
+                                        &nbsp;{eventInfo.event.title}
+                                    </i>
+                                </div>
+                            </Popover>
+                        );
+                    }}
                 />
 
                 <AddScheduleModal
