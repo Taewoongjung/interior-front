@@ -3,7 +3,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import FullCalendar from '@fullcalendar/react';
 import {useEffect, useState} from 'react';
 import React from 'react';
-import AddScheduleModal from "./AddScheduleModal";
+import AddScheduleModal, {selectionAlarmTime} from "./AddScheduleModal";
 import {useBusinessStores} from "../../hooks/useBusinessStore";
 import {SelectProps, Popover, Descriptions, Button, DescriptionsProps} from "antd";
 import useSWR from "swr";
@@ -21,6 +21,8 @@ interface IScheduleEvent {
     textColor: string
     scheduleType: string
     isAlarmOn: string
+    alarmStartDate: string
+    selectedAlarmTime: string
     resourceEditable: boolean
 }
 
@@ -112,6 +114,8 @@ const FullCalendarPage = () => {
                     textColor: findComplementaryColor(e.colorHexInfo),
                     scheduleType : e.type,
                     isAlarmOn: e.isAlarmOn,
+                    alarmStartDate: e.alarmStartDate,
+                    selectedAlarmTime: e.selectedAlarmTime,
                     resourceEditable: true
                 }
 
@@ -206,10 +210,17 @@ const FullCalendarPage = () => {
 
                         let scheduleType = eventInfo.event.extendedProps.scheduleType === 'WORK' ? "일정" : "발주";
 
+                        let alarmStartDate = eventInfo.event.extendedProps.alarmStartDate !== null ? eventInfo.event.extendedProps.alarmStartDate : null;
+                        let selectedAlarmTime = eventInfo.event.extendedProps.selectedAlarmTime !== null ? eventInfo.event.extendedProps.selectedAlarmTime : null;
+
+                        let selectedAlarmTimeLabel = selectionAlarmTime.filter(f => f.value === selectedAlarmTime);
+
+                        let alarmDetailInfo = (alarmStartDate !== null && selectedAlarmTime !== null) ? `${selectedAlarmTimeLabel[0].label} (${alarmStartDate})` : null;
+
                         const alarmStatus = eventInfo.event.extendedProps.isAlarmOn === 'T'
                             ? <>
                                 <span>켜짐</span>&nbsp;
-                                <BellFilled />
+                                <BellFilled />&nbsp; <div style={{color:'grey'}}>{alarmDetailInfo}</div>
                             </>
                             : <>
                                 <span>꺼짐</span>&nbsp;

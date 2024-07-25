@@ -31,7 +31,7 @@ const selectionScheduleTypeOptions = [
     { label: '발주', value: 'ORDER' },
 ];
 
-const selectionAlarmTime = [
+export const selectionAlarmTime = [
     { label: '이벤트시간', value: 'AT_THE_TIME'},
     { label: '5분 전', value: 'FIVE_M_AGO'},
     { label: '10분 전', value: 'TEN_M_AGO'},
