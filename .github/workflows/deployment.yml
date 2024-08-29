@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    
+
       # 레포지토리에 접근하여 CI서버로 코드를 내려받는 과정입니다.
       - name: checkout Github Action
         uses: actions/checkout@v3
-      
+
       - name: Get npm cache directory
         id: npm-cache-dir
         run: |
@@ -29,7 +29,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      
+
 #      - name: install npm dependencies
 #        run: npm install
 #
@@ -50,4 +50,5 @@ jobs:
             git clone https://github.com/Taewoongjung/interior-front.git
             cd /home/twj/interior-front
             docker build -t interior-jung-front .
-            docker run -d -p ${{ secrets.DOCKER_IMAGE_PORT }} interior-jung-front
+#            docker run -d -p ${{ secrets.DOCKER_IMAGE_PORT }} interior-jung-front
+            docker run -d -p 80:80 -p 443:443 interior-jung-front
