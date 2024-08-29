@@ -50,5 +50,4 @@ jobs:
             git clone https://github.com/Taewoongjung/interior-front.git
             cd /home/twj/interior-front
             docker build -t interior-jung-front .
-#            docker run -d -p ${{ secrets.DOCKER_IMAGE_PORT }} interior-jung-front
             docker run -d -p 80:80 -p 443:443 interior-jung-front
